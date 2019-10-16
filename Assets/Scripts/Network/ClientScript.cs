@@ -20,7 +20,9 @@ public class ClientScript : MonoBehaviour
     private object _lockObj;
     private List<byte[]> _recvMsgList;
 
-    void Start()
+    private List<SocketEvent> _socketEventList;
+
+    protected void Start()
     {
         Debug.Log($"Begin connecting server - {_address}:{_port} ...");
         
@@ -33,18 +35,23 @@ public class ClientScript : MonoBehaviour
         lock (_lockObj)
         {
             _recvMsgList = new List<byte[]>();
+            _socketEventList = new List<SocketEvent>();
         }
     }
 
     void OnDestroy()
     {
-        _client.Received -= OnReceiveMsg;
-        _client.Completed -= OnComplete;
-        _client.Close();
-        Debug.Log("client closed!");
+        if (_client != null)
+        {
+            _client.Received -= OnReceiveMsg;
+            _client.Completed -= OnComplete;
+            _client.Close();
+        }
+
+        Debug.Log("Client closed!");
     }
 
-    void Update()
+    protected void Update()
     {
         lock (_lockObj)
         {
@@ -53,6 +60,13 @@ public class ClientScript : MonoBehaviour
                 byte[] data = _recvMsgList[0];
                 Received?.Invoke(data);
                 _recvMsgList.RemoveAt(0);
+            }
+
+            while (_socketEventList.Count > 0)
+            {
+                SocketEvent se = _socketEventList[0];
+                Completed?.Invoke(se._action, se._msg);
+                _socketEventList.RemoveAt(0);
             }
 
         }
@@ -78,7 +92,20 @@ public class ClientScript : MonoBehaviour
 
     void OnComplete(TcpClient client, SocketAction action, string msg)
     {
-        Completed?.Invoke(action, msg);
+        lock (_lockObj)
+        {
+            SocketEvent se = new SocketEvent()
+            {
+                _action = action,
+                _msg = msg,
+            };
+            _socketEventList.Add(se);
+        }
     }
-    
+
+    class SocketEvent
+    {
+        public SocketAction _action;
+        public string _msg;
+    }
 }

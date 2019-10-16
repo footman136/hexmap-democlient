@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -53,18 +54,30 @@ public class UIManager : MonoBehaviour
 //    版权声明：本文为CSDN博主「PassionY」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。
 //    原文链接：https://blog.csdn.net/yupu56/article/details/54561553    
 
-    private PanelSystemTips _systemTips;
+    struct SystemTipsParam
+    {
+        public PanelSystemTips.MessageType _type;
+        public string _msg;
+        public PanelSystemTips _tips;
+    }
+    private List<SystemTipsParam> _systemTipsList;
+    private bool _systemTipsPlaying = false;
     public void SystemTips(string msg, PanelSystemTips.MessageType msgType)
     {
-        if (_systemTips == null)
+        if (_systemTipsList == null)
         {
+            _systemTipsList = new List<SystemTipsParam>();
+        }
+
+        PanelSystemTips systemTips = null;
+        { // pool里空了，创建一个新的
             var go = Resources.Load("UI/Common/PanelSystemTips");
             if (go!=null)
             {
                 var go2 = Instantiate(go, transform) as GameObject;
                 if (go2 != null)
                 {
-                    _systemTips = go2.GetComponent<PanelSystemTips>();
+                    systemTips = go2.GetComponent<PanelSystemTips>();
                 }
             }
             else
@@ -72,9 +85,37 @@ public class UIManager : MonoBehaviour
                 Debug.LogError("UI/PanelSystemTips not found!");
             }
         }
-        if (_systemTips != null)
+        
+        if (systemTips != null)
         {
-            _systemTips.Show(msg, msgType);
+            if (_systemTipsPlaying)
+            { // 当前动画正在播放，新增的动画就保存起来
+                SystemTipsParam stp = new SystemTipsParam()
+                {
+                    _type = msgType,
+                    _msg = msg,
+                    _tips = systemTips,
+                };
+                // 添加到播放链表
+                _systemTipsList.Add(stp);
+                systemTips.gameObject.SetActive(false);
+            }
+            else
+            { // 否则直接播放
+                systemTips.Show(msg, msgType, OnSystemTipsComplete);
+                _systemTipsPlaying = true;
+            }
+        }
+    }
+
+    void OnSystemTipsComplete()
+    {
+        _systemTipsPlaying = false;
+        if (_systemTipsList.Count > 0)
+        {
+            _systemTipsList[0]._tips.gameObject.SetActive(true);
+            _systemTipsList[0]._tips.Show(_systemTipsList[0]._msg, _systemTipsList[0]._type, OnSystemTipsComplete);
+            _systemTipsList.RemoveAt(0);
         }
     }
 

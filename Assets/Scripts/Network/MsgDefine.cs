@@ -17,12 +17,12 @@ public class MsgDefine
         NORMAL_MESSAGE = 11000,
     }
     
-    public static string PLAYER_ENTER(string username, string password){
+    public static string PLAYER_ENTER(string account, long tokenId){
         JsonData registerJson = new JsonData ();
         registerJson ["cmd_id"] = ((int)CMD.PLAYER_ENTER).ToString();
         registerJson ["cmd"] = "PLAYER_ENTER";
-        registerJson ["username"] = username;
-        registerJson ["password"] = password;
+        registerJson ["account"] = account;
+        registerJson ["token_id"] = tokenId;
  
         return registerJson.ToJson();
     }
