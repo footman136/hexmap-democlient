@@ -1,0 +1,84 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using System;
+using System.Net.Sockets;
+using System.Threading;
+
+public class ClientScript : MonoBehaviour
+{
+    public string _address = "127.0.0.1";
+    public int _port = 9999;
+
+    private const int BUFF_SIZE = 1024;
+    
+    private AsynSocketClient _client;
+
+    public event Action<byte[]> Received;
+    public event Action<SocketAction, string> Completed;
+
+    private object _lockObj;
+    private List<byte[]> _recvMsgList;
+
+    void Start()
+    {
+        Debug.Log($"Begin connecting server - {_address}:{_port} ...");
+        
+        _client = new AsynSocketClient(BUFF_SIZE);
+        _client.ConnectAsync(_address, _port);
+        _client.Received += OnReceiveMsg;
+        _client.Completed += OnComplete;
+
+        _lockObj = new System.Object();
+        lock (_lockObj)
+        {
+            _recvMsgList = new List<byte[]>();
+        }
+    }
+
+    void OnDestroy()
+    {
+        _client.Received -= OnReceiveMsg;
+        _client.Completed -= OnComplete;
+        _client.Close();
+        Debug.Log("client closed!");
+    }
+
+    void Update()
+    {
+        lock (_lockObj)
+        {
+            while (_recvMsgList.Count > 0)
+            {
+                byte[] data = _recvMsgList[0];
+                Received?.Invoke(data);
+                _recvMsgList.RemoveAt(0);
+            }
+
+        }
+    }
+
+    public void SendMsg(byte[] data)
+    {
+        _client.SendAsync(data);
+    }
+
+    public void SendMsg(string data)
+    {
+        _client.SendAsync(data);
+    }
+
+    void OnReceiveMsg(DataEventArgs args)
+    {
+        lock (_lockObj)
+        {
+            _recvMsgList.Add(args.Data);
+        }
+    }
+
+    void OnComplete(TcpClient client, SocketAction action, string msg)
+    {
+        Completed?.Invoke(action, msg);
+    }
+    
+}
