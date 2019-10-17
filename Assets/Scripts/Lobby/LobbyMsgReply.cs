@@ -25,9 +25,9 @@ public class LobbyMsgReply
         Array.Copy(data, 4, recvData, 0, size - 4);
 
         int msgId = System.BitConverter.ToInt32(recvHeader,0);
-        switch ((MSG_REPLY) msgId)
+        switch ((LOBBY_REPLY) msgId)
         {
-            case MSG_REPLY.PLAYER_ENTER_REPLY:
+            case LOBBY_REPLY.PLAYER_ENTER_REPLY:
                 PLAYER_ENTER_REPLY(recvData);
                 break;
         }
