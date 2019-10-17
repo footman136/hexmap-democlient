@@ -11,29 +11,20 @@ using LitJson; // https://github.com/LitJSON/litjson
 /// </summary>
 public class MsgDefine
 {
-    enum CMD
+    /// <summary>
+    /// 客户端发送给服务器的消息，消息ID一般为奇数
+    /// </summary>
+    public enum MSG
     {
         PLAYER_ENTER = 10001,
-        NORMAL_MESSAGE = 11000,
+        CHAT_MESSAGE = 11000,
     }
     
-    public static string PLAYER_ENTER(string account, long tokenId){
-        JsonData registerJson = new JsonData ();
-        registerJson ["cmd_id"] = ((int)CMD.PLAYER_ENTER).ToString();
-        registerJson ["cmd"] = "PLAYER_ENTER";
-        registerJson ["account"] = account;
-        registerJson ["token_id"] = tokenId;
- 
-        return registerJson.ToJson();
-    }
-
-    public static string NORMAL_MESSAGE(string message)
+    /// <summary>
+    /// 客户端发送给服务器的消息，消息ID一般为偶数
+    /// </summary>
+    public enum MSG_REPLY
     {
-        JsonData registerJson = new JsonData ();
-        registerJson["cmd_id"] = ((int)CMD.NORMAL_MESSAGE).ToString();
-        registerJson ["cmd"] = "NORMAL_MESSAGE";
-        registerJson ["message"] = message;
- 
-        return registerJson.ToJson();
+        PLAYER_ENTER_REPLY = 10002,
     }
 }

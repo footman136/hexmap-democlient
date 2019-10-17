@@ -4,45 +4,50 @@ using UnityEngine;
 using System;
 // https://github.com/LitJSON/litjson
 using LitJson;
+// https://blog.csdn.net/u014308482/article/details/52958148
+using Protobuf.Lobby;
+using static MsgDefine;
 
 public class LobbyMsgReply
 {
-    public enum MSG
-    {
-        PLAYER_ENTER = 10001,
-        SOCKET_EVENT = 10007,
-        CHAT_MESSAGE = 11000,
-    }
 
-    public static void ProcessMsg(byte[] data)
+    public static void ProcessMsg(byte[] data, int size)
     {
-        var message = System.Text.Encoding.UTF8.GetString(data, 0, data.Length);
-        var dataJson = JsonMapper.ToObject(message);
-        int cmdId = Int32.Parse(dataJson["cmd_id"].ToString());
-        switch ((MSG) cmdId)
+        if (size < 4)
         {
-            case MSG.PLAYER_ENTER:
-                PLAYER_ENTER(dataJson);
-                break;
-            case MSG.SOCKET_EVENT:
-                SOCKET_EVENT(dataJson);
-                break;
-            case MSG.CHAT_MESSAGE:
-                CHAT_MESSAGE(dataJson);
+            Debug.Log($"ProcessMsg Error - invalid data size:{size}");
+            return;
+        }
+
+        byte[] recvHeader = new byte[4];
+        Array.Copy(data, 0, recvHeader, 0, 4);
+        byte[] recvData = new byte[size - 4];
+        Array.Copy(data, 4, recvData, 0, size - 4);
+
+        int msgId = System.BitConverter.ToInt32(recvHeader,0);
+        switch ((MSG_REPLY) msgId)
+        {
+            case MSG_REPLY.PLAYER_ENTER_REPLY:
+                PLAYER_ENTER_REPLY(recvData);
                 break;
         }
     }
 
-    public static void PLAYER_ENTER(JsonData dataJson)
+    static void PLAYER_ENTER_REPLY(byte[] data)
     {
+        PlayerEnterReply per = PlayerEnterReply.Parser.ParseFrom(data);
+        if (per.Ret)
+        {
+            
+        }
+        else
+        {
+            string msg = "玩家进入大厅失败！！！";
+            UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
+            Debug.Log(msg);
+        }
     }
-    public static void SOCKET_EVENT(JsonData dataJson)
-    {
-        //int intAction = Int32.Parse(dataJson["cmd_id"].ToString());
-        var json = dataJson["cmd_id"];
-        int action = int.Parse(json.ToString());
-    }
-    public static void CHAT_MESSAGE(JsonData dataJson)
+    static void CHAT_MESSAGE(JsonData dataJson)
     {
     }
 }

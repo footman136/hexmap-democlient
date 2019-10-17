@@ -58,7 +58,7 @@ public class PanelChat : MonoBehaviour
         if (string.IsNullOrEmpty(_inputField.text))
             return;
         
-        _client.SendMsg(MsgDefine.NORMAL_MESSAGE(_inputField.text));
+//        _client.SendMsg(MsgDefine.NORMAL_MESSAGE(_inputField.text));
         _inputField.text = "";
     }
 
@@ -88,7 +88,7 @@ public class PanelChat : MonoBehaviour
                 };
                 _listNotify.Add(nm);
                 // 发送第一条消息，登录该用户
-                _client.SendMsg(MsgDefine.PLAYER_ENTER("footman", 123456));
+//                _client.SendMsg(MsgDefine.PLAYER_ENTER("footman", 123456));
                 Debug.Log(msg);
             }
                 break;
