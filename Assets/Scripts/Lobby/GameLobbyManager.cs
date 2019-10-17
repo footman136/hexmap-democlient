@@ -40,7 +40,7 @@ public class GameLobbyManager : ClientScript
     /// </summary>
     /// <param name="msgId">消息ID</param>
     /// <param name="???"></param>
-    public void SendMsg(MsgDefine.LOBBY msgId, byte[] data)
+    public void SendMsg(LOBBY msgId, byte[] data)
     {
         byte[] sendData = new byte[data.Length + 4];
         byte[] sendHeader = System.BitConverter.GetBytes((int)msgId);
@@ -63,7 +63,7 @@ public class GameLobbyManager : ClientScript
                     Account = ClientManager.Instance.Player.Account,
                     TokenId = ClientManager.Instance.Player.TokenId,
                 };
-                SendMsg(MsgDefine.LOBBY.PLAYER_ENTER, data.ToByteArray());
+                SendMsg(LOBBY.PlayerEnter, data.ToByteArray());
             }
                 break;
             case SocketAction.Send:

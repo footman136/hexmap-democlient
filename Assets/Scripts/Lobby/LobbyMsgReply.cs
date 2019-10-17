@@ -6,7 +6,6 @@ using System;
 using LitJson;
 // https://blog.csdn.net/u014308482/article/details/52958148
 using Protobuf.Lobby;
-using static MsgDefine;
 
 public class LobbyMsgReply
 {
@@ -27,7 +26,7 @@ public class LobbyMsgReply
         int msgId = System.BitConverter.ToInt32(recvHeader,0);
         switch ((LOBBY_REPLY) msgId)
         {
-            case LOBBY_REPLY.PLAYER_ENTER_REPLY:
+            case LOBBY_REPLY.PlayerEnterReply:
                 PLAYER_ENTER_REPLY(recvData);
                 break;
         }
