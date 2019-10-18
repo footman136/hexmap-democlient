@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Google.Protobuf;
 using Main;
 using Protobuf.Lobby;
-using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -32,6 +31,7 @@ public class PanelLobbyMain : MonoBehaviour
     {
         _ScrollView.SetActive(false);
         _btnJoinRoom.SetActive(false);
+        _roomInfoItemTemplate.gameObject.SetActive(false);
     }
 
     // Update is called once per frame
@@ -83,6 +83,7 @@ public class PanelLobbyMain : MonoBehaviour
         RoomInfoItem item = Instantiate(_roomInfoItemTemplate, _ScrollViewContent.transform);
         if (item != null)
         {
+            item.gameObject.SetActive(true);
             string count = $"{playerCount}/{maxPlayerCount}";
             item.SetData(name, roomId.ToString(), count, createTime.ToString());
         }
