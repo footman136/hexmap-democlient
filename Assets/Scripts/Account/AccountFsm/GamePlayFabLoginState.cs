@@ -8,8 +8,6 @@ public class GamePlayFabLoginState : FsmBaseState<ConnectionStateMachine, Connec
 {
     private readonly ClientManager _game;
 
-    private GameObject _panelConnecting;
-
     public GamePlayFabLoginState(ConnectionStateMachine owner, ClientManager game) : base(owner)
     {
         _game = game;
@@ -17,7 +15,8 @@ public class GamePlayFabLoginState : FsmBaseState<ConnectionStateMachine, Connec
 
     public override void Enter()
     {
-        _panelConnecting = UIManager.CreatePanel(UIManager.Instance.RootLobby, "", "UI/Lobby/PanelConnecting");
+        UIManager.Instance.BeginLoading();
+        UIManager.Instance.BeginConnecting();
     }
 
     public override void Tick()
@@ -26,9 +25,7 @@ public class GamePlayFabLoginState : FsmBaseState<ConnectionStateMachine, Connec
 
     public override void Exit(bool disabled)
     {
-        if (_panelConnecting != null)
-        {
-            UIManager.DestroyPanel(ref _panelConnecting);
-        }
+        UIManager.Instance.EndLoading();
+        UIManager.Instance.EndConnecting();
     }
 }

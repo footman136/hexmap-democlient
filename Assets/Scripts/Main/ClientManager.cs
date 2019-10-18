@@ -30,6 +30,7 @@ namespace Main
             Instance = this;
             _lobbyManager.gameObject.SetActive(false);
             _roomManager.gameObject.SetActive(false);
+            DontDestroyOnLoad(gameObject);
         }
 
         // Start is called before the first frame update
@@ -49,7 +50,7 @@ namespace Main
         // Update is called once per frame
         void Update()
         {
-        
+            _stateMachine.Tick();
         }
     
     }

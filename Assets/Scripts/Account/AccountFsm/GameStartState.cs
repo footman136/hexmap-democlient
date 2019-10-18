@@ -17,8 +17,9 @@ public class GameStartState : FsmBaseState<ConnectionStateMachine, ConnectionFSM
 
     public override void Enter()
     {
+        UIManager.Instance.EndLoading();
         if (_panelLogin == null)
-            _panelLogin = UIManager.CreatePanel(UIManager.Instance.RootLobby, "", "UI/Lobby/PanelLogin");
+            _panelLogin = UIManager.CreatePanel(UIManager.Instance.Root, "", "UI/Logo/PanelLogin");
         if(_panelLogin == null)
             Debug.LogError("GameStartState Enter failed! PanelLogin create failed!!!");
         else

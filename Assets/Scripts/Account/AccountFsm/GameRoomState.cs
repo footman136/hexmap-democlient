@@ -4,20 +4,18 @@ using UnityEngine;
 using Assets.Gamelogic.FSM;
 using Main;
 
-public class GamePlayFabRegisterState : FsmBaseState<ConnectionStateMachine, ConnectionFSMStateEnum.StateEnum>
+public class GameRoomState : FsmBaseState<ConnectionStateMachine, ConnectionFSMStateEnum.StateEnum>
 {
     private readonly ClientManager _game;
 
-    private GameObject _panelConnecting;
-
-    public GamePlayFabRegisterState(ConnectionStateMachine owner, ClientManager game) : base(owner)
+    public GameRoomState(ConnectionStateMachine owner, ClientManager game) : base(owner)
     {
         _game = game;
     }
 
     public override void Enter()
     {
-        UIManager.Instance.BeginConnecting();
+        UIManager.Instance.BeginLoading();
     }
 
     public override void Tick()
@@ -26,6 +24,5 @@ public class GamePlayFabRegisterState : FsmBaseState<ConnectionStateMachine, Con
 
     public override void Exit(bool disabled)
     {
-        UIManager.Instance.EndConnecting();
     }
 }

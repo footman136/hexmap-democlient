@@ -60,7 +60,7 @@ public class PlayFabLogin : MonoBehaviour
         long tokenId = long.Parse(idStr,NumberStyles.HexNumber);
         ClientManager.Instance.Player.TokenId = tokenId;
         ClientManager.Instance.Player.Account = _account;
-        string msg = $"PlayFab 登录成功！ <{idStr}> <{tokenId}>";
+        string msg = $"PlayFab 登录成功！ TokenId<{idStr}>";
         Debug.Log(msg);
         UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Success);
         ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.CONNECTING); 

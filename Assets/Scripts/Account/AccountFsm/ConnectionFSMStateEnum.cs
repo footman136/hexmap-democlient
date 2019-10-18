@@ -13,9 +13,10 @@ public class ConnectionFSMStateEnum
         PLAYFAB_REGISTER = 3,
         CONNECTING = 4,
         CONNECTED = 5,
-        PLAYING = 6,
-        RESULT = 7,
-        DISCONNECTED= 8,
-        COUNT = 9,
+        LOBBY = 6,
+        ROOM = 7,
+        RESULT = 8,
+        DISCONNECTED= 9,
+        COUNT = 10,
     }
 }

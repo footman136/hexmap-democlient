@@ -9,7 +9,6 @@ public class GameConnectingState : FsmBaseState<ConnectionStateMachine, Connecti
     private readonly ClientManager _game;
 
     private GameObject _clientWorker;
-    private GameObject _panelConnecting;
     
     public GameConnectingState(ConnectionStateMachine owner, ClientManager game) : base(owner)
     {
@@ -18,7 +17,8 @@ public class GameConnectingState : FsmBaseState<ConnectionStateMachine, Connecti
 
     public override void Enter()
     {
-        _panelConnecting = UIManager.CreatePanel(UIManager.Instance.RootLobby, "", "UI/Lobby/PanelConnecting");
+        UIManager.Instance.BeginLoading();
+        UIManager.Instance.BeginConnecting();
         
         // 使用PlayFab链接后台数据库
         // LobbyManager一激活，就会连接服务器
@@ -32,9 +32,6 @@ public class GameConnectingState : FsmBaseState<ConnectionStateMachine, Connecti
 
     public override void Exit(bool disabled)
     {
-        if (_panelConnecting != null)
-        {
-            UIManager.DestroyPanel(ref _panelConnecting);
-        }
+        UIManager.Instance.EndConnecting();
     }
 }

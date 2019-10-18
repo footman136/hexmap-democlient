@@ -25,7 +25,8 @@ public class ConnectionStateMachine : FiniteStateMachine<ConnectionFSMStateEnum.
         var connectedState = new GameConnectedState(this, _game);
         var disconnectedState = new GameDisconnectedState(this, _game);
         var resultState = new GameResultState(this, _game);
-        var playingState = new GamePlayingState(this, _game);
+        var lobbyState = new GameLobbyState(this, _game);
+        var roomState = new GameRoomState(this, _game);
 
         var stateList = new Dictionary<ConnectionFSMStateEnum.StateEnum, IFsmState>
         {
@@ -36,7 +37,8 @@ public class ConnectionStateMachine : FiniteStateMachine<ConnectionFSMStateEnum.
             {ConnectionFSMStateEnum.StateEnum.CONNECTED, connectedState},
             {ConnectionFSMStateEnum.StateEnum.DISCONNECTED, disconnectedState},
             {ConnectionFSMStateEnum.StateEnum.RESULT, resultState},
-            {ConnectionFSMStateEnum.StateEnum.PLAYING, playingState},
+            {ConnectionFSMStateEnum.StateEnum.LOBBY, lobbyState},
+            {ConnectionFSMStateEnum.StateEnum.ROOM, roomState},
         };
         SetStates(stateList);
         
@@ -64,19 +66,27 @@ public class ConnectionStateMachine : FiniteStateMachine<ConnectionFSMStateEnum.
         });
         allowedTransitions.Add(ConnectionFSMStateEnum.StateEnum.CONNECTED, new List<ConnectionFSMStateEnum.StateEnum>
         {
-            ConnectionFSMStateEnum.StateEnum.PLAYING,
+            ConnectionFSMStateEnum.StateEnum.LOBBY,
         });
         allowedTransitions.Add(ConnectionFSMStateEnum.StateEnum.DISCONNECTED, new List<ConnectionFSMStateEnum.StateEnum>
         {
             ConnectionFSMStateEnum.StateEnum.START,
+            ConnectionFSMStateEnum.StateEnum.LOBBY,
         });
         allowedTransitions.Add(ConnectionFSMStateEnum.StateEnum.RESULT, new List<ConnectionFSMStateEnum.StateEnum>
         {
             ConnectionFSMStateEnum.StateEnum.START,
+            ConnectionFSMStateEnum.StateEnum.LOBBY,
         });
-        allowedTransitions.Add(ConnectionFSMStateEnum.StateEnum.PLAYING, new List<ConnectionFSMStateEnum.StateEnum>
+        allowedTransitions.Add(ConnectionFSMStateEnum.StateEnum.LOBBY, new List<ConnectionFSMStateEnum.StateEnum>
         {
             ConnectionFSMStateEnum.StateEnum.START,
+            ConnectionFSMStateEnum.StateEnum.ROOM,
+        });
+        allowedTransitions.Add(ConnectionFSMStateEnum.StateEnum.ROOM, new List<ConnectionFSMStateEnum.StateEnum>
+        {
+            ConnectionFSMStateEnum.StateEnum.LOBBY,
+            ConnectionFSMStateEnum.StateEnum.RESULT,
         });
         SetTransitions(allowedTransitions);
     }

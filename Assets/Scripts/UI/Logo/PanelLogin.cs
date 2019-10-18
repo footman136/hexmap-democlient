@@ -97,7 +97,7 @@ public class PanelLogin : MonoBehaviour
     {
         if (_panelRegister == null)
         {
-            _panelRegister = UIManager.CreatePanel(UIManager.Instance.RootLobby, "", "UI/Lobby/PanelRegister");
+            _panelRegister = UIManager.CreatePanel(UIManager.Instance.Root, "", "UI/Logo/PanelRegister");
         }
 
         if (_panelRegister!=null)

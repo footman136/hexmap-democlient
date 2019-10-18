@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 // https://github.com/LitJSON/litjson
 using LitJson;
+using Main;
 // https://blog.csdn.net/u014308482/article/details/52958148
 using Protobuf.Lobby;
 
@@ -29,24 +30,35 @@ public class LobbyMsgReply
             case LOBBY_REPLY.PlayerEnterReply:
                 PLAYER_ENTER_REPLY(recvData);
                 break;
+            case LOBBY_REPLY.AskRoomListReply:
+                ASK_ROOM_LIST_REPLY(recvData);
+                break;
         }
     }
 
-    static void PLAYER_ENTER_REPLY(byte[] data)
+    static void PLAYER_ENTER_REPLY(byte[] bytes)
     {
-        PlayerEnterReply per = PlayerEnterReply.Parser.ParseFrom(data);
-        if (per.Ret)
+        PlayerEnterReply input = PlayerEnterReply.Parser.ParseFrom(bytes);
+        if (input.Ret)
         {
-            
+            ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.CONNECTED);
         }
         else
         {
             string msg = "玩家进入大厅失败！！！";
             UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
             Debug.Log(msg);
+            ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.START);
         }
     }
-    static void CHAT_MESSAGE(JsonData dataJson)
+
+    static void ASK_ROOM_LIST_REPLY(byte[] bytes)
     {
+        AskRoomListReply input = AskRoomListReply.Parser.ParseFrom(bytes);
+        PanelLobbyMain.Instance.ClearRoomList();
+        foreach (var room in input.Rooms)
+        {
+            PanelLobbyMain.Instance.AddRoomInfo(room.Name, room.RoomId, room.PlayerCount, room.MaxPlayerCount, room.CreateTime);
+        }
     }
 }
