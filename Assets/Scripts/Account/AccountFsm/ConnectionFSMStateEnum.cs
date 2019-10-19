@@ -16,7 +16,9 @@ public class ConnectionFSMStateEnum
         LOBBY = 6,
         ROOM = 7,
         RESULT = 8,
-        DISCONNECTED= 9,
-        COUNT = 10,
+        DISCONNECTED = 9,
+        CONNECTING_ROOM = 10,
+        CONNECTED_ROOM = 11,
+        COUNT = 12,
     }
 }

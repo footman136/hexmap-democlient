@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using Main;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -47,8 +48,14 @@ public class PanelNewMapMenu : MonoBehaviour {
 	public void CreateLargeMap () {
 		CreateMap(80, 60);
 	}
-
+                       
 	void CreateMap (int x, int z) {
+
+		if (string.IsNullOrEmpty(_name.text) || string.IsNullOrEmpty(_countMax.text))
+		{
+			UIManager.Instance.SystemTips("地图名或最大玩家数不能是空的！", PanelSystemTips.MessageType.Error);
+			return;
+		}
 		if (generateMaps) {
 			mapGenerator.GenerateMap(x, z, wrapping);
 		}
@@ -75,6 +82,6 @@ public class PanelNewMapMenu : MonoBehaviour {
 			writer.Write(mapFileVersion);
 			hexGrid.Save(writer);
 		}
-		
+		ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.CONNECTING_ROOM);
 	}
 }
