@@ -16,9 +16,7 @@ public class GameRoomState : FsmBaseState<ConnectionStateMachine, ConnectionFSMS
 
     public override void Enter()
     {
-        UIManager.Instance.EndConnecting();
-        SceneManager.LoadScene("Room");
-        UIManager.Instance.BeginLoading();
+        GameRoomManager.Instance.CreateJoinRoom();
     }
 
     public override void Tick()

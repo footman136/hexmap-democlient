@@ -24,8 +24,6 @@ public class ClientScript : MonoBehaviour
 
     protected void Start()
     {
-        Debug.Log($"Begin connecting server - {_address}:{_port} ...");
-        
         _client = new AsynSocketClient(BUFF_SIZE);
         _client.ConnectAsync(_address, _port);
         _client.Received += OnReceiveMsg;
@@ -37,6 +35,8 @@ public class ClientScript : MonoBehaviour
             _recvMsgList = new List<byte[]>();
             _socketEventList = new List<SocketEvent>();
         }
+
+        Log($"Begin connecting server - {_address}:{_port} ...");
     }
 
     void OnDestroy()
@@ -48,7 +48,7 @@ public class ClientScript : MonoBehaviour
             _client.Close();
         }
 
-        Debug.Log("Client closed!");
+        Log("Client closed!");
     }
 
     protected void Update()
@@ -70,6 +70,11 @@ public class ClientScript : MonoBehaviour
             }
 
         }
+    }
+
+    public void Log(string msg)
+    {
+        _client.Log(msg);
     }
 
     public void SendMsg(byte[] data)

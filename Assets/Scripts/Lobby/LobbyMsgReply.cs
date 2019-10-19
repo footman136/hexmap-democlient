@@ -51,7 +51,7 @@ public class LobbyMsgReply
             string msg = "玩家进入大厅失败！！！";
             UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
             Debug.Log(msg);
-            ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.START);
+            ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.DISCONNECTED);
         }
     }
 
@@ -67,15 +67,23 @@ public class LobbyMsgReply
 
     static void ASK_CREATE_ROOM_REPLY(byte[] bytes)
     {
+        UIManager.Instance.EndConnecting();
         AskCreateRoomReply input = AskCreateRoomReply.Parser.ParseFrom(bytes);
         if (input.Ret)
         {
             // 根据大厅传递回来的RoomServer的地址，链接RoomServer
-            GameRoomManager roomManager = ClientManager.Instance.RoomManager;
-            roomManager._address = input.RoomServerAddress;
-            roomManager._port = input.RoomServerPort;
-            roomManager.gameObject.SetActive(true);
-            Debug.Log($"MSG: 开始链接RoomServer - {input.RoomServerAddress}:{input.RoomServerPort}");
+            // 这个类是Room场景初始化的时候,GameRoomManager需要的数据，因为跨场景了，所以需要一个全局的地方进行传递
+            EnterRoomData roomData = ClientManager.Instance.EnterRoom;
+            roomData.Address = input.RoomServerAddress;
+            roomData.Port = input.RoomServerPort;
+            roomData.MaxPlayerCount = input.MaxPlayerCount;
+            roomData.RoomName = input.RoomName;
+            roomData.IsCreateRoom = true;
+            roomData.RoomId = 0;
+            
+            // 正式进入房间了。。。加载Room场景
+            ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.CONNECTING_ROOM);
+            Debug.Log($"MSG: 大厅回复可以创建房间。RoomServer:{roomData.Address}:{roomData.Port} - Room Name:{roomData.RoomName}");
         }
         else
         {

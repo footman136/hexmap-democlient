@@ -277,7 +277,9 @@ public class HexGrid : MonoBehaviour {
 		}
 		bool wrapping = header >= 5 ? reader.ReadBoolean() : false;
 		if (x != cellCountX || z != cellCountZ || this.wrapping != wrapping) {
-			if (!CreateMap(x, z, wrapping)) {
+			if (!CreateMap(x, z, wrapping))
+			{
+				Debug.LogError("HexGrid Load() Error - ReCreateMap Failed!");
 				return;
 			}
 		}

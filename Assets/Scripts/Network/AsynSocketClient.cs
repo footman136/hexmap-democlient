@@ -27,6 +27,8 @@ public class AsynSocketClient
         private bool isStopWork = false;
 
         private static int BUFF_SIZE;
+
+        private bool LogEnabled;
         #endregion
 
         /// <summary>
@@ -55,6 +57,7 @@ public class AsynSocketClient
         {
             tcpClient = new TcpClient();
             BUFF_SIZE = buff_size;
+            LogEnabled = true;
         }
  
         #region 连接
@@ -285,7 +288,7 @@ public class AsynSocketClient
             {
                 try
                 {
-                    Debug.Log("socket closed.");
+                    Log("socket closed.");
                     this.Received = null;
                     tcpClient.Close();
                 }
@@ -348,7 +351,12 @@ public class AsynSocketClient
                 }
             }
         }
- 
+
+        public void Log(string msg)
+        {
+            if(LogEnabled)
+                Debug.Log(msg);
+        }
     }
  
     /// <summary>

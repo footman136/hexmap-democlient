@@ -2,6 +2,8 @@
 using Main;
 using UnityEngine;
 using UnityEngine.UI;
+using Google.Protobuf;
+using Protobuf.Lobby;
 
 public class PanelNewMapMenu : MonoBehaviour {
 
@@ -16,7 +18,7 @@ public class PanelNewMapMenu : MonoBehaviour {
 
 	bool wrapping = true;
 	
-	const int mapFileVersion = 6;
+	const int mapFileVersion = 5;
 	
 
 	public void ToggleMapGeneration (bool toggle) {
@@ -82,6 +84,16 @@ public class PanelNewMapMenu : MonoBehaviour {
 			writer.Write(mapFileVersion);
 			hexGrid.Save(writer);
 		}
-		ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.CONNECTING_ROOM);
+		
+		// 向大厅服务器发送请求加入房间的的信息，让大厅确认是否可以进入
+		UIManager.Instance.BeginConnecting();
+		int maxPlayerCount = int.Parse(_countMax.text);
+		AskCreateRoom data = new AskCreateRoom()
+		{
+			MaxPlayerCount = maxPlayerCount,
+		  	RoomName = mapName,
+		};
+		ClientManager.Instance.LobbyManager.SendMsg(LOBBY.AskCreateRoom, data.ToByteArray());
+		Debug.Log("MSG: 询问大厅：是否可以加入房间？");
 	}
 }

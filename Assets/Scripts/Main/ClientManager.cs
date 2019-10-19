@@ -5,16 +5,8 @@ namespace Main
     public class ClientManager : MonoBehaviour
     {
         // 状态机
-        private ConnectionStateMachine _stateMachine;
+        [SerializeField] private ConnectionStateMachine _stateMachine;
         public ConnectionStateMachine StateMachine => _stateMachine;
-    
-        // 客户端网络链接-大厅
-        [SerializeField] private GameLobbyManager _lobbyManager;
-        public GameLobbyManager LobbyManager => _lobbyManager;
-    
-        // 客户端网络连接-房间
-        [SerializeField] private GameRoomManager _roomManager;
-        public GameRoomManager RoomManager => _roomManager;
     
         // 登陆器
         [SerializeField] private PlayFabLogin _playFab;
@@ -23,13 +15,22 @@ namespace Main
         [SerializeField] private PlayerInfo _playerInfo;
         public PlayerInfo Player => _playerInfo;
 
+        // 客户端网络链接-大厅
+        [SerializeField] private GameLobbyManager _lobbyManager;
+        public GameLobbyManager LobbyManager => _lobbyManager;
+
+        // 进入房间以前需要准备的数据
+        public EnterRoomData EnterRoom;
+    
         public static ClientManager Instance { private set; get; }
 
         void Awake()
         {
+            if(Instance != null)
+                Debug.LogError("ClientManager is Singleton! Cannot be created again!");
             Instance = this;
+            
             _lobbyManager.gameObject.SetActive(false);
-            _roomManager.gameObject.SetActive(false);
             DontDestroyOnLoad(gameObject);
         }
 
@@ -54,4 +55,15 @@ namespace Main
         }
     
     }
+    
+    public struct EnterRoomData
+    {
+        public string Address;
+        public int Port;
+        public bool IsCreateRoom;
+        public int MaxPlayerCount;
+        public string RoomName;
+        public long RoomId;
+        public bool Wrapping;
+    };
 }

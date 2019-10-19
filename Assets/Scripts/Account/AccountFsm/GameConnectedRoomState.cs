@@ -13,6 +13,7 @@ public class GameConnectedRoomState : FsmBaseState<ConnectionStateMachine, Conne
         _game = game;
     }
 
+    // 暂时本状态没太大用，仅仅是作为过渡
     private bool _bFirst;
     public override void Enter()
     {

@@ -8,14 +8,31 @@ using System;
 
 public class GameRoomManager : ClientScript
 {
+    public static GameRoomManager Instance;
+
+    public HexmapHelper hexmapHelper;
+    
+    #region 初始化
+    void Awake()
+    {
+        if(Instance != null)
+            Debug.LogError("GameRoomManager is Singleton! Cannot be created again!");
+        Instance = this;
+    }
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log("GameRoomManager.Start()!");
+        EnterRoomData roomData = ClientManager.Instance.EnterRoom;
+
+        _address = roomData.Address;
+        _port = roomData.Port;
+        
         base.Start();
+        UIManager.Instance.BeginLoading();
 
         Completed += OnComplete;
         Received += OnReceiveMsg;
+        Log($"GameRoomManager.Start()! 开始链接RoomServer - {_address}:{_port}");
     }
 
     void OnDestroy()
@@ -29,7 +46,9 @@ public class GameRoomManager : ClientScript
     {
         base.Update();
     }
-    
+    #endregion
+
+    #region 收发消息
     /// <summary>
     /// 新增的发送消息函数，增加了消息ID，会把前面的消息ID（4字节）和后面的消息内容组成一个包再发送
     /// </summary>
@@ -71,11 +90,38 @@ public class GameRoomManager : ClientScript
             case SocketAction.Error:
                 break;
         }
-        Debug.Log(msg);
+        Log(msg);
     }
     
     void OnReceiveMsg(byte[] data)
     {
         RoomMsgReply.ProcessMsg(data, data.Length);
     }
+    #endregion
+    
+    #region 事件处理
+
+    public void CreateJoinRoom()
+    {
+        EnterRoomData roomData = ClientManager.Instance.EnterRoom;
+        if (roomData.IsCreateRoom)
+        {// 创建房间流程
+
+            if (hexmapHelper.Load(roomData.RoomName))
+            {
+                Log($"Load Map Failed - {roomData.RoomName}");
+                return;
+            }
+            
+            UIManager.Instance.EndLoading();
+            //GameRoomManager.Instance.SendMsg();
+            
+        }
+        else
+        {// 加入房间流程
+            
+        }
+        
+    }
+    #endregion
 }

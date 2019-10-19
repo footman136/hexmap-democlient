@@ -19,6 +19,7 @@ public class ConnectionFSMStateEnum
         DISCONNECTED = 9,
         CONNECTING_ROOM = 10,
         CONNECTED_ROOM = 11,
-        COUNT = 12,
+        DISCONNECTED_ROOM = 12,
+        COUNT = 13,
     }
 }
