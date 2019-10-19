@@ -12,7 +12,7 @@ public class ConnectionStateMachine : FiniteStateMachine<ConnectionFSMStateEnum.
     private ClientManager _game;
     public ConnectionFSMStateEnum.StateEnum CurrentState { private set; get; }
     public float _startTime; // 本状态开始的时间
-    [SerializeField] private bool logChanges = false;
+    [SerializeField] private bool logChanges = true;
     
     public ConnectionStateMachine(ClientManager game)
     {

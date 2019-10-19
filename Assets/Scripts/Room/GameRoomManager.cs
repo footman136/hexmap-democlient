@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Main;
+using Google.Protobuf;
 using Protobuf.Room;
 using System;
 
@@ -50,14 +51,14 @@ public class GameRoomManager : ClientScript
         {
             case SocketAction.Connect:
             {
-//                UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Success);
-//                // 发送第一条消息，登录该用户，第一次使用Protobuf哦。。。Oct.17.2019. Liu Gang.
-//                PlayerEnter data = new PlayerEnter()
-//                {
-//                    Account = ClientManager.Instance.Player.Account,
-//                    TokenId = ClientManager.Instance.Player.TokenId,
-//                };
-//                SendMsg(LOBBY.PlayerEnter, data.ToByteArray());
+                UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Success);
+                // 登录到RoomServer
+                PlayerEnter data = new PlayerEnter()
+                {
+                    Account = ClientManager.Instance.Player.Account,
+                    TokenId = ClientManager.Instance.Player.TokenId,
+                };
+                SendMsg(ROOM.PlayerEnter, data.ToByteArray());
             }
                 break;
             case SocketAction.Send:
@@ -75,6 +76,6 @@ public class GameRoomManager : ClientScript
     
     void OnReceiveMsg(byte[] data)
     {
-        LobbyMsgReply.ProcessMsg(data, data.Length);
+        RoomMsgReply.ProcessMsg(data, data.Length);
     }
 }

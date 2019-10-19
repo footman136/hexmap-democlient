@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Assets.Gamelogic.FSM;
 using Main;
+using UnityEngine.SceneManagement;
 
 public class GameRoomState : FsmBaseState<ConnectionStateMachine, ConnectionFSMStateEnum.StateEnum>
 {
@@ -15,6 +16,8 @@ public class GameRoomState : FsmBaseState<ConnectionStateMachine, ConnectionFSMS
 
     public override void Enter()
     {
+        UIManager.Instance.EndConnecting();
+        SceneManager.LoadScene("Room");
         UIManager.Instance.BeginLoading();
     }
 

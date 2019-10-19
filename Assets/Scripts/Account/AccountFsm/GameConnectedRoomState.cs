@@ -23,7 +23,7 @@ public class GameConnectedRoomState : FsmBaseState<ConnectionStateMachine, Conne
     {
         if (_bFirst)
         { // 只运行一帧，就切换到下个状态了
-            ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.LOBBY);
+            ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.ROOM);
             _bFirst = false;
         }
     }

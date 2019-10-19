@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Assets.Gamelogic.FSM;
+using Google.Protobuf;
 using Main;
+using Protobuf.Lobby;
 
 public class GameConnectingRoomState : FsmBaseState<ConnectionStateMachine, ConnectionFSMStateEnum.StateEnum>
 {
@@ -18,10 +20,8 @@ public class GameConnectingRoomState : FsmBaseState<ConnectionStateMachine, Conn
         UIManager.Instance.BeginLoading();
         UIManager.Instance.BeginConnecting();
         
-        // 使用PlayFab链接后台数据库
-        // RoomManager一激活，就会连接服务器
-        GameObject roomWorker = ClientManager.Instance.RoomManager.gameObject;
-        roomWorker.SetActive(true);
+        AskCreateRoom data = new AskCreateRoom();
+        ClientManager.Instance.LobbyManager.SendMsg(LOBBY.AskCreateRoom, data.ToByteArray());
     }
 
     public override void Tick()

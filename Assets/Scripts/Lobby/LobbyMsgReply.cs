@@ -15,7 +15,7 @@ public class LobbyMsgReply
     {
         if (size < 4)
         {
-            Debug.Log($"ProcessMsg Error - invalid data size:{size}");
+            Debug.Log($"LOBBY - ProcessMsg Error - invalid data size:{size}");
             return;
         }
 
@@ -32,6 +32,9 @@ public class LobbyMsgReply
                 break;
             case LOBBY_REPLY.AskRoomListReply:
                 ASK_ROOM_LIST_REPLY(recvData);
+                break;
+            case LOBBY_REPLY.AskCreateRoomReply:
+                ASK_CREATE_ROOM_REPLY(recvData);
                 break;
         }
     }
@@ -59,6 +62,26 @@ public class LobbyMsgReply
         foreach (var room in input.Rooms)
         {
             PanelLobbyMain.Instance.AddRoomInfo(room.Name, room.RoomId, room.PlayerCount, room.MaxPlayerCount, room.CreateTime);
+        }
+    }
+
+    static void ASK_CREATE_ROOM_REPLY(byte[] bytes)
+    {
+        AskCreateRoomReply input = AskCreateRoomReply.Parser.ParseFrom(bytes);
+        if (input.Ret)
+        {
+            // 根据大厅传递回来的RoomServer的地址，链接RoomServer
+            GameRoomManager roomManager = ClientManager.Instance.RoomManager;
+            roomManager._address = input.RoomServerAddress;
+            roomManager._port = input.RoomServerPort;
+            roomManager.gameObject.SetActive(true);
+            Debug.Log($"MSG: 开始链接RoomServer - {input.RoomServerAddress}:{input.RoomServerPort}");
+        }
+        else
+        {
+            string msg = $"大厅发现没有多余的房间服务器可以分配！";
+            UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
+            Debug.Log("MSG: " + msg);
         }
     }
 }
