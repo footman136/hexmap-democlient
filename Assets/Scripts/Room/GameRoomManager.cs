@@ -35,7 +35,7 @@ public class GameRoomManager : ClientScript
             roomData.Address = "192.168.137.1";
             roomData.Port = 8888;
             roomData.RoomName = "遗落の战境";
-            roomData.IsCreateRoom = true;
+            roomData.IsCreateByMe = true;
         }
 
         _address = roomData.Address;
@@ -133,7 +133,7 @@ public class GameRoomManager : ClientScript
 
     public void CreateJoinRoom(EnterRoomData roomData)
     {
-        if (roomData.IsCreateRoom)
+        if (roomData.IsCreateByMe)
         {// 创建房间流程
 
 //            if (!hexmapHelper.Load(roomData.RoomName))
@@ -174,9 +174,9 @@ public class GameRoomManager : ClientScript
                 hexmapHelper.EndLoadBuffer(ref reader);
             }
         }
-        
-        // 加入房间流程
-                    
+        else
+        {
+        }
         UIManager.Instance.EndLoading();
     }
     #endregion

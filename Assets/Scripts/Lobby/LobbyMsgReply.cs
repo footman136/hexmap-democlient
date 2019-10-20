@@ -78,7 +78,7 @@ public class LobbyMsgReply
             roomData.Port = input.RoomServerPort;
             roomData.MaxPlayerCount = input.MaxPlayerCount;
             roomData.RoomName = input.RoomName;
-            roomData.IsCreateRoom = true;
+            roomData.IsCreateByMe = true;
             roomData.RoomId = 0;
             
             // 正式进入房间了。。。加载Room场景

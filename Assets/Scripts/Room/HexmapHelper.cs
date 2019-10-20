@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using UnityEditor.Build.Content;
 using UnityEngine;
 
 public class HexmapHelper : MonoBehaviour
@@ -110,5 +111,32 @@ public class HexmapHelper : MonoBehaviour
     public void EndLoadBuffer(ref BinaryReader reader)
     {
          reader = null;
+    }
+
+    public BinaryWriter BeginSaveBuffer(string mapName)
+    {
+        string path = GetSelectedPath(mapName);
+
+        try
+        {
+            BinaryWriter writer = new BinaryWriter(File.Open(path, FileMode.Create));
+            return writer;
+        }
+        catch (Exception e)
+        {
+            Debug.Log($"Exception - Hexmap BeginSaveBuffer open file failed - {mapName}");
+        }
+
+        return null;
+    }
+
+    public void SaveBuffer(BinaryWriter writer, byte[] bytes)
+    {
+         writer.Write(bytes);
+    }
+
+    public void EndSaveBuffer(ref BinaryWriter writer)
+    {
+        writer = null;
     }
 }
