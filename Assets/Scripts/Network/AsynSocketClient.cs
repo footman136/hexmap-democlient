@@ -202,18 +202,18 @@ public class AsynSocketClient
                     return;
                 }
 
-                // 真正的互联网环境下会有消息包被截断的情况，所以发送的时候必须在开始定义4个字节的包长度，目前是测试阶段，暂时不开放。
-//                byte[] bytesRealSend = new byte[bytes.Length+4];
-//                byte[] bytesHeader = System.BitConverter.GetBytes(bytes.Length);
-//                Array.Copy(bytesHeader, 0, bytesRealSend, 0, 4);
-//                Array.Copy(bytes, 0, bytesRealSend, 4, bytes.Length);
-//                tcpClient.Client.BeginSend(bytesRealSend, 0, bytesRealSend.Length, SocketFlags.None, SendCallBack, tcpClient);
                 StateObject state = new StateObject
                 {
                     TcpClient = tcpClient,
                     ListData = bytes
                 };
-                tcpClient.Client.BeginSend(bytes, 0, bytes.Length, SocketFlags.None, SendCallBack, state);
+                // 真正的互联网环境下会有消息包被截断的情况，所以发送的时候必须在开始定义4个字节的包长度，目前是测试阶段，暂时不开放。
+                byte[] bytesRealSend = new byte[bytes.Length+4];
+                byte[] bytesHeader = System.BitConverter.GetBytes(bytes.Length);
+                Array.Copy(bytesHeader, 0, bytesRealSend, 0, 4);
+                Array.Copy(bytes, 0, bytesRealSend, 4, bytes.Length);
+                tcpClient.Client.BeginSend(bytesRealSend, 0, bytesRealSend.Length, SocketFlags.None, SendCallBack, state);
+                //tcpClient.Client.BeginSend(bytes, 0, bytes.Length, SocketFlags.None, SendCallBack, state);
             }
             catch (SocketException ex)
             {

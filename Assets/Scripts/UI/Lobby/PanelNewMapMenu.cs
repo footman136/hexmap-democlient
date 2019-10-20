@@ -76,18 +76,11 @@ public class PanelNewMapMenu : MonoBehaviour {
 	void Save()
 	{
 		string mapName = _name.text;
-		string path = Path.Combine(Application.persistentDataPath, mapName + ".map");
-		using (
-			BinaryWriter writer =
-				new BinaryWriter(File.Open(path, FileMode.Create))
-		) {
-			writer.Write(mapFileVersion);
-			hexGrid.Save(writer);
-		}
+		int maxPlayerCount = int.Parse(_countMax.text);
+		GameRoomManager.Instance.hexmapHelper.Save(mapName, maxPlayerCount);
 		
 		// 向大厅服务器发送请求加入房间的的信息，让大厅确认是否可以进入
 		UIManager.Instance.BeginConnecting();
-		int maxPlayerCount = int.Parse(_countMax.text);
 		AskCreateRoom data = new AskCreateRoom()
 		{
 			MaxPlayerCount = maxPlayerCount,

@@ -5,6 +5,7 @@ using Main;
 using Google.Protobuf;
 using Protobuf.Room;
 using System;
+using System.IO;
 
 public class GameRoomManager : ClientScript
 {
@@ -135,21 +136,48 @@ public class GameRoomManager : ClientScript
         if (roomData.IsCreateRoom)
         {// 创建房间流程
 
-            if (!hexmapHelper.Load(roomData.RoomName))
+//            if (!hexmapHelper.Load(roomData.RoomName))
+//            {
+//                Log($"Load Map Failed - {roomData.RoomName}");
+//                return;
+//            }
+            
+            // 把地图数据上传到房间服务器保存。后面的和加入房间一样了。
+            BinaryReader reader = hexmapHelper.BeginLoadBuffer(roomData.RoomName);
+            if (reader != null)
             {
-                Log($"Load Map Failed - {roomData.RoomName}");
-                return;
+                const int CHUNK_SIZE = 900;
+                byte[] bytes = new byte[CHUNK_SIZE];
+                int size = CHUNK_SIZE;
+                bool isFileEnd = false;
+                int index = 0;
+                while (!isFileEnd)
+                {
+                    if (!hexmapHelper.LoadBuffer(reader, out bytes, ref size, ref isFileEnd))
+                    {
+                        Log($"Load Buffer Failed - {roomData.RoomName}");
+                    }
+                    
+                    UploadMap output = new UploadMap()
+                    {
+                        RoomName = roomData.RoomName,
+                        MaxPlayerCount = roomData.MaxPlayerCount,
+                        MapData = ByteString.CopyFrom(bytes),
+                        PackageIndex = index++,
+                        IsLastPackage = isFileEnd,
+                    };
+
+                    SendMsg(ROOM.UploadMap, output.ToByteArray());
+                }
+
+                Log($"MSG: 发送地图数据 - 地图名:{roomData.RoomName} - Total Size:{reader.BaseStream.Length}");
+                hexmapHelper.EndLoadBuffer(ref reader);
             }
-            
-            UIManager.Instance.EndLoading();
-            //GameRoomManager.Instance.SendMsg();
-            
-        }
-        else
-        {// 加入房间流程
-            
         }
         
+        // 加入房间流程
+                    
+        UIManager.Instance.EndLoading();
     }
     #endregion
 }
