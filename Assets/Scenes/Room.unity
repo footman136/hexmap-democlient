@@ -202,8 +202,8 @@ Light:
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 1
-    m_Bias: 0.05
-    m_NormalBias: 0.4
+    m_Bias: 0.15
+    m_NormalBias: 0
     m_NearPlane: 0.2
     m_CullingMatrixOverride:
       e00: 1
@@ -305,7 +305,7 @@ Transform:
   m_Children:
   - {fileID: 1122170685}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &631837880
 GameObject:
@@ -533,7 +533,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1101492172
 GameObject:
@@ -860,6 +860,7 @@ GameObject:
   - component: {fileID: 1745859538}
   - component: {fileID: 1745859537}
   - component: {fileID: 1745859536}
+  - component: {fileID: 1745859540}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -947,6 +948,19 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &1745859540
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1745859535}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11991997a33bba84e9da6e7e852eb502, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _root: {fileID: 1745859539}
 --- !u!1 &1778121407
 GameObject:
   m_ObjectHideFlags: 0
@@ -978,7 +992,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _address: 192.168.137.1
   _port: 8888
-  hexmapHelper: {fileID: 0}
+  hexmapHelper: {fileID: 289277176}
 --- !u!4 &1778121409
 Transform:
   m_ObjectHideFlags: 0

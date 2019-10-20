@@ -19,10 +19,23 @@ public class GameRoomManager : ClientScript
             Debug.LogError("GameRoomManager is Singleton! Cannot be created again!");
         Instance = this;
     }
+
+    private EnterRoomData roomData;
     // Start is called before the first frame update
     void Start()
     {
-        EnterRoomData roomData = ClientManager.Instance.EnterRoom;
+         roomData = new EnterRoomData();
+        if (ClientManager.Instance != null)
+        {
+            roomData = ClientManager.Instance.EnterRoom;
+        }
+        else
+        {// 单独运行本场景的时候，CliengtManager不存在
+            roomData.Address = "192.168.137.1";
+            roomData.Port = 8888;
+            roomData.RoomName = "遗落の战境";
+            roomData.IsCreateRoom = true;
+        }
 
         _address = roomData.Address;
         _port = roomData.Port;
@@ -33,6 +46,16 @@ public class GameRoomManager : ClientScript
         Completed += OnComplete;
         Received += OnReceiveMsg;
         Log($"GameRoomManager.Start()! 开始链接RoomServer - {_address}:{_port}");
+
+        if (ClientManager.Instance == null)
+            StartCoroutine(LoadMap());
+    }
+
+    IEnumerator LoadMap()
+    {
+        yield return null;
+        CreateJoinRoom(roomData);
+        
     }
 
     void OnDestroy()
@@ -72,11 +95,17 @@ public class GameRoomManager : ClientScript
             {
                 UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Success);
                 // 登录到RoomServer
-                PlayerEnter data = new PlayerEnter()
+                PlayerEnter data = new PlayerEnter();
+                if (ClientManager.Instance != null)
                 {
-                    Account = ClientManager.Instance.Player.Account,
-                    TokenId = ClientManager.Instance.Player.TokenId,
-                };
+                    data.Account = ClientManager.Instance.Player.Account;
+                    data.TokenId = ClientManager.Instance.Player.TokenId;
+                }
+                else
+                {
+                    data.Account = "Footman";
+                    data.TokenId = 123456;
+                }
                 SendMsg(ROOM.PlayerEnter, data.ToByteArray());
             }
                 break;
@@ -101,13 +130,12 @@ public class GameRoomManager : ClientScript
     
     #region 事件处理
 
-    public void CreateJoinRoom()
+    public void CreateJoinRoom(EnterRoomData roomData)
     {
-        EnterRoomData roomData = ClientManager.Instance.EnterRoom;
         if (roomData.IsCreateRoom)
         {// 创建房间流程
 
-            if (hexmapHelper.Load(roomData.RoomName))
+            if (!hexmapHelper.Load(roomData.RoomName))
             {
                 Log($"Load Map Failed - {roomData.RoomName}");
                 return;
