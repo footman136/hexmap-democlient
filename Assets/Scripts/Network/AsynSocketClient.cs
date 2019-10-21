@@ -29,6 +29,9 @@ public class AsynSocketClient
         private static int BUFF_SIZE;
 
         private bool LogEnabled;
+        
+        //定义接收数据的对象  
+        List<byte> m_buffer; // 把这个定义成为链表，我也是服了。。。       
         #endregion
 
         /// <summary>
@@ -58,6 +61,7 @@ public class AsynSocketClient
             tcpClient = new TcpClient();
             BUFF_SIZE = buff_size;
             LogEnabled = true;
+            m_buffer = new List<Byte>();
         }
  
         #region 连接
@@ -156,50 +160,54 @@ public class AsynSocketClient
             {
                 if (count > 0)
                 {
-                    // 回调处理接收后的消息
-                    DataEventArgs data = new DataEventArgs()
-                    {
-                        Data = state.ListData.Take<byte>(count).ToArray(),
-                    };
-                    string msg = $"Receive a message : {data.Data.Length} bytes";
-                    OnComplete(state.TcpClient, SocketAction.Receive, msg);
-                    Received?.Invoke(data);
+//                    // 回调处理接收后的消息
+//                    DataEventArgs data = new DataEventArgs()
+//                    {
+//                        Data = state.ListData.Take<byte>(count).ToArray(),
+//                    };
+//                    string msg = $"Receive a message : {data.Data.Length} bytes";
+//                    OnComplete(state.TcpClient, SocketAction.Receive, msg);
+//                    Received?.Invoke(data);
                     
                     
-//                    // 真正的互联网环境下会有消息包被截断的情况，所以发送的时候必须在开始定义4个字节的包长度，目前是测试阶段，暂时不开放。
-//                    //读取数据  
-//                    byte[] data = new byte[e.BytesTransferred];
-//                    Log($"Server Found data received - {e.BytesTransferred} byts");
-//                    Array.Copy(e.Buffer, e.Offset, data, 0, e.BytesTransferred);  
-//                    lock (m_buffer)  
-//                    {  
-//                        m_buffer.AddRange(data);  
-//                    }  
-//  
-//                    do  
-//                    {  
-//                        //注意: 这里是需要和服务器有协议的,我做了个简单的协议,就是一个完整的包是包长(4字节)+包数据,便于处理,当然你可以定义自己需要的;   
-//                        //判断包的长度,前面4个字节.  
-//                        byte[] lenBytes = m_buffer.GetRange(0, 4).ToArray();  
-//                        int packageLen = BitConverter.ToInt32(lenBytes, 0);  
-//                        if (packageLen <= m_buffer.Count - 4)  
-//                        {  
-//                            //包够长时,则提取出来,交给后面的程序去处理  
-//                            byte[] rev = m_buffer.GetRange(4, packageLen).ToArray();  
-//                            //从数据池中移除这组数据,为什么要lock,你懂的  
-//                            lock (m_buffer)  
-//                            {  
-//                                m_buffer.RemoveRange(0, packageLen + 4);  
-//                            }  
-//                            //将数据包交给前台去处理  
-//                            Completed?.Invoke(e, ServerSocketAction.Receive);
-//                            receiveCallBack?.Invoke(e, rev, 0, rev.Length);
-//                        }  
-//                        else  
-//                        {   //长度不够,还得继续接收,需要跳出循环  
-//                            break;  
-//                        }  
-//                    } while (m_buffer.Count > 4);  
+                    // 真正的互联网环境下会有消息包被截断的情况，所以发送的时候必须在开始定义4个字节的包长度，目前是测试阶段，暂时不开放。
+                    //读取数据  
+                    byte[] data = new byte[count];
+                    Log($"Server Found data received - {count} byts");
+                    lock (m_buffer)  
+                    {  
+                        m_buffer.AddRange(state.ListData.Take<byte>(count).ToArray());  
+                    }  
+  
+                    do  
+                    {  
+                        //注意: 这里是需要和服务器有协议的,我做了个简单的协议,就是一个完整的包是包长(4字节)+包数据,便于处理,当然你可以定义自己需要的;   
+                        //判断包的长度,前面4个字节.  
+                        byte[] lenBytes = m_buffer.GetRange(0, 4).ToArray();  
+                        int packageLen = BitConverter.ToInt32(lenBytes, 0);  
+                        if (packageLen <= m_buffer.Count - 4)  
+                        {  
+                            //包够长时,则提取出来,交给后面的程序去处理  
+                            byte[] rev = m_buffer.GetRange(4, packageLen).ToArray();  
+                            //从数据池中移除这组数据,为什么要lock,你懂的  
+                            lock (m_buffer)  
+                            {  
+                                m_buffer.RemoveRange(0, packageLen + 4);  
+                            }  
+                            //将数据包交给前台去处理
+                            string msg = $"Receive a message : {rev.Length} bytes";
+                            OnComplete(state.TcpClient, SocketAction.Receive, msg);
+                            DataEventArgs data2 = new DataEventArgs()
+                            {
+                                Data = rev,
+                            };
+                            Received?.Invoke(data2);
+                        }  
+                        else  
+                        {   //长度不够,还得继续接收,需要跳出循环  
+                            break;  
+                        }  
+                    } while (m_buffer.Count > 4);  
                 }
             }
             catch (Exception ex)
