@@ -65,7 +65,9 @@ public class RoomMsgReply
         UploadMapReply input = UploadMapReply.Parser.ParseFrom(bytes);
         if (!input.Ret)
         {
-            GameRoomManager.Instance.Log("MSG: 上传地图失败！");
+            string msg = "上传地图失败！";
+            UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
+            GameRoomManager.Instance.Log("MSG: " + msg);
             return;
         }
 
@@ -75,7 +77,6 @@ public class RoomMsgReply
             DownloadMap output = new DownloadMap()
             {
                 RoomId = roomId,
-                RoomName = input.RoomName,
             };
             GameRoomManager.Instance.SendMsg(ROOM.DownloadMap, output.ToByteArray());
             GameRoomManager.Instance.Log($"MSG: 上传地图成功！RoomID:{roomId}");
@@ -88,19 +89,16 @@ public class RoomMsgReply
         DownloadMapReply input = DownloadMapReply.Parser.ParseFrom(bytes);
         if (!input.Ret)
         {
-            GameRoomManager.Instance.Log("MSG: 下载地图失败！");
+            string msg = "下载地图失败！";
+            UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
+            GameRoomManager.Instance.Log("MSG: " + msg);
             return;
         }
 
-        EnterRoomData roomData = new EnterRoomData();
-        roomData.RoomName = input.RoomName;
-        roomData.RoomId = input.RoomId;
-        roomData.IsCreateByMe = input.IsCreatedByMe;
-        roomData.MaxPlayerCount = input.MaxPlayerCount;
-        
         if (input.PackageIndex == 0)
         {// 第一条此类消息
-            mapDataBuffers.Clear();                        
+            mapDataBuffers.Clear();
+            GameRoomManager.Instance.Log($"MSG: 开始下载地图！地图名：{input.RoomName}");
         }
         mapDataBuffers.Add(input.MapData.ToByteArray());
         
@@ -114,7 +112,7 @@ public class RoomMsgReply
                 totalSize += package.Length;
             }
             // 同时确保文件名的唯一性和可读性
-            string mapName = $"{roomData.RoomName}_{roomData.RoomId}";
+            string mapName = $"{input.RoomName}_{input.RoomId}";
             
             BinaryWriter writer = GameRoomManager.Instance.hexmapHelper.BeginSaveBuffer(mapName);
             if (writer == null)
@@ -128,9 +126,10 @@ public class RoomMsgReply
             }
 
             GameRoomManager.Instance.hexmapHelper.EndSaveBuffer(ref writer);
-            GameRoomManager.Instance.Log($"MSG: 下载地图成功！地图名：{mapName} - Total Size:{totalSize}");
+            GameRoomManager.Instance.Log($"MSG: 下载地图成功！地图名：{mapName} - Total Map Size:{totalSize}");
 
             GameRoomManager.Instance.hexmapHelper.Load(mapName);
+            GameRoomManager.Instance.Log($"MSG: 显示地图！地图名：{mapName}");
         }
     }
 }

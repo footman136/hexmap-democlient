@@ -276,13 +276,13 @@ public class HexGrid : MonoBehaviour {
 			z = reader.ReadInt32();
 		}
 		bool wrapping = header >= 5 ? reader.ReadBoolean() : false;
-		if (x != cellCountX || z != cellCountZ || this.wrapping != wrapping) {
+//		if (x != cellCountX || z != cellCountZ || this.wrapping != wrapping) {
 			if (!CreateMap(x, z, wrapping))
 			{
 				Debug.LogError("HexGrid Load() Error - ReCreateMap Failed!");
 				return;
 			}
-		}
+//		}
 
 		bool originalImmediateMode = cellShaderData.ImmediateMode;
 		cellShaderData.ImmediateMode = true;

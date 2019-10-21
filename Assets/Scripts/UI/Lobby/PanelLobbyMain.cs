@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using Google.Protobuf;
 using Main;
 using Protobuf.Lobby;
+using Protobuf.Room;
 using UnityEngine;
+using UnityEngine.Experimental.PlayerLoop;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -16,6 +18,8 @@ public class PanelLobbyMain : MonoBehaviour
     [SerializeField] private VerticalLayoutGroup _ScrollViewContent;
     [SerializeField] private RoomInfoItem _roomInfoItemTemplate;
     [SerializeField] private GameObject _btnJoinRoom;
+
+    private RoomInfoItem _selectedItem;
 
     void Awake()
     {
@@ -32,6 +36,7 @@ public class PanelLobbyMain : MonoBehaviour
         _ScrollView.SetActive(false);
         _btnJoinRoom.SetActive(false);
         _roomInfoItemTemplate.gameObject.SetActive(false);
+        _selectedItem = null;
     }
 
     // Update is called once per frame
@@ -56,8 +61,26 @@ public class PanelLobbyMain : MonoBehaviour
     public void OnClickRoomList()
     {
         _btnJoinRoom.SetActive(false);
-        AskRoomList data = new AskRoomList();
-        ClientManager.Instance.LobbyManager.SendMsg(LOBBY.AskRoomList, data.ToByteArray());
+        AskRoomList output = new AskRoomList();
+        ClientManager.Instance.LobbyManager.SendMsg(LOBBY.AskRoomList, output.ToByteArray());
+    }
+
+    public void OnClickJoinRoom()
+    {
+        if (_selectedItem != null)
+        {
+            string roomName;
+            long roomId;
+            int maxPlayerCount;
+            int curPlayerCount;                
+            _selectedItem.GetData(out roomName, out roomId, out curPlayerCount, out maxPlayerCount);
+            AskJoinRoom output = new AskJoinRoom()
+            {
+                RoomId = roomId,
+                MaxPlayerCount = maxPlayerCount,
+            };
+            ClientManager.Instance.LobbyManager.SendMsg(LOBBY.AskJoinRoom, output.ToByteArray());
+        }
     }
     
     public void OnClickBackground()
@@ -78,14 +101,13 @@ public class PanelLobbyMain : MonoBehaviour
         }  
     }
 
-    public void AddRoomInfo(string name, long roomId, int playerCount, int maxPlayerCount, long createTime)
+    public void AddRoomInfo(string name, long roomId, long createTime, int curPlayerCount, int maxPlayerCount, bool isCreatedByMe, bool isRunning)
     {
         RoomInfoItem item = Instantiate(_roomInfoItemTemplate, _ScrollViewContent.transform);
         if (item != null)
         {
             item.gameObject.SetActive(true);
-            string count = $"{playerCount}/{maxPlayerCount}";
-            item.SetData(name, roomId.ToString(), count, createTime.ToString());
+            item.SetData(name, roomId.ToString(), createTime, curPlayerCount, maxPlayerCount, isCreatedByMe, isRunning);
         }
         _ScrollView.SetActive(true);
     }
@@ -105,6 +127,7 @@ public class PanelLobbyMain : MonoBehaviour
     public void ItemSelected(RoomInfoItem item)
     {
         _btnJoinRoom.SetActive(true);
+        _selectedItem = item;
     }
     #endregion
     

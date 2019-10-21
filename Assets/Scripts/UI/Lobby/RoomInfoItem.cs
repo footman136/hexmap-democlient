@@ -25,11 +25,21 @@ public class RoomInfoItem : MonoBehaviour
         
     }
 
-    public void SetData(string name, string roomId, string count, string createTime)
+    public void SetData(string name, string roomId, long createTime, int curPlayerCount, int maxPlayerCount, bool isCreatedByMe, bool isRunning)
     {
         _name.text = name;
         _roomId.text = roomId;
-        _count.text = count;
+        _count.text = $"{curPlayerCount}/{maxPlayerCount}";
+
+    }
+
+    public void GetData(out string name, out long roomId, out int curCount, out int maxCount)
+    {
+        name = _name.text;
+        roomId = long.Parse(_roomId.text);
+        string[] countStrs = _count.text.Split('/');
+        curCount = int.Parse(countStrs[0]);
+        maxCount = int.Parse(countStrs[1]);
     }
 
     public void Select(bool sel)

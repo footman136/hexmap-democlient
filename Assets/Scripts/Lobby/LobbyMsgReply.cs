@@ -36,6 +36,9 @@ public class LobbyMsgReply
             case LOBBY_REPLY.AskCreateRoomReply:
                 ASK_CREATE_ROOM_REPLY(recvData);
                 break;
+            case LOBBY_REPLY.AskJoinRoomReply:
+                ASK_JOIN_ROOM_REPLY(recvData);
+                break;
         }
     }
 
@@ -58,10 +61,17 @@ public class LobbyMsgReply
     static void ASK_ROOM_LIST_REPLY(byte[] bytes)
     {
         AskRoomListReply input = AskRoomListReply.Parser.ParseFrom(bytes);
+        if (!input.Ret)
+        {
+            string msg = "获取房间信息失败！";
+            UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
+            ClientManager.Instance.LobbyManager.Log("MSG: ASK_ROOM_LIST_REPLY - " + msg);
+            return;
+        }
         PanelLobbyMain.Instance.ClearRoomList();
         foreach (var room in input.Rooms)
         {
-            PanelLobbyMain.Instance.AddRoomInfo(room.Name, room.RoomId, room.PlayerCount, room.MaxPlayerCount, room.CreateTime);
+            PanelLobbyMain.Instance.AddRoomInfo(room.RoomName, room.RoomId, room.CreateTime, room.CurPlayerCount, room.MaxPlayerCount, room.IsCreatedByMe, room.IsRunning);
         }
     }
 
@@ -79,7 +89,7 @@ public class LobbyMsgReply
                 Port = input.RoomServerPort,
                 MaxPlayerCount = input.MaxPlayerCount,
                 RoomName = input.RoomName,
-                IsCreateByMe = true,
+                IsCreatingRoom = true, // 创建房间
                 RoomId = 0,
             };
             ClientManager.Instance.EnterRoom = roomData;
@@ -87,6 +97,34 @@ public class LobbyMsgReply
             // 正式进入房间了。。。加载Room场景
             ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.CONNECTING_ROOM);
             Debug.Log($"MSG: 大厅回复可以创建房间。RoomServer:{roomData.Address}:{roomData.Port} - Room Name:{roomData.RoomName}");
+        }
+        else
+        {
+            string msg = $"大厅发现没有多余的房间服务器可以分配！";
+            UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
+            Debug.Log("MSG: " + msg);
+        }
+    }
+    static void ASK_JOIN_ROOM_REPLY(byte[] bytes)
+    {
+        UIManager.Instance.EndConnecting();
+        AskJoinRoomReply input = AskJoinRoomReply.Parser.ParseFrom(bytes);
+        if (input.Ret)
+        {
+            // 根据大厅传递回来的RoomServer的地址，链接RoomServer
+            // 这个类是Room场景初始化的时候,GameRoomManager需要的数据，因为跨场景了，所以需要一个全局的地方进行传递
+            EnterRoomData roomData = new EnterRoomData()
+            {
+                Address = input.RoomServerAddress,
+                Port = input.RoomServerPort,
+                RoomId = input.RoomId,
+                IsCreatingRoom = false, // 加入房间
+            };
+            ClientManager.Instance.EnterRoom = roomData;
+            
+            // 正式进入房间了。。。加载Room场景
+            ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.CONNECTING_ROOM);
+            Debug.Log($"MSG: 大厅回复可以加入房间。RoomServer:{roomData.Address}:{roomData.Port} - Room Name:{roomData.RoomId}");
         }
         else
         {

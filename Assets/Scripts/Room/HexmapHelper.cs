@@ -110,7 +110,8 @@ public class HexmapHelper : MonoBehaviour
 
     public void EndLoadBuffer(ref BinaryReader reader)
     {
-         reader = null;
+        reader.Close();
+        //reader = null;
     }
 
     public BinaryWriter BeginSaveBuffer(string mapName)
@@ -137,6 +138,7 @@ public class HexmapHelper : MonoBehaviour
 
     public void EndSaveBuffer(ref BinaryWriter writer)
     {
-        writer = null;
+        writer.Close();
+        //writer = null;
     }
 }

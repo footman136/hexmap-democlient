@@ -60,7 +60,7 @@ namespace Main
     {
         public string Address;
         public int Port;
-        public bool IsCreateByMe;
+        public bool IsCreatingRoom;
         public int MaxPlayerCount;
         public string RoomName;
         public long RoomId;

@@ -35,7 +35,7 @@ public class GameRoomManager : ClientScript
             roomData.Address = "192.168.20.131";
             roomData.Port = 8888;
             roomData.RoomName = "遗落の战境";
-            roomData.IsCreateByMe = true;
+            roomData.IsCreatingRoom = true;
         }
 
         _address = roomData.Address;
@@ -133,15 +133,9 @@ public class GameRoomManager : ClientScript
 
     public void CreateJoinRoom(EnterRoomData roomData)
     {
-        if (roomData.IsCreateByMe)
+        if (roomData.IsCreatingRoom)
         {// 创建房间流程
 
-//            if (!hexmapHelper.Load(roomData.RoomName))
-//            {
-//                Log($"Load Map Failed - {roomData.RoomName}");
-//                return;
-//            }
-            
             // 把地图数据上传到房间服务器保存。后面的和加入房间一样了。
             BinaryReader reader = hexmapHelper.BeginLoadBuffer(roomData.RoomName);
             if (reader != null)
@@ -175,7 +169,12 @@ public class GameRoomManager : ClientScript
             }
         }
         else
-        {
+        {// 直接获取地图数据
+            DownloadMap output = new DownloadMap()
+            {
+                RoomId = roomData.RoomId,
+            };
+            SendMsg(ROOM.DownloadMap, output.ToByteArray());
         }
         UIManager.Instance.EndLoading();
     }
