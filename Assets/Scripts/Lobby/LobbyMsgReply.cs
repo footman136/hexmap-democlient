@@ -7,6 +7,8 @@ using LitJson;
 using Main;
 // https://blog.csdn.net/u014308482/article/details/52958148
 using Protobuf.Lobby;
+using Protobuf.Room;
+using PlayerEnterReply = Protobuf.Lobby.PlayerEnterReply;
 
 public class LobbyMsgReply
 {
@@ -39,6 +41,9 @@ public class LobbyMsgReply
             case LOBBY_REPLY.AskJoinRoomReply:
                 ASK_JOIN_ROOM_REPLY(recvData);
                 break;
+            case LOBBY_REPLY.DestroyRoomReply:
+                DESTROY_ROOM_REPLY(recvData);
+                break;
         }
     }
 
@@ -53,7 +58,7 @@ public class LobbyMsgReply
         {
             string msg = "玩家进入大厅失败！！！";
             UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
-            Debug.Log(msg);
+            ClientManager.Instance.LobbyManager.Log("MSG: PLAYER_ENTER_REPLY - " + msg);
             ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.DISCONNECTED);
         }
     }
@@ -96,13 +101,13 @@ public class LobbyMsgReply
             
             // 正式进入房间了。。。加载Room场景
             ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.CONNECTING_ROOM);
-            Debug.Log($"MSG: 大厅回复可以创建房间。RoomServer:{roomData.Address}:{roomData.Port} - Room Name:{roomData.RoomName}");
+            ClientManager.Instance.LobbyManager.Log($"MSG: ASK_CREATE_ROOM_REPLY - 大厅回复可以创建房间。RoomServer:{roomData.Address}:{roomData.Port} - Room Name:{roomData.RoomName}");
         }
         else
         {
             string msg = $"大厅发现没有多余的房间服务器可以分配！";
             UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
-            Debug.Log("MSG: " + msg);
+            ClientManager.Instance.LobbyManager.Log("MSG: ASK_CREATE_ROOM_REPLY - " + msg);
         }
     }
     static void ASK_JOIN_ROOM_REPLY(byte[] bytes)
@@ -124,13 +129,27 @@ public class LobbyMsgReply
             
             // 正式进入房间了。。。加载Room场景
             ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.CONNECTING_ROOM);
-            Debug.Log($"MSG: 大厅回复可以加入房间。RoomServer:{roomData.Address}:{roomData.Port} - Room Name:{roomData.RoomId}");
+            ClientManager.Instance.LobbyManager.Log($"MSG: ASK_JOIN_ROOM_REPLY - 大厅回复可以加入房间。RoomServer:{roomData.Address}:{roomData.Port} - Room Name:{roomData.RoomId}");
         }
         else
         {
             string msg = $"大厅发现没有多余的房间服务器可以分配！";
             UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
-            Debug.Log("MSG: " + msg);
+            ClientManager.Instance.LobbyManager.Log("MSG: ASK_JOIN_ROOM_REPLY - " + msg);
         }
+    }
+
+    static void DESTROY_ROOM_REPLY(byte[] bytes)
+    {
+        DestroyRoomReply input = DestroyRoomReply.Parser.ParseFrom(bytes);
+        if (!input.Ret)
+        {
+            ClientManager.Instance.LobbyManager.Log("MSG: DESTROY_ROOM_REPLY - 删除房间失败！");
+            return;
+        }
+
+        string msg = $"删除房间成功！{input.RoomName}";
+        UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Success);
+        ClientManager.Instance.LobbyManager.Log("MSG: DESTROY_ROOM_REPLY - " + msg);
     }
 }

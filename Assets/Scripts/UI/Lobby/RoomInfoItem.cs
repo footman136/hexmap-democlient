@@ -13,6 +13,32 @@ public class RoomInfoItem : MonoBehaviour
 
     [SerializeField] private GameObject _selected;
     
+    [SerializeField] private Toggle _togRunning;
+    [SerializeField] private Toggle _togCreatedByMe;
+
+    public string RoomName => _name.text;
+    public long RoomId => long.Parse(_roomId.text);
+    public bool IsRunning => _togRunning.isOn;
+    public bool IsCreateByMe => _togCreatedByMe.isOn;
+    public int CurPlayerCount
+    {
+        get
+        {
+            string[] countStrs = _count.text.Split('/');
+            return int.Parse(countStrs[0]);
+        }
+    }
+    
+    public int MaxPlayerCount
+    {
+        get
+        {
+            string[] countStrs = _count.text.Split('/');
+            return int.Parse(countStrs[1]);
+        }
+    }
+
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -30,16 +56,8 @@ public class RoomInfoItem : MonoBehaviour
         _name.text = name;
         _roomId.text = roomId;
         _count.text = $"{curPlayerCount}/{maxPlayerCount}";
-
-    }
-
-    public void GetData(out string name, out long roomId, out int curCount, out int maxCount)
-    {
-        name = _name.text;
-        roomId = long.Parse(_roomId.text);
-        string[] countStrs = _count.text.Split('/');
-        curCount = int.Parse(countStrs[0]);
-        maxCount = int.Parse(countStrs[1]);
+        _togRunning.isOn = isRunning;
+        _togCreatedByMe.isOn = isCreatedByMe;
     }
 
     public void Select(bool sel)

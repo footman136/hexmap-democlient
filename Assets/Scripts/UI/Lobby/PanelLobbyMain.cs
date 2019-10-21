@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using Google.Protobuf;
 using Main;
 using Protobuf.Lobby;
+using Protobuf.Room;
+using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.Experimental.PlayerLoop;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using RoomInfo = Protobuf.Lobby.RoomInfo;
 
 //头部引入
 
@@ -17,6 +20,7 @@ public class PanelLobbyMain : MonoBehaviour
     [SerializeField] private VerticalLayoutGroup _ScrollViewContent;
     [SerializeField] private RoomInfoItem _roomInfoItemTemplate;
     [SerializeField] private GameObject _btnJoinRoom;
+    [SerializeField] private GameObject _btnDeleteRoom;
 
     private RoomInfoItem _selectedItem;
 
@@ -68,11 +72,8 @@ public class PanelLobbyMain : MonoBehaviour
     {
         if (_selectedItem != null)
         {
-            string roomName;
-            long roomId;
-            int maxPlayerCount;
-            int curPlayerCount;                
-            _selectedItem.GetData(out roomName, out roomId, out curPlayerCount, out maxPlayerCount);
+            long roomId = _selectedItem.RoomId;
+            int maxPlayerCount = _selectedItem.MaxPlayerCount;
             AskJoinRoom output = new AskJoinRoom()
             {
                 RoomId = roomId,
@@ -81,13 +82,24 @@ public class PanelLobbyMain : MonoBehaviour
             ClientManager.Instance.LobbyManager.SendMsg(LOBBY.AskJoinRoom, output.ToByteArray());
         }
     }
+
+    public void OnClickDeleteRoom()
+    {
+        if (_selectedItem != null)
+        {
+            DestroyRoom output = new DestroyRoom()
+            {
+                RoomId = _selectedItem.RoomId,
+            };
+            ClientManager.Instance.LobbyManager.SendMsg(LOBBY.DestroyRoom,output.ToByteArray());
+        }
+    }
     
     public void OnClickBackground()
     {
         UIManager.Instance.SystemTips("Background clicked!!!", PanelSystemTips.MessageType.Important);
         Debug.Log("Background clicked!!!");
     }
-    
     #endregion
     
     #region 房间列表
@@ -128,6 +140,14 @@ public class PanelLobbyMain : MonoBehaviour
     {
         _btnJoinRoom.SetActive(true);
         _selectedItem = item;
+        if (!_selectedItem.IsRunning && _selectedItem.IsCreateByMe)
+        {
+            _btnDeleteRoom.SetActive(true);
+        }
+        else
+        {
+            _btnDeleteRoom.SetActive(false);
+        }
     }
     #endregion
     
