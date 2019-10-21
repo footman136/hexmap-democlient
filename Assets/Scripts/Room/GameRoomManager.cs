@@ -177,7 +177,6 @@ public class GameRoomManager : ClientScript
             };
             SendMsg(ROOM.DownloadMap, output.ToByteArray());
         }
-        UIManager.Instance.EndLoading();
     }
     #endregion
 }

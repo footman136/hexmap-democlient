@@ -130,6 +130,7 @@ public class RoomMsgReply
 
             GameRoomManager.Instance.hexmapHelper.Load(mapName);
             GameRoomManager.Instance.Log($"MSG: 显示地图！地图名：{mapName}");
+            UIManager.Instance.EndLoading();
         }
     }
 }
