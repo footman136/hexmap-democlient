@@ -38,6 +38,7 @@ public class PanelLobbyMain : MonoBehaviour
     {
         _ScrollView.SetActive(false);
         _btnJoinRoom.SetActive(false);
+        _btnDeleteRoom.SetActive(false);
         _roomInfoItemTemplate.gameObject.SetActive(false);
         _selectedItem = null;
     }
@@ -119,7 +120,7 @@ public class PanelLobbyMain : MonoBehaviour
         {
             item.gameObject.SetActive(true);
             bool isCreatedByMe = roomInfo.Creator == ClientManager.Instance.Player.TokenId;
-            item.SetData(name, roomInfo.RoomId.ToString(), roomInfo.CreateTime, roomInfo.CurPlayerCount, roomInfo.MaxPlayerCount, isCreatedByMe, roomInfo.IsRunning);
+            item.SetData(roomInfo.RoomName, roomInfo.RoomId.ToString(), roomInfo.CreateTime, roomInfo.CurPlayerCount, roomInfo.MaxPlayerCount, isCreatedByMe, roomInfo.IsRunning);
         }
         _ScrollView.SetActive(true);
     }
