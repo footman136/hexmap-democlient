@@ -69,9 +69,9 @@ public class LobbyMsgReply
             return;
         }
         PanelLobbyMain.Instance.ClearRoomList();
-        foreach (var room in input.Rooms)
+        foreach (var roomInfo in input.Rooms)
         {
-            PanelLobbyMain.Instance.AddRoomInfo(room.RoomName, room.RoomId, room.CreateTime, room.CurPlayerCount, room.MaxPlayerCount, room.IsCreatedByMe, room.IsRunning);
+            PanelLobbyMain.Instance.AddRoomInfo(roomInfo);
         }
     }
 

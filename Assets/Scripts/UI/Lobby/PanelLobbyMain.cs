@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Google.Protobuf;
 using Main;
 using Protobuf.Lobby;
-using Protobuf.Room;
 using UnityEngine;
 using UnityEngine.Experimental.PlayerLoop;
 using UnityEngine.SceneManagement;
@@ -101,13 +100,14 @@ public class PanelLobbyMain : MonoBehaviour
         }  
     }
 
-    public void AddRoomInfo(string name, long roomId, long createTime, int curPlayerCount, int maxPlayerCount, bool isCreatedByMe, bool isRunning)
+    public void AddRoomInfo(RoomInfo roomInfo)
     {
         RoomInfoItem item = Instantiate(_roomInfoItemTemplate, _ScrollViewContent.transform);
         if (item != null)
         {
             item.gameObject.SetActive(true);
-            item.SetData(name, roomId.ToString(), createTime, curPlayerCount, maxPlayerCount, isCreatedByMe, isRunning);
+            bool isCreatedByMe = roomInfo.Creator == ClientManager.Instance.Player.TokenId;
+            item.SetData(name, roomInfo.RoomId.ToString(), roomInfo.CreateTime, roomInfo.CurPlayerCount, roomInfo.MaxPlayerCount, isCreatedByMe, roomInfo.IsRunning);
         }
         _ScrollView.SetActive(true);
     }

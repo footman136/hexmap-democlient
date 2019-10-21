@@ -39,6 +39,12 @@ public class RoomMsgReply
             case ROOM_REPLY.DownloadMapReply:
                 DOWNLOAD_MAP_REPLY(recvData);
                 break;
+            case ROOM_REPLY.EnterRoomReply:
+                ENTER_ROOM_REPLY(recvData);
+                break;
+            case ROOM_REPLY.LeaveRoomReply:
+                LEAVE_ROOM_REPLY(recvData);
+                break;
         }
     }
 
@@ -114,6 +120,7 @@ public class RoomMsgReply
             // 同时确保文件名的唯一性和可读性
             string mapName = $"{input.RoomName}_{input.RoomId}";
             
+            // 把服务器传过来的地图数据写入本地文件
             BinaryWriter writer = GameRoomManager.Instance.hexmapHelper.BeginSaveBuffer(mapName);
             if (writer == null)
             {
@@ -128,9 +135,37 @@ public class RoomMsgReply
             GameRoomManager.Instance.hexmapHelper.EndSaveBuffer(ref writer);
             GameRoomManager.Instance.Log($"MSG: 下载地图成功！地图名：{mapName} - Total Map Size:{totalSize}");
 
+            // 从本地文件读取地图，并显示出来
             GameRoomManager.Instance.hexmapHelper.Load(mapName);
             GameRoomManager.Instance.Log($"MSG: 显示地图！地图名：{mapName}");
-            UIManager.Instance.EndLoading();
+            
+            // 发出EnterRoom消息，进入房间
+            EnterRoom output = new EnterRoom()
+            {
+                RoomId = input.RoomId,
+            };
+            GameRoomManager.Instance.SendMsg(ROOM.EnterRoom, output.ToByteArray());
+            
         }
+    }
+
+    private static void ENTER_ROOM_REPLY(byte[] bytes)
+    {
+        EnterRoomReply input = EnterRoomReply.Parser.ParseFrom(bytes);
+        if (!input.Ret)
+        {
+            string msg = "进入房间失败！";
+            GameRoomManager.Instance.Log("MSG: ENTER_ROOM_REPLY - " + msg);
+            UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
+            ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.DISCONNECTED_ROOM);
+            return;
+        }
+        UIManager.Instance.EndLoading();
+    }
+
+    private static void LEAVE_ROOM_REPLY(byte[] bytes)
+    {
+        LeaveRoomReply input = LeaveRoomReply.Parser.ParseFrom(bytes);
+        
     }
 }
