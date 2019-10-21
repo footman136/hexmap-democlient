@@ -32,7 +32,7 @@ public class GameRoomManager : ClientScript
         }
         else
         {// 单独运行本场景的时候，CliengtManager不存在
-            roomData.Address = "192.168.137.1";
+            roomData.Address = "192.168.20.131";
             roomData.Port = 8888;
             roomData.RoomName = "遗落の战境";
             roomData.IsCreateByMe = true;

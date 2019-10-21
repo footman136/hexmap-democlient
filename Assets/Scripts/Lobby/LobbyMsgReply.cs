@@ -73,13 +73,16 @@ public class LobbyMsgReply
         {
             // 根据大厅传递回来的RoomServer的地址，链接RoomServer
             // 这个类是Room场景初始化的时候,GameRoomManager需要的数据，因为跨场景了，所以需要一个全局的地方进行传递
-            EnterRoomData roomData = ClientManager.Instance.EnterRoom;
-            roomData.Address = input.RoomServerAddress;
-            roomData.Port = input.RoomServerPort;
-            roomData.MaxPlayerCount = input.MaxPlayerCount;
-            roomData.RoomName = input.RoomName;
-            roomData.IsCreateByMe = true;
-            roomData.RoomId = 0;
+            EnterRoomData roomData = new EnterRoomData()
+            {
+                Address = input.RoomServerAddress,
+                Port = input.RoomServerPort,
+                MaxPlayerCount = input.MaxPlayerCount,
+                RoomName = input.RoomName,
+                IsCreateByMe = true,
+                RoomId = 0,
+            };
+            ClientManager.Instance.EnterRoom = roomData;
             
             // 正式进入房间了。。。加载Room场景
             ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.CONNECTING_ROOM);

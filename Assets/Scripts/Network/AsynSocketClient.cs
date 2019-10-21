@@ -156,16 +156,16 @@ public class AsynSocketClient
             {
                 if (count > 0)
                 {
-//                    // 回调处理接收后的消息
-//                    DataEventArgs data = new DataEventArgs()
-//                    {
-//                        Data = state.ListData.Take<byte>(count).ToArray(),
-//                    };
-//                    Received?.Invoke(data);
-//                    string msg = $"Receive a message : {data.Data.Length} bytes";
-//                    OnComplete(state.TcpClient, SocketAction.Receive, msg);
-//                    
-//                    
+                    // 回调处理接收后的消息
+                    DataEventArgs data = new DataEventArgs()
+                    {
+                        Data = state.ListData.Take<byte>(count).ToArray(),
+                    };
+                    string msg = $"Receive a message : {data.Data.Length} bytes";
+                    OnComplete(state.TcpClient, SocketAction.Receive, msg);
+                    Received?.Invoke(data);
+                    
+                    
 //                    // 真正的互联网环境下会有消息包被截断的情况，所以发送的时候必须在开始定义4个字节的包长度，目前是测试阶段，暂时不开放。
 //                    //读取数据  
 //                    byte[] data = new byte[e.BytesTransferred];
@@ -238,16 +238,16 @@ public class AsynSocketClient
                     return;
                 }
 
-                StateObject state = new StateObject
-                {
-                    TcpClient = tcpClient,
-                    ListData = bytes
-                };
                 // 真正的互联网环境下会有消息包被截断的情况，所以发送的时候必须在开始定义4个字节的包长度，目前是测试阶段，暂时不开放。
                 byte[] bytesRealSend = new byte[bytes.Length+4];
                 byte[] bytesHeader = System.BitConverter.GetBytes(bytes.Length);
                 Array.Copy(bytesHeader, 0, bytesRealSend, 0, 4);
                 Array.Copy(bytes, 0, bytesRealSend, 4, bytes.Length);
+                StateObject state = new StateObject
+                {
+                    TcpClient = tcpClient,
+                    ListData = bytesRealSend,
+                };
                 tcpClient.Client.BeginSend(bytesRealSend, 0, bytesRealSend.Length, SocketFlags.None, SendCallBack, state);
                 //tcpClient.Client.BeginSend(bytes, 0, bytes.Length, SocketFlags.None, SendCallBack, state);
             }

@@ -129,6 +129,8 @@ public class RoomMsgReply
 
             GameRoomManager.Instance.hexmapHelper.EndSaveBuffer(ref writer);
             GameRoomManager.Instance.Log($"MSG: 下载地图成功！地图名：{mapName} - Total Size:{totalSize}");
+
+            GameRoomManager.Instance.hexmapHelper.Load(mapName);
         }
     }
 }

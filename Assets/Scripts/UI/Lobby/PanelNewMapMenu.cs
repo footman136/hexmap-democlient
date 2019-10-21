@@ -13,6 +13,7 @@ public class PanelNewMapMenu : MonoBehaviour {
 
 	[SerializeField] private InputField _name;
 	[SerializeField] private InputField _countMax;
+	[SerializeField] private HexmapHelper _hexmapHelper;
 
 	bool generateMaps = true;
 
@@ -77,7 +78,8 @@ public class PanelNewMapMenu : MonoBehaviour {
 	{
 		string mapName = _name.text;
 		int maxPlayerCount = int.Parse(_countMax.text);
-		GameRoomManager.Instance.hexmapHelper.Save(mapName, maxPlayerCount);
+		_hexmapHelper.Save(mapName, maxPlayerCount);
+		ClientManager.Instance.LobbyManager.Log($"在本地生成地图 - {mapName}");
 		
 		// 向大厅服务器发送请求加入房间的的信息，让大厅确认是否可以进入
 		UIManager.Instance.BeginConnecting();
