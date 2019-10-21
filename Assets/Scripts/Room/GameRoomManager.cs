@@ -35,7 +35,8 @@ public class GameRoomManager : ClientScript
             roomData.Address = "192.168.20.131";
             roomData.Port = 8888;
             roomData.RoomName = "遗落の战境";
-            roomData.IsCreatingRoom = true;
+            roomData.IsCreatingRoom = false;
+            roomData.RoomId = 4641073560387179659;
         }
 
         _address = roomData.Address;
