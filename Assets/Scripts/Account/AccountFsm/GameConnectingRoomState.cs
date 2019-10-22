@@ -5,7 +5,6 @@ using Assets.Gamelogic.FSM;
 using Google.Protobuf;
 using Main;
 using Protobuf.Lobby;
-using UnityEditor.PackageManager;
 using UnityEngine.SceneManagement;
 
 public class GameConnectingRoomState : FsmBaseState<ConnectionStateMachine, ConnectionFSMStateEnum.StateEnum>

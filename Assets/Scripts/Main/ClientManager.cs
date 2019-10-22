@@ -32,6 +32,9 @@ namespace Main
             
             _lobbyManager.gameObject.SetActive(false);
             DontDestroyOnLoad(gameObject);
+            
+            // 初始化全局量
+            Utils.InitLogFileName();
         }
 
         // Start is called before the first frame update

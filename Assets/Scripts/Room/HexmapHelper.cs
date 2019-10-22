@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using UnityEditor.Build.Content;
 using UnityEngine;
 
 public class HexmapHelper : MonoBehaviour
@@ -10,7 +9,12 @@ public class HexmapHelper : MonoBehaviour
     public HexGrid hexGrid;
     
     const int mapFileVersion = 5;
-    
+
+    void Awake()
+    {
+        // 这一行，查了两个小时。。。如果没有，打包客户端后，地表看不到任何颜色，都是灰色。
+        Shader.EnableKeyword("HEX_MAP_EDIT_MODE");
+    }
     // Start is called before the first frame update
     void Start()
     {

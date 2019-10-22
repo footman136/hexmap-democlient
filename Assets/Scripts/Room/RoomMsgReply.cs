@@ -133,11 +133,11 @@ public class RoomMsgReply
             }
 
             GameRoomManager.Instance.hexmapHelper.EndSaveBuffer(ref writer);
-            GameRoomManager.Instance.Log($"MSG: 下载地图成功！地图名：{mapName} - Total Map Size:{totalSize}");
+            GameRoomManager.Instance.Log($"MSG: DOWNLOAD_MAP_REPLY - 下载地图成功！地图名：{mapName} - Total Map Size:{totalSize}");
 
             // 从本地文件读取地图，并显示出来
             GameRoomManager.Instance.hexmapHelper.Load(mapName);
-            GameRoomManager.Instance.Log($"MSG: 显示地图！地图名：{mapName}");
+            GameRoomManager.Instance.Log($"MSG: DOWNLOAD_MAP_REPLY - 显示地图！地图名：{mapName}");
             
             // 发出EnterRoom消息，进入房间
             EnterRoom output = new EnterRoom()
@@ -145,6 +145,7 @@ public class RoomMsgReply
                 RoomId = input.RoomId,
             };
             GameRoomManager.Instance.SendMsg(ROOM.EnterRoom, output.ToByteArray());
+            GameRoomManager.Instance.Log($"MSG: DOWNLOAD_MAP_REPLY - 申请进入房间：{mapName}");
             
         }
     }
@@ -160,7 +161,13 @@ public class RoomMsgReply
             ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.DISCONNECTED_ROOM);
             return;
         }
-        UIManager.Instance.EndLoading();
+
+        {
+            string msg = $"进入房间: {input.RoomName}";
+            GameRoomManager.Instance.Log("MSG: ENTER_ROOM_REPLY - " + msg);
+            UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Success);
+            UIManager.Instance.EndLoading();
+        }
     }
 
     private static void LEAVE_ROOM_REPLY(byte[] bytes)

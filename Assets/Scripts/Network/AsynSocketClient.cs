@@ -398,8 +398,10 @@ public class AsynSocketClient
 
         public void Log(string msg)
         {
-            if(LogEnabled)
-                Debug.Log(msg);
+            if (LogEnabled)
+            {
+                Utils.Log(msg);
+            }
         }
     }
  
