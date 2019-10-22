@@ -56,6 +56,8 @@ public class HexMapCamera : MonoBehaviour {
 		if (xDelta != 0f || zDelta != 0f) {
 			AdjustPosition(xDelta, zDelta);
 		}
+		
+		CameraMove();
 	}
 
 	void AdjustZoom (float delta) {
@@ -118,5 +120,47 @@ public class HexMapCamera : MonoBehaviour {
 
 		grid.CenterMap(position.x);
 		return position;
+	}
+	
+	// 鼠标右键控制拖动。Oct.22.2019. Liu Gang.
+	[SerializeField] private Texture2D _cursorTex;
+	private bool _leftMouseDown;
+	private bool _rightMouseDown;
+	private Vector3 _lastMousePos;
+	private readonly float mouseMoveSpeed = 0.2f;
+	
+	/// <summary>
+	/// 鼠标右键控制拖动。Oct.22.2019. Liu Gang.
+	/// </summary>
+	public void CameraMove()
+	{
+		if (Input.GetMouseButton(1))
+		{
+			Vector3 mousePos = Input.mousePosition;
+			if (!_leftMouseDown)
+			{
+				//鼠标图标换成自定义小手
+				if (_cursorTex != null)
+				{
+					Cursor.SetCursor(_cursorTex, Vector2.zero, CursorMode.Auto);
+				}
+				_lastMousePos = mousePos;
+				_leftMouseDown = true;
+			}
+
+			Vector3 deltaMousePos = mousePos - _lastMousePos;
+			transform.position += new Vector3(-deltaMousePos.x, 0, -deltaMousePos.y) * mouseMoveSpeed;
+			_lastMousePos = mousePos;
+			//Debug.Log("DeltaMousePos <"+deltaMousePos.y+">");
+		}
+		else
+		{
+			if (_leftMouseDown)
+			{
+				//鼠标恢复默认图标，置null即可
+				Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+				_leftMouseDown = false;
+			}
+		}
 	}
 }
