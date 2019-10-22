@@ -3,18 +3,24 @@ using System.Collections.Generic;
 using Google.Protobuf;
 using Protobuf.Room;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
 
 public class PanelRoomMain : MonoBehaviour
 {
-    [SerializeField] private Texture2D _texCursorCreateActor;
-    [SerializeField] private Texture2D _texCursorFindPath;
+    [SerializeField] private HexGrid hexGrid;
+    [SerializeField] private Texture2D _curCreateActor;
+    [SerializeField] private Texture2D _curDestroyActor;
+    [SerializeField] private Texture2D _curFindPath;
+    
+    HexCell currentCell;
+    HexUnit selectedUnit;
     
     public enum CommandType
     {
         CMD_NONE = 0,
         CMD_CREATE_ACTOR = 1,
-        CMD_FIND_PATH = 2,
+        CMD_DESTROY_ACTOR = 2,
+        CMD_FIND_PATH = 3,
     };
 
     public CommandType _commandType;
@@ -25,6 +31,7 @@ public class PanelRoomMain : MonoBehaviour
         _commandType = CommandType.CMD_NONE;
     }
 
+    #region 鼠标操作
     // Update is called once per frame
     void Update()
     {
@@ -32,8 +39,113 @@ public class PanelRoomMain : MonoBehaviour
         {
             SetCommand(CommandType.CMD_NONE, false);
         }
+
+        // 本函数用来判定，是否点击到了界面，只有没有点击界面，才处理战场内的事件
+        if (EventSystem.current.IsPointerOverGameObject())
+            return;
+        if (_commandType == CommandType.CMD_CREATE_ACTOR)
+        {
+            if (Input.GetMouseButtonUp(0))
+            {
+                var ret = CreateUnit();
+                if (!ret)
+                    SetCommand(CommandType.CMD_NONE);
+            }
+        }
+        else if (_commandType == CommandType.CMD_DESTROY_ACTOR)
+        {
+            if (Input.GetMouseButtonUp(0))
+            {
+                var ret = DestroyUnit();
+                if (!ret)
+                    SetCommand(CommandType.CMD_NONE);
+            }
+        }
+        if(_commandType == CommandType.CMD_NONE)
+        {
+            if (Input.GetMouseButtonUp(0))
+            {
+                DoSelection();
+            }
+            else if (selectedUnit)
+            {
+                if (Input.GetMouseButtonUp(1)) 
+                {
+                    DoMove();
+                }
+                else 
+                {
+                    DoPathfinding();
+                }
+            }
+        }
     }
 
+    HexCell GetCellUnderCursor () {
+        return
+            hexGrid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
+    }
+
+    bool CreateUnit () {
+        HexCell cell = GetCellUnderCursor();
+        if (cell && !cell.Unit) {
+            hexGrid.AddUnit(
+                Instantiate(HexUnit.unitPrefab), cell, Random.Range(0f, 360f)
+            );
+            return true;
+        }
+
+        return false;
+    }
+
+    bool DestroyUnit () {
+        HexCell cell = GetCellUnderCursor();
+        if (cell && cell.Unit) {
+            hexGrid.RemoveUnit(cell.Unit);
+            return true;
+        }
+
+        return false;
+    }
+
+    void DoSelection () {
+        hexGrid.ClearPath();
+        UpdateCurrentCell();
+        if (currentCell) {
+            selectedUnit = currentCell.Unit;
+        }
+    }
+
+    void DoPathfinding () {
+        if (UpdateCurrentCell()) {
+            if (currentCell && selectedUnit.IsValidDestination(currentCell)) {
+                hexGrid.FindPath(selectedUnit.Location, currentCell, selectedUnit);
+            }
+            else {
+                hexGrid.ClearPath();
+            }
+        }
+    }
+
+    void DoMove () {
+        if (hexGrid.HasPath) {
+            selectedUnit.Travel(hexGrid.GetPath());
+            hexGrid.ClearPath();
+        }
+    }
+
+    bool UpdateCurrentCell () {
+        HexCell cell =
+            hexGrid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
+        if (cell != currentCell) {
+            currentCell = cell;
+            return true;
+        }
+        return false;
+    }
+    #endregion
+
+    #region 状态改变
     public void SetCommand(CommandType command, bool bSetCursor = true)
     {
         _commandType = command;
@@ -45,14 +157,19 @@ public class PanelRoomMain : MonoBehaviour
                 Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
                 break;
             case CommandType.CMD_CREATE_ACTOR:
-                Cursor.SetCursor(_texCursorCreateActor, Vector2.zero, CursorMode.Auto);
+                Cursor.SetCursor(_curCreateActor, Vector2.zero, CursorMode.Auto);
+                break;
+            case CommandType.CMD_DESTROY_ACTOR:
+                Cursor.SetCursor(_curDestroyActor, Vector2.zero, CursorMode.Auto);
                 break;
             case CommandType.CMD_FIND_PATH:
-                Cursor.SetCursor(_texCursorFindPath, Vector2.zero, CursorMode.Auto);
+                Cursor.SetCursor(_curFindPath, Vector2.zero, CursorMode.Auto);
                 break;
         }
     }
+    #endregion
 
+    #region 事件处理
     public void OnClickExit()
     {
         LeaveRoom output = new LeaveRoom()
@@ -68,4 +185,10 @@ public class PanelRoomMain : MonoBehaviour
     {
         SetCommand(CommandType.CMD_CREATE_ACTOR);
     }
+    
+    public void OnClickDestroyActor()
+    {
+        SetCommand(CommandType.CMD_DESTROY_ACTOR);
+    }
+    #endregion
 }
