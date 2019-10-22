@@ -52,6 +52,7 @@ public class Utils
 		_logPathName = $"{Application.persistentDataPath}/{logfilename}";
 		LogClear();
 	}
+
 	/// <summary>
 	/// 这是一个专门用于在手机目录里写入log的函数，不同于Debug.Log()，可以在手机上记录log文件。
 	/// 注意，要谨慎使用，因为它会导致log文件不断增大，可能导致手机SD卡空间被占用得越来越大

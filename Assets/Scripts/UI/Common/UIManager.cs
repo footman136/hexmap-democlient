@@ -188,7 +188,7 @@ public class UIManager : MonoBehaviour
     /// <param name="packageName">资源包名</param>
     /// <param name="prefabName">预制件名</param>
     /// <returns>创建出来的UI</returns>
-    public static GameObject CreatePanel(Transform anchor, string packageName, string prefabName)
+    public GameObject CreatePanel(Transform anchor, string packageName, string prefabName)
     {
         var go = Resources.Load(prefabName);
         if (go != null)
@@ -206,7 +206,7 @@ public class UIManager : MonoBehaviour
         go.SetActive(bShow);
     }
 
-    public static void DestroyPanel(ref GameObject go)
+    public void DestroyPanel(ref GameObject go)
     {
         if (go != null)
         {

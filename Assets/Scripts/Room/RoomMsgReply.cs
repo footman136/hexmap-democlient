@@ -10,6 +10,7 @@ using Main;
 // https://blog.csdn.net/u014308482/article/details/52958148
 using Protobuf.Room;
 using System.IO;
+using UnityEngine.SceneManagement;
 
 public class RoomMsgReply
 {
@@ -155,7 +156,7 @@ public class RoomMsgReply
         EnterRoomReply input = EnterRoomReply.Parser.ParseFrom(bytes);
         if (!input.Ret)
         {
-            string msg = "进入房间失败！";
+            string msg = "进入房间失败：" + input.ErrMsg;
             GameRoomManager.Instance.Log("MSG: ENTER_ROOM_REPLY - " + msg);
             UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
             ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.DISCONNECTED_ROOM);
@@ -163,6 +164,8 @@ public class RoomMsgReply
         }
 
         {
+            GameRoomManager.Instance.RoomId = input.RoomId;
+            GameRoomManager.Instance.RoomName = input.RoomName;
             string msg = $"进入房间: {input.RoomName}";
             GameRoomManager.Instance.Log("MSG: ENTER_ROOM_REPLY - " + msg);
             UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Success);
@@ -173,6 +176,6 @@ public class RoomMsgReply
     private static void LEAVE_ROOM_REPLY(byte[] bytes)
     {
         LeaveRoomReply input = LeaveRoomReply.Parser.ParseFrom(bytes);
-        
+        ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.RESULT);
     }
 }

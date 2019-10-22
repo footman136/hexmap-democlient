@@ -15,6 +15,7 @@ public class GameResultState : FsmBaseState<ConnectionStateMachine, ConnectionFS
 
     public override void Enter()
     {
+        UIManager.Instance.CreatePanel(UIManager.Instance.Root, "", "UI/Room/PanelBattleResult");
     }
 
     public override void Tick()

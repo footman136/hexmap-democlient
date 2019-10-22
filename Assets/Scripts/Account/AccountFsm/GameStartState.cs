@@ -19,7 +19,7 @@ public class GameStartState : FsmBaseState<ConnectionStateMachine, ConnectionFSM
     {
         UIManager.Instance.EndLoading();
         if (_panelLogin == null)
-            _panelLogin = UIManager.CreatePanel(UIManager.Instance.Root, "", "UI/Logo/PanelLogin");
+            _panelLogin = UIManager.Instance.CreatePanel(UIManager.Instance.Root, "", "UI/Logo/PanelLogin");
         if(_panelLogin == null)
             Debug.LogError("GameStartState Enter failed! PanelLogin create failed!!!");
         else
@@ -41,7 +41,7 @@ public class GameStartState : FsmBaseState<ConnectionStateMachine, ConnectionFSM
     {
         if (_panelLogin != null)
         {
-            UIManager.DestroyPanel(ref _panelLogin);
+            UIManager.Instance.DestroyPanel(ref _panelLogin);
         }
     }
 }

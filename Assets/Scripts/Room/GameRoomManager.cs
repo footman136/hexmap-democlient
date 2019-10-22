@@ -12,6 +12,9 @@ public class GameRoomManager : ClientScript
     public static GameRoomManager Instance;
 
     public HexmapHelper hexmapHelper;
+
+    public long RoomId;
+    public string RoomName;
     
     #region 初始化
     void Awake()

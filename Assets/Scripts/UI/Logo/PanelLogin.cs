@@ -27,7 +27,7 @@ public class PanelLogin : MonoBehaviour
     private void OnDestroy()
     {
         if(_panelRegister!=null)
-            UIManager.DestroyPanel(ref _panelRegister);
+            UIManager.Instance.DestroyPanel(ref _panelRegister);
     }
 
     // Update is called once per frame
@@ -97,7 +97,7 @@ public class PanelLogin : MonoBehaviour
     {
         if (_panelRegister == null)
         {
-            _panelRegister = UIManager.CreatePanel(UIManager.Instance.Root, "", "UI/Logo/PanelRegister");
+            _panelRegister = UIManager.Instance.CreatePanel(UIManager.Instance.Root, "", "UI/Logo/PanelRegister");
         }
 
         if (_panelRegister!=null)
