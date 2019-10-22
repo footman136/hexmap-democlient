@@ -26,8 +26,14 @@ namespace Main
 
         void Awake()
         {
-            if(Instance != null)
-                Debug.LogError("ClientManager is Singleton! Cannot be created again!");
+            if (Instance != null)
+            {
+                // 如果从大厅回退到登录，代码还是会走到这里，只能手动删除一下，这个错误也改为一个警告。
+                // 因为这是无法避免的。
+                Debug.LogWarning("ClientManager is Singleton! Cannot be created again!");
+                DestroyImmediate(Instance.gameObject);
+            }
+
             Instance = this;
             
             _lobbyManager.gameObject.SetActive(false);
@@ -49,6 +55,7 @@ namespace Main
         private void OnDestroy()
         {
             _stateMachine.OnDisable();
+            Instance = null;
         }
 
         // Update is called once per frame
