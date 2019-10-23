@@ -3,19 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Google.Protobuf;
-using JetBrains.Annotations;
 // https://github.com/LitJSON/litjson
 using LitJson;
 using Main;
 // https://blog.csdn.net/u014308482/article/details/52958148
 using Protobuf.Room;
 using System.IO;
-using UnityEngine.SceneManagement;
+using GameUtils;
 
 public class RoomMsgReply
 {
 
-    public static void ProcessMsg(byte[] data, int size)
+    public static void ProcessMsg(byte[] bytes, int size)
     {
         if (size < 4)
         {
@@ -24,9 +23,9 @@ public class RoomMsgReply
         }
 
         byte[] recvHeader = new byte[4];
-        Array.Copy(data, 0, recvHeader, 0, 4);
+        Array.Copy(bytes, 0, recvHeader, 0, 4);
         byte[] recvData = new byte[size - 4];
-        Array.Copy(data, 4, recvData, 0, size - 4);
+        Array.Copy(bytes, 4, recvData, 0, size - 4);
 
         int msgId = System.BitConverter.ToInt32(recvHeader,0);
         switch ((ROOM_REPLY) msgId)
@@ -45,6 +44,10 @@ public class RoomMsgReply
                 break;
             case ROOM_REPLY.LeaveRoomReply:
                 LEAVE_ROOM_REPLY(recvData);
+                break;
+            default:
+                // 通用消息处理器，别的地方要想响应找个消息，应该调用MsgDispatcher.RegisterMsg()来注册消息处理事件
+                MsgDispatcher.ProcessMsg(bytes, size);
                 break;
         }
     }
@@ -122,7 +125,7 @@ public class RoomMsgReply
             string mapName = $"{input.RoomName}_{input.RoomId}";
             
             // 把服务器传过来的地图数据写入本地文件
-            BinaryWriter writer = GameRoomManager.Instance.hexmapHelper.BeginSaveBuffer(mapName);
+            BinaryWriter writer = GameRoomManager.Instance.HexmapHelper.BeginSaveBuffer(mapName);
             if (writer == null)
             {
                  return;
@@ -130,14 +133,14 @@ public class RoomMsgReply
 
             foreach (var package in mapDataBuffers)
             {
-                GameRoomManager.Instance.hexmapHelper.SaveBuffer(writer, package);                
+                GameRoomManager.Instance.HexmapHelper.SaveBuffer(writer, package);                
             }
 
-            GameRoomManager.Instance.hexmapHelper.EndSaveBuffer(ref writer);
+            GameRoomManager.Instance.HexmapHelper.EndSaveBuffer(ref writer);
             GameRoomManager.Instance.Log($"MSG: DOWNLOAD_MAP_REPLY - 下载地图成功！地图名：{mapName} - Total Map Size:{totalSize}");
 
             // 从本地文件读取地图，并显示出来
-            GameRoomManager.Instance.hexmapHelper.Load(mapName);
+            GameRoomManager.Instance.HexmapHelper.Load(mapName);
             GameRoomManager.Instance.Log($"MSG: DOWNLOAD_MAP_REPLY - 显示地图！地图名：{mapName}");
             
             // 发出EnterRoom消息，进入房间

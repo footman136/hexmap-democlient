@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using Animation;
 using UnityEngine;
 
 public class HexmapHelper : MonoBehaviour
@@ -10,6 +11,8 @@ public class HexmapHelper : MonoBehaviour
     
     const int mapFileVersion = 5;
 
+    #region 初始化
+    
     void Awake()
     {
         // 这一行，查了两个小时。。。如果没有，打包客户端后，地表看不到任何颜色，都是灰色。
@@ -26,6 +29,10 @@ public class HexmapHelper : MonoBehaviour
     {
         
     }
+    #endregion
+    
+    #region 地图
+    
     string GetSelectedPath (string nameInput) {
         string mapName = nameInput;
         if (mapName.Length == 0) {
@@ -145,4 +152,74 @@ public class HexmapHelper : MonoBehaviour
         writer.Close();
         //writer = null;
     }
+    
+    #endregion
+
+    #region 工具
+    
+    HexCell GetCellUnderCursor () {
+        return
+            hexGrid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
+    }
+
+    HexCell GetCell(int posX, int posZ)
+    {
+        return hexGrid.GetCell(new HexCoordinates(posX, posZ));
+    }
+
+    #endregion
+    
+    #region 单元
+    
+    public bool CreateUnit (string unitName, int posX, int posZ, float orientation, long actorId, long OwnerId)
+    {
+        HexCell cell = GetCell(posX, posZ);
+        if (cell && !cell.Unit)
+        {
+            string unitPathName = $"Arts/Prefabs/Client/{unitName}";
+            var go = Resources.Load<HexUnit>(unitPathName);
+            if (go != null)
+            {
+                HexUnit hu = Instantiate(go);
+                if (hu != null)
+                {
+                    hexGrid.AddUnit(hu, cell, orientation);
+                    var av = hu.GetComponent<ActorVisualizer>();
+                    if (av != null)
+                    {
+                        av.ActorId = actorId;
+                        av.OwnerActorId = OwnerId;
+                    }
+                    return true;
+                }
+            }
+        }
+        else
+        {
+            Debug.Log($"HexmapHelper ：原来这个格子没有物体，现在有了物体 - <{posX},{posZ}>");
+        }
+
+        return false;
+    }
+
+    public bool DestroyUnit (long actorId) 
+    {
+        if (ActorVisualizer.AllActors.ContainsKey(actorId))
+        {
+            var av = ActorVisualizer.AllActors[actorId];
+            if (av != null)
+            {
+                var hu = av.GetComponent<HexUnit>();
+                if (hu != null)
+                {
+                    hexGrid.RemoveUnit(hu);
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    #endregion
 }

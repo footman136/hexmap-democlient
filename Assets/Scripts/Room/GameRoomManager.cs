@@ -11,10 +11,13 @@ public class GameRoomManager : ClientScript
 {
     public static GameRoomManager Instance;
 
-    public HexmapHelper hexmapHelper;
+    public HexmapHelper HexmapHelper;
+    public RoomLogic RoomLogic;
 
     public long RoomId;
     public string RoomName;
+
+    public PlayerEnter CurrentPlayer;
     
     #region 初始化
     void Awake()
@@ -50,6 +53,7 @@ public class GameRoomManager : ClientScript
 
         Completed += OnComplete;
         Received += OnReceiveMsg;
+        RoomLogic.Init();
         Log($"GameRoomManager.Start()! 开始链接RoomServer - {_address}:{_port}");
 
         if (ClientManager.Instance == null)
@@ -67,6 +71,7 @@ public class GameRoomManager : ClientScript
     {
         Completed -= OnComplete;
         Received -= OnReceiveMsg;
+        RoomLogic.Fini();
     }
 
     // Update is called once per frame
@@ -111,6 +116,8 @@ public class GameRoomManager : ClientScript
                     data.Account = "Footman";
                     data.TokenId = 123456;
                 }
+
+                CurrentPlayer = data; // 保存当前玩家的信息在本类，这样以后不用大老远去找ClientManager
                 SendMsg(ROOM.PlayerEnter, data.ToByteArray());
             }
                 break;
@@ -141,7 +148,7 @@ public class GameRoomManager : ClientScript
         {// 创建房间流程
 
             // 把地图数据上传到房间服务器保存。后面的和加入房间一样了。
-            BinaryReader reader = hexmapHelper.BeginLoadBuffer(roomData.RoomName);
+            BinaryReader reader = HexmapHelper.BeginLoadBuffer(roomData.RoomName);
             if (reader != null)
             {
                 const int CHUNK_SIZE = 900;
@@ -151,7 +158,7 @@ public class GameRoomManager : ClientScript
                 int index = 0;
                 while (!isFileEnd)
                 {
-                    if (!hexmapHelper.LoadBuffer(reader, out bytes, ref size, ref isFileEnd))
+                    if (!HexmapHelper.LoadBuffer(reader, out bytes, ref size, ref isFileEnd))
                     {
                         Log($"Load Buffer Failed - {roomData.RoomName}");
                     }
@@ -169,7 +176,7 @@ public class GameRoomManager : ClientScript
                 }
 
                 Log($"MSG: 发送地图数据 - 地图名:{roomData.RoomName} - Total Size:{reader.BaseStream.Length}");
-                hexmapHelper.EndLoadBuffer(ref reader);
+                HexmapHelper.EndLoadBuffer(ref reader);
             }
         }
         else

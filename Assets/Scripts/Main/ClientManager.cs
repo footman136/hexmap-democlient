@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using GameUtils;
 
 namespace Main
 {

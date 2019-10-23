@@ -1,7 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Animation;
 using Google.Protobuf;
+using Main;
 using Protobuf.Room;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -28,6 +31,8 @@ public class PanelRoomMain : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // 这一行，查了两个小时。。。如果没有，打包客户端后，地表看不到任何颜色，都是灰色。
+        Shader.EnableKeyword("HEX_MAP_EDIT_MODE");
         _commandType = CommandType.CMD_NONE;
     }
 
@@ -47,18 +52,20 @@ public class PanelRoomMain : MonoBehaviour
         {
             if (Input.GetMouseButtonUp(0))
             {
-                var ret = CreateUnit();
+                var ret = AskCreateUnit("Troop_Cityguard");
                 if (!ret)
                     SetCommand(CommandType.CMD_NONE);
+                selectedUnit = null;
             }
         }
         else if (_commandType == CommandType.CMD_DESTROY_ACTOR)
         {
             if (Input.GetMouseButtonUp(0))
             {
-                var ret = DestroyUnit();
+                var ret = AskDestroyUnit();
                 if (!ret)
                     SetCommand(CommandType.CMD_NONE);
+                selectedUnit = null;
             }
         }
         if(_commandType == CommandType.CMD_NONE)
@@ -86,23 +93,51 @@ public class PanelRoomMain : MonoBehaviour
             hexGrid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
     }
 
-    bool CreateUnit () {
+    HexCell GetCell(int posX, int posZ)
+    {
+        return hexGrid.GetCell(new HexCoordinates(posX, posZ));
+    }
+
+    bool AskCreateUnit(string unitName)
+    {
         HexCell cell = GetCellUnderCursor();
-        if (cell && !cell.Unit) {
-            hexGrid.AddUnit(
-                Instantiate(HexUnit.unitPrefab), cell, Random.Range(0f, 360f)
-            );
+        if (cell && !cell.Unit)
+        {
+            CreateATroop output = new CreateATroop()
+            {
+                RoomId = GameRoomManager.Instance.RoomId,
+                OwnerId = GameRoomManager.Instance.CurrentPlayer.TokenId,
+                ActorId = GameUtils.Utils.GuidToLongId(),
+                PosX = cell.coordinates.X,
+                PosZ = cell.coordinates.Z,
+                Orientation = Random.Range(0f, 360f),
+                Species = unitName, // 预制件的名字
+            };
+            GameRoomManager.Instance.SendMsg(ROOM.CreateAtroop, output.ToByteArray());
             return true;
         }
 
         return false;
     }
 
-    bool DestroyUnit () {
+    bool AskDestroyUnit()
+    {
         HexCell cell = GetCellUnderCursor();
-        if (cell && cell.Unit) {
-            hexGrid.RemoveUnit(cell.Unit);
-            return true;
+        if (cell && cell.Unit)
+        {
+            HexUnit hu = cell.Unit;
+            var av = hu.gameObject.GetComponent<ActorVisualizer>();
+            if (av != null)
+            {
+                DestroyATroop output = new DestroyATroop()
+                {
+                    RoomId = GameRoomManager.Instance.RoomId,
+                    OwnerId = GameRoomManager.Instance.CurrentPlayer.TokenId,
+                    ActorId = av.ActorId,
+                };
+                GameRoomManager.Instance.SendMsg(ROOM.DestroyAtroop, output.ToByteArray());
+                return true;
+            }
         }
 
         return false;
@@ -146,7 +181,8 @@ public class PanelRoomMain : MonoBehaviour
     #endregion
 
     #region 状态改变
-    public void SetCommand(CommandType command, bool bSetCursor = true)
+
+        void SetCommand(CommandType command, bool bSetCursor = true)
     {
         _commandType = command;
         if (!bSetCursor)

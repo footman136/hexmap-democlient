@@ -13,7 +13,7 @@ using PlayerEnterReply = Protobuf.Lobby.PlayerEnterReply;
 public class LobbyMsgReply
 {
 
-    public static void ProcessMsg(byte[] data, int size)
+    public static void ProcessMsg(byte[] bytes, int size)
     {
         if (size < 4)
         {
@@ -22,9 +22,9 @@ public class LobbyMsgReply
         }
 
         byte[] recvHeader = new byte[4];
-        Array.Copy(data, 0, recvHeader, 0, 4);
+        Array.Copy(bytes, 0, recvHeader, 0, 4);
         byte[] recvData = new byte[size - 4];
-        Array.Copy(data, 4, recvData, 0, size - 4);
+        Array.Copy(bytes, 4, recvData, 0, size - 4);
 
         int msgId = System.BitConverter.ToInt32(recvHeader,0);
         switch ((LOBBY_REPLY) msgId)

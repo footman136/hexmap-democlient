@@ -7,7 +7,6 @@ using System.Net;
 using System.Threading;
 using System;
 using System.Linq;
-using UnityEditor;
 
 /// <summary>
 ///    ————————————————
@@ -195,7 +194,7 @@ public class AsynSocketClient
                                 m_buffer.RemoveRange(0, packageLen + 4);  
                             }  
                             //将数据包交给前台去处理
-                            string msg = $"Receive a message : {rev.Length} bytes";
+                            string msg = $"Receive a message : {rev.Length + 4} bytes";
                             OnComplete(state.TcpClient, SocketAction.Receive, msg);
                             DataEventArgs data2 = new DataEventArgs()
                             {
@@ -400,7 +399,7 @@ public class AsynSocketClient
         {
             if (LogEnabled)
             {
-                Utils.Log(msg);
+                GameUtils.Utils.Log(msg);
             }
         }
     }

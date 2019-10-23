@@ -10,8 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 6012331055097891228}
   - component: {fileID: 8983605298548612993}
+  - component: {fileID: 4709059319703734270}
   m_Layer: 0
-  m_Name: Unit_City_Guard
+  m_Name: Troop_Cityguard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -44,6 +45,64 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 434bba114c5e84a0f8fb19ef55b2766a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &4709059319703734270
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3910315148531584418}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3d7216739453984cbce541f65c4b07d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ActorId: 0
+  OwnerActorId: 0
+  idleStates:
+  - stateName: Idle
+    animationBool: isIdling
+    minStateTime: 1
+    maxStateTime: 999
+    stateWeight: 1
+  movementStates:
+  - stateName: Walk
+    animationBool: isWalking
+    maxStateTime: 999
+    moveSpeed: 3
+    turnSpeed: 120
+  - stateName: Run
+    animationBool: isRunning
+    maxStateTime: 0
+    moveSpeed: 6
+    turnSpeed: 120
+  runningStates: []
+  attackingStates:
+  - stateName: Fight_1
+    animationBool: isFighting1
+  - stateName: Fight_2
+    animationBool: isFighting2
+  - stateName: Fight_3
+    animationBool: isFighting3
+  - stateName: Fight_4
+    animationBool: isFighting4
+  - stateName: Fight_5
+    animationBool: isFighting5
+  - stateName: Fight_6
+    animationBool: isFighting6
+  - stateName: Fight_7
+    animationBool: isFighting7
+  - stateName: Fight_8
+    animationBool: isFighting8
+  deathStates:
+  - stateName: Die
+    animationBool: IsDying
+  _species: NA
+  ScriptableActorStats: {fileID: 11400000, guid: 374c86f0bcf6a654ca22bbbdbae4529b,
+    type: 2}
+  _targetPosition: {x: 0, y: 0, z: 0}
+  _distance: 0
+  _logChanges: 0
 --- !u!1001 &4574439992754241662
 PrefabInstance:
   m_ObjectHideFlags: 0
