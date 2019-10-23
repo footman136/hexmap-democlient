@@ -4,7 +4,6 @@ using Animation;
 using Google.Protobuf;
 using Main;
 using Protobuf.Room;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -78,7 +77,7 @@ public class PanelRoomMain : MonoBehaviour
             {
                 if (Input.GetMouseButtonUp(1)) 
                 {
-                    DoMove();
+                    AskMove();
                 }
                 else 
                 {
@@ -162,11 +161,28 @@ public class PanelRoomMain : MonoBehaviour
         }
     }
 
-    void DoMove () {
-        if (hexGrid.HasPath) {
-            selectedUnit.Travel(hexGrid.GetPath());
-            hexGrid.ClearPath();
-        }
+    void AskMove()
+    {
+        if (!hexGrid.HasPath)
+            return;
+        if (currentCell == null || selectedUnit == null)
+            return;
+        var av = selectedUnit.GetComponent<ActorVisualizer>();
+        if (av == null)
+            return;
+
+        TroopMove output = new TroopMove()
+        {
+            RoomId = GameRoomManager.Instance.RoomId,
+            OwnerId = GameRoomManager.Instance.CurrentPlayer.TokenId,
+            ActorId = av.ActorId,
+            PosFromX = av.PosX,
+            PosFromZ = av.PosZ,
+            PosToX = currentCell.coordinates.X,
+            PosToZ = currentCell.coordinates.Z,
+            Speed = 2,
+        };
+        GameRoomManager.Instance.SendMsg(ROOM.TroopMove, output.ToByteArray());
     }
 
     bool UpdateCurrentCell () {

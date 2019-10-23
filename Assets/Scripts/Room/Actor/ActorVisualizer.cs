@@ -11,8 +11,13 @@ namespace Animation
     {
         #region 成员
 
+        [Header("Basic Attributes"), Space(5)]
         public long ActorId;
         public long OwnerActorId;
+        public int PosX;
+        public int PosZ;
+        public float Orientation;
+        public string Species = "N/A";
         
         [Header("Animation States"), Space(5)]
         [SerializeField]
@@ -27,10 +32,6 @@ namespace Animation
         private AnimationState[] deathStates;
 
         [Space(), Header("AI"), Space(5)] 
-        [SerializeField]
-        private string _species = "NA";
-        public string Species => _species;
-
         [SerializeField, Tooltip("This specific animal stats asset, create a new one from the asset menu under (LowPolyAnimals/NewAnimalStats)")]
         ActorStats ScriptableActorStats;
         [SerializeField] private Vector3 _targetPosition;

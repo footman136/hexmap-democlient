@@ -167,6 +167,17 @@ public class HexmapHelper : MonoBehaviour
         return hexGrid.GetCell(new HexCoordinates(posX, posZ));
     }
 
+    HexCell currentCell;
+    HexUnit selectedUnit;
+    bool UpdateCurrentCell () {
+        HexCell cell =
+            hexGrid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
+        if (cell != currentCell) {
+            currentCell = cell;
+            return true;
+        }
+        return false;
+    }
     #endregion
     
     #region 单元
@@ -189,14 +200,19 @@ public class HexmapHelper : MonoBehaviour
                     {
                         av.ActorId = actorId;
                         av.OwnerActorId = OwnerId;
+                        av.PosX = posX;
+                        av.PosZ = posZ;
+                        av.Orientation = orientation;
+                        av.Species = unitName;
                     }
+                    GameRoomManager.Instance.Log($"MSG: CreateATroopReply - 创建了一个Actor - {unitName}");
                     return true;
                 }
             }
         }
         else
         {
-            Debug.Log($"HexmapHelper ：原来这个格子没有物体，现在有了物体 - <{posX},{posZ}>");
+            GameRoomManager.Instance.Log($"HexmapHelper ：创建Actor失败！原来这个格子没有物体，现在有了物体 - <{posX},{posZ}> - {unitName}");
         }
 
         return false;
@@ -212,6 +228,7 @@ public class HexmapHelper : MonoBehaviour
                 var hu = av.GetComponent<HexUnit>();
                 if (hu != null)
                 {
+                    GameRoomManager.Instance.Log($"MSG: DestroyATroopReply -  销毁了一个Actor - {av.Species}");
                     hexGrid.RemoveUnit(hu);
                     return true;
                 }
@@ -219,6 +236,32 @@ public class HexmapHelper : MonoBehaviour
         }
 
         return false;
+    }
+
+    public void DoMove (long actorId, int posX, int posZ, float Speed)
+    {
+        if (ActorVisualizer.AllActors.ContainsKey(actorId))
+        {
+            var av = ActorVisualizer.AllActors[actorId];
+            if (av != null)
+            {
+                var hu = av.GetComponent<HexUnit>();
+                if (hu != null)
+                {
+                    HexCell hc = GetCell(posX, posZ);
+                    if (hu.IsValidDestination(hc))
+                    {
+                        hexGrid.FindPath(hu.Location, hc, hu);
+                        if (hexGrid.HasPath)
+                        {
+                            List<HexCell> listPath = hexGrid.GetPath();
+                            hu.Travel(listPath);
+                        }
+                    }
+
+                }
+            }
+        }
     }
 
     #endregion
