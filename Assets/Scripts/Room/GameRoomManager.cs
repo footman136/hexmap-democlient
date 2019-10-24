@@ -180,12 +180,14 @@ public class GameRoomManager : ClientScript
             }
         }
         else
-        {// 直接获取地图数据
-            DownloadMap output = new DownloadMap()
+        {// 直接申请进入房间
+            // 发出EnterRoom消息，进入房间
+            EnterRoom output = new EnterRoom()
             {
                 RoomId = roomData.RoomId,
             };
-            SendMsg(ROOM.DownloadMap, output.ToByteArray());
+            SendMsg(ROOM.EnterRoom, output.ToByteArray());
+            Log($"MSG: CreateJoinRoom - 申请进入房间：{roomData.RoomName}");
         }
     }
     #endregion

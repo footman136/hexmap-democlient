@@ -83,13 +83,14 @@ public class RoomMsgReply
 
         if (input.IsLastPackage)
         {
-            long roomId = input.RoomId;
-            DownloadMap output = new DownloadMap()
+            GameRoomManager.Instance.Log($"MSG: 上传地图成功！RoomID:{input.RoomId}");
+            // 发出EnterRoom消息，进入房间
+            EnterRoom output = new EnterRoom()
             {
-                RoomId = roomId,
+                RoomId = input.RoomId,
             };
-            GameRoomManager.Instance.SendMsg(ROOM.DownloadMap, output.ToByteArray());
-            GameRoomManager.Instance.Log($"MSG: 上传地图成功！RoomID:{roomId}");
+            GameRoomManager.Instance.SendMsg(ROOM.EnterRoom, output.ToByteArray());
+            GameRoomManager.Instance.Log($"MSG: UPLOAD_MAP_REPLY - 申请进入房间：{input.RoomName}");
         }
     }
 
@@ -108,7 +109,7 @@ public class RoomMsgReply
         if (input.PackageIndex == 0)
         {// 第一条此类消息
             mapDataBuffers.Clear();
-            GameRoomManager.Instance.Log($"MSG: 开始下载地图！地图名：{input.RoomName}");
+            GameRoomManager.Instance.Log($"MSG: DOWNLOAD_MAP_REPLY - 开始下载地图！地图名：{input.RoomName}");
         }
         mapDataBuffers.Add(input.MapData.ToByteArray());
         
@@ -143,14 +144,13 @@ public class RoomMsgReply
             GameRoomManager.Instance.HexmapHelper.Load(mapName);
             GameRoomManager.Instance.Log($"MSG: DOWNLOAD_MAP_REPLY - 显示地图！地图名：{mapName}");
             
-            // 发出EnterRoom消息，进入房间
-            EnterRoom output = new EnterRoom()
-            {
-                RoomId = input.RoomId,
-            };
-            GameRoomManager.Instance.SendMsg(ROOM.EnterRoom, output.ToByteArray());
-            GameRoomManager.Instance.Log($"MSG: DOWNLOAD_MAP_REPLY - 申请进入房间：{mapName}");
-            
+            // 进入房间整体流程完成
+            GameRoomManager.Instance.RoomId = input.RoomId;
+            GameRoomManager.Instance.RoomName = input.RoomName;
+            string msg = $"进入房间 - {input.RoomName}";
+            GameRoomManager.Instance.Log("MSG: DOWNLOAD_MAP_REPLY - " + msg);
+            UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Success);
+            UIManager.Instance.EndLoading();
         }
     }
 
@@ -166,14 +166,11 @@ public class RoomMsgReply
             return;
         }
 
+        DownloadMap output = new DownloadMap()
         {
-            GameRoomManager.Instance.RoomId = input.RoomId;
-            GameRoomManager.Instance.RoomName = input.RoomName;
-            string msg = $"进入房间: {input.RoomName}";
-            GameRoomManager.Instance.Log("MSG: ENTER_ROOM_REPLY - " + msg);
-            UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Success);
-            UIManager.Instance.EndLoading();
-        }
+            RoomId = input.RoomId,
+        };
+        GameRoomManager.Instance.SendMsg(ROOM.DownloadMap, output.ToByteArray());
     }
 
     private static void LEAVE_ROOM_REPLY(byte[] bytes)
