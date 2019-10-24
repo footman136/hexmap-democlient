@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using Google.Protobuf;
 // https://github.com/LitJSON/litjson
 using LitJson;
 using Main;
@@ -151,5 +152,8 @@ public class LobbyMsgReply
         string msg = $"删除房间成功！{input.RoomName}";
         UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Success);
         ClientManager.Instance.LobbyManager.Log("MSG: DESTROY_ROOM_REPLY - " + msg);
+
+        AskRoomList output = new AskRoomList();
+        ClientManager.Instance.LobbyManager.SendMsg(LOBBY.AskRoomList, output.ToByteArray());
     }
 }

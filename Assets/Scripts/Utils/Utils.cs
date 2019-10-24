@@ -8,8 +8,9 @@ using System.Security.Cryptography;
 
 namespace GameUtils
 {
-	public class Utils  
+	public class Utils
 	{
+		private static object _lockObj = new object();
 		/// <summary>  
 		/// 根据GUID获取19位的唯一数字序列  
 		/// </summary>  
@@ -73,20 +74,25 @@ namespace GameUtils
 		/// <param name="msg"></param>
 		public static void Log(string msg)
 		{
-			Debug.Log(msg);
-			if (string.IsNullOrEmpty(_logPathName))
+			lock (_lockObj)
 			{
-				return;
+				Debug.Log(msg);
+				if (string.IsNullOrEmpty(_logPathName))
+				{
+					return;
+				}
+
+				string logpathname = _logPathName;
+				FileStream fs = new FileStream(logpathname, FileMode.OpenOrCreate, FileAccess.ReadWrite,
+					FileShare.Read);
+				StreamWriter sw = new StreamWriter(fs);
+				sw.Flush();
+				sw.BaseStream.Seek(0, SeekOrigin.End);
+				sw.WriteLine(msg);
+				sw.Flush();
+				sw.Close();
+				fs.Close();
 			}
-			string logpathname = _logPathName;
-			FileStream fs = new FileStream (logpathname, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
-			StreamWriter sw = new StreamWriter(fs);
-			sw.Flush();
-			sw.BaseStream.Seek(0, SeekOrigin.End);
-			sw.WriteLine(msg);
-			sw.Flush();
-			sw.Close();
-			fs.Close();
 		}
 	
 		/// <summary>
