@@ -276,6 +276,7 @@ public class HexGrid : MonoBehaviour {
 			z = reader.ReadInt32();
 		}
 		bool wrapping = header >= 5 ? reader.ReadBoolean() : false;
+		wrapping = false;
 		if (x != cellCountX || z != cellCountZ || this.wrapping != wrapping) {
 			if (!CreateMap(x, z, wrapping))
 			{

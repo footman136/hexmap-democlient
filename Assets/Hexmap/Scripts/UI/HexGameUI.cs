@@ -58,7 +58,7 @@ public class HexGameUI : MonoBehaviour {
 
 	void DoMove () {
 		if (grid.HasPath) {
-			selectedUnit.Travel(grid.GetPath());
+			selectedUnit.Travel(grid.GetPath(), 4f);
 			grid.ClearPath();
 		}
 	}

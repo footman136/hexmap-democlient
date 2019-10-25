@@ -1,23 +1,26 @@
 ﻿using Assets.Gamelogic.FSM;
 
-public class ActorDieState : FsmBaseState<StateMachineActor, FSMStateActor.StateEnum>
+namespace AI
 {
-    private readonly RoomLogic _roomLogic;
-
-    public ActorDieState(StateMachineActor owner, RoomLogic roomLogic) : base(owner)
+    public class ActorDieState : FsmBaseState<StateMachineActor, FSMStateActor.StateEnum>
     {
-        _roomLogic = roomLogic;
-    }
-
-    public override void Enter()
-    {
-    }
-
-    public override void Tick()
-    {
-    }
-
-    public override void Exit(bool disabled)
-    {
+        private readonly ActorBehaviour _actorBehaviour;
+    
+        public ActorDieState(StateMachineActor owner, ActorBehaviour ab) : base(owner)
+        {
+            _actorBehaviour = ab;
+        }
+    
+        public override void Enter()
+        {
+        }
+    
+        public override void Tick()
+        {
+        }
+    
+        public override void Exit(bool disabled)
+        {
+        }
     }
 }

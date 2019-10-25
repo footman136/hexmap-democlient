@@ -12,6 +12,7 @@ public struct FSMStateActor
         WALK = 1,
         FIGHT = 2,
         DIE = 3,
+        VANISH = 4,
         NONE = 10,
     }
     

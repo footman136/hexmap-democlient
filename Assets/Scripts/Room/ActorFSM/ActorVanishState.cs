@@ -2,11 +2,11 @@
 
 namespace AI
 {
-    public class ActorIdleState : FsmBaseState<StateMachineActor, FSMStateActor.StateEnum>
+    public class ActorVanishState : FsmBaseState<StateMachineActor, FSMStateActor.StateEnum>
     {
         private readonly ActorBehaviour _actorBehaviour;
 
-        public ActorIdleState(StateMachineActor owner, ActorBehaviour ab) : base(owner)
+        public ActorVanishState(StateMachineActor owner, ActorBehaviour ab) : base(owner)
         {
             _actorBehaviour = ab;
         }

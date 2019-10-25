@@ -1,12 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using AI;
 using GameUtils;
 using Protobuf.Room;
 using UnityEngine;
 
 public class RoomLogic : MonoBehaviour
 {
+
+    public ActorManager ActorManager = new ActorManager();
+    
     #region 初始化
     
     // Start is called before the first frame update
@@ -18,7 +22,7 @@ public class RoomLogic : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        ActorManager.Tick();
     }
 
     public void Init()
@@ -36,6 +40,7 @@ public class RoomLogic : MonoBehaviour
         MsgDispatcher.RegisterMsg((int)ROOM_REPLY.CreateAtroopReply, OnCreateATroopReply);
         MsgDispatcher.RegisterMsg((int)ROOM_REPLY.DestroyAtroopReply, OnDestroyATroopReply);
         MsgDispatcher.RegisterMsg((int)ROOM_REPLY.TroopMoveReply, OnTroopMoveReply);
+        MsgDispatcher.RegisterMsg((int)ROOM_REPLY.TroopAiStateReply, OnTroopAiStateReply);
     }
 
     private void RemoveListener()
@@ -59,8 +64,8 @@ public class RoomLogic : MonoBehaviour
             return;
         }
         
-        GameRoomManager.Instance.HexmapHelper.CreateUnit(input.Species, input.PosX, input.PosZ, input.Orientation,
-            input.ActorId, input.OwnerId);
+        GameRoomManager.Instance.HexmapHelper.CreateUnit(input.RoomId, input.OwnerId, input.ActorId,   
+            input.PosX, input.PosZ, input.Orientation, input.Species);
     }
 
     private void OnDestroyATroopReply(byte[] bytes)
@@ -87,6 +92,12 @@ public class RoomLogic : MonoBehaviour
         }
 
         GameRoomManager.Instance.HexmapHelper.DoMove(input.ActorId, input.PosToX, input.PosToZ, input.Speed);
+    }
+
+    private void OnTroopAiStateReply(byte[] bytes)
+    {
+        TroopAiStateReply input = TroopAiStateReply.Parser.ParseFrom(bytes);
+        
     }
 
     #endregion

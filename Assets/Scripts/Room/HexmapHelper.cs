@@ -162,9 +162,14 @@ public class HexmapHelper : MonoBehaviour
             hexGrid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
     }
 
-    HexCell GetCell(int posX, int posZ)
+    public HexCell GetCell(int posX, int posZ)
     {
         return hexGrid.GetCell(new HexCoordinates(posX, posZ));
+    }
+
+    public HexCell GetCell(Vector3 position)
+    {
+        return hexGrid.GetCell(position);
     }
 
     HexCell currentCell;
@@ -181,8 +186,18 @@ public class HexmapHelper : MonoBehaviour
     #endregion
     
     #region 单元
-    
-    public bool CreateUnit (string unitName, int posX, int posZ, float orientation, long actorId, long OwnerId)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="roomId">房间id</param>
+    /// <param name="ownerId">所属玩家id</param>
+    /// <param name="actorId">自己的id</param>
+    /// <param name="posX"></param>
+    /// <param name="posZ"></param>
+    /// <param name="orientation"></param>
+    /// <param name="unitName"></param>
+    /// <returns></returns>
+    public bool CreateUnit (long roomId, long ownerId, long actorId, int posX, int posZ, float orientation, string unitName)
     {
         HexCell cell = GetCell(posX, posZ);
         if (cell && !cell.Unit)
@@ -198,12 +213,18 @@ public class HexmapHelper : MonoBehaviour
                     var av = hu.GetComponent<ActorVisualizer>();
                     if (av != null)
                     {
+                        av.RoomId = roomId;
+                        av.OwnerId = ownerId;
                         av.ActorId = actorId;
-                        av.OwnerActorId = OwnerId;
                         av.PosX = posX;
                         av.PosZ = posZ;
                         av.Orientation = orientation;
                         av.Species = unitName;
+                    }
+
+                    if (!GameRoomManager.Instance.RoomLogic.ActorManager.AllActors.ContainsKey(actorId))
+                    {
+                        GameRoomManager.Instance.RoomLogic.ActorManager.AddActor(roomId, ownerId, actorId, posX, posZ, orientation, unitName, hu);
                     }
                     GameRoomManager.Instance.Log($"MSG: CreateATroopReply - 创建了一个Actor - {unitName}");
                     return true;
@@ -220,6 +241,7 @@ public class HexmapHelper : MonoBehaviour
 
     public bool DestroyUnit (long actorId) 
     {
+        GameRoomManager.Instance.RoomLogic.ActorManager.RemoveActor(actorId);
         if (ActorVisualizer.AllActors.ContainsKey(actorId))
         {
             var av = ActorVisualizer.AllActors[actorId];
@@ -238,7 +260,7 @@ public class HexmapHelper : MonoBehaviour
         return false;
     }
 
-    public void DoMove (long actorId, int posX, int posZ, float Speed)
+    public void DoMove (long actorId, int posX, int posZ, float speed)
     {
         if (ActorVisualizer.AllActors.ContainsKey(actorId))
         {
@@ -251,14 +273,35 @@ public class HexmapHelper : MonoBehaviour
                     HexCell hc = GetCell(posX, posZ);
                     if (hu.IsValidDestination(hc))
                     {
+                        Debug.Log($"DEST: <{posX},{posZ}>");
+                        if (posX < 0 || posZ < 0)
+                        {
+                            Debug.LogError($"DEST: Error - <{posX},{posZ}>");
+                        }
                         hexGrid.FindPath(hu.Location, hc, hu);
                         if (hexGrid.HasPath)
                         {
                             List<HexCell> listPath = hexGrid.GetPath();
-                            hu.Travel(listPath);
+                            hu.Travel(listPath, speed);
                         }
                     }
 
+                }
+            }
+        }
+    }
+
+    public void Stop(long actorId)
+    {
+        if (ActorVisualizer.AllActors.ContainsKey(actorId))
+        {
+            var av = ActorVisualizer.AllActors[actorId];
+            if (av != null)
+            {
+                var hu = av.GetComponent<HexUnit>();
+                if (hu != null)
+                {
+                    hu.Stop();
                 }
             }
         }

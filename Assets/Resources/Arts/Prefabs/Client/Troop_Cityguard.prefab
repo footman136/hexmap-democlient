@@ -57,8 +57,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3d7216739453984cbce541f65c4b07d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  RoomId: 0
+  OwnerId: 0
   ActorId: 0
-  OwnerActorId: 0
+  PosX: 0
+  PosZ: 0
+  Orientation: 0
+  Species: N/A
   idleStates:
   - stateName: Idle
     animationBool: isIdling
@@ -97,7 +102,6 @@ MonoBehaviour:
   deathStates:
   - stateName: Die
     animationBool: IsDying
-  _species: NA
   ScriptableActorStats: {fileID: 11400000, guid: 374c86f0bcf6a654ca22bbbdbae4529b,
     type: 2}
   _targetPosition: {x: 0, y: 0, z: 0}

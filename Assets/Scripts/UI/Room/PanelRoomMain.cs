@@ -1,8 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Animation;
+using AI;
 using Google.Protobuf;
-using Main;
 using Protobuf.Room;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -77,7 +77,8 @@ public class PanelRoomMain : MonoBehaviour
             {
                 if (Input.GetMouseButtonUp(1)) 
                 {
-                    AskMove();
+                    //AskMove();
+                    MoveByMyself();
                 }
                 else 
                 {
@@ -95,6 +96,16 @@ public class PanelRoomMain : MonoBehaviour
     HexCell GetCell(int posX, int posZ)
     {
         return hexGrid.GetCell(new HexCoordinates(posX, posZ));
+    }
+    
+    bool UpdateCurrentCell () {
+        HexCell cell =
+            hexGrid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
+        if (cell != currentCell) {
+            currentCell = cell;
+            return true;
+        }
+        return false;
     }
 
     bool AskCreateUnit(string unitName)
@@ -180,19 +191,29 @@ public class PanelRoomMain : MonoBehaviour
             PosFromZ = av.PosZ,
             PosToX = currentCell.coordinates.X,
             PosToZ = currentCell.coordinates.Z,
-            Speed = 2,
+            Speed = 0.5f,
         };
         GameRoomManager.Instance.SendMsg(ROOM.TroopMove, output.ToByteArray());
     }
 
-    bool UpdateCurrentCell () {
-        HexCell cell =
-            hexGrid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
-        if (cell != currentCell) {
-            currentCell = cell;
-            return true;
+    private void MoveByMyself()
+    {
+        if (!hexGrid.HasPath)
+            return;
+        if (currentCell == null || selectedUnit == null)
+            return;
+        var av = selectedUnit.GetComponent<ActorVisualizer>();
+        if (av == null)
+            return;
+        var ab = GameRoomManager.Instance.RoomLogic.ActorManager.GetPlayer(av.ActorId);
+        if (ab == null)
+            return;
+        ab.SetTarget(currentCell.coordinates.X, currentCell.coordinates.Z);
+        if (currentCell.coordinates.X <= 0 || currentCell.coordinates.Z <= 0)
+        {
+            Debug.LogError($"MOVE BY MYSELF: Error - <{currentCell.coordinates.X},{currentCell.coordinates.Z}>");
         }
-        return false;
+        ab.StateMachine.TriggerTransition(FSMStateActor.StateEnum.WALK); 
     }
     #endregion
 

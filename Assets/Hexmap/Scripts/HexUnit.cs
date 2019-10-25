@@ -6,7 +6,7 @@ using System.IO;
 public class HexUnit : MonoBehaviour {
 
 	const float rotationSpeed = 180f;
-	const float travelSpeed = 2f;
+	private float travelSpeed = 4f;
 
 	public static HexUnit unitPrefab;
 
@@ -65,17 +65,24 @@ public class HexUnit : MonoBehaviour {
 		return cell.IsExplored && !cell.IsUnderwater && !cell.Unit;
 	}
 
-	public void Travel (List<HexCell> path) {
-		location.Unit = null;
-		location = path[path.Count - 1];
-		location.Unit = this;
+	public void Stop()
+	{
+		pathToTravel = null;
+		StopAllCoroutines();
+	}
+
+	public void Travel (List<HexCell> path, float speed) {
+//		location.Unit = null;
+//		location = path[path.Count - 1];
+//		location.Unit = this;
 		pathToTravel = path;
+		travelSpeed = speed;
 		StopAllCoroutines();
 		StartCoroutine(TravelPath());
 	}
 
 	IEnumerator TravelPath () {
-		Vector3 a, b, c = pathToTravel[0].Position;
+		Vector3 a, b, c = transform.localPosition;
 		yield return LookAt(pathToTravel[1].Position);
 
 		if (!currentTravelLocation) {
@@ -88,7 +95,10 @@ public class HexUnit : MonoBehaviour {
 		for (int i = 1; i < pathToTravel.Count; i++) {
 			currentTravelLocation = pathToTravel[i];
 			a = c;
-			b = pathToTravel[i - 1].Position;
+			if (i == 1)
+				b = transform.localPosition;
+			else
+				b = pathToTravel[i - 1].Position;
 
 			int nextColumn = currentTravelLocation.ColumnIndex;
 			if (currentColumn != nextColumn) {
@@ -109,6 +119,11 @@ public class HexUnit : MonoBehaviour {
 
 			for (; t < 1f; t += Time.deltaTime * travelSpeed) {
 				transform.localPosition = Bezier.GetPoint(a, b, c, t);
+
+				location.Unit = null;
+				location = Grid.GetCell(transform.localPosition);
+				location.Unit = this;
+				
 				Vector3 d = Bezier.GetDerivative(a, b, c, t);
 				d.y = 0f;
 				transform.localRotation = Quaternion.LookRotation(d);
@@ -119,12 +134,18 @@ public class HexUnit : MonoBehaviour {
 		}
 		currentTravelLocation = null;
 
+		location = pathToTravel[pathToTravel.Count - 1];
 		a = c;
 		b = location.Position;
 		c = b;
 		Grid.IncreaseVisibility(location, VisionRange);
 		for (; t < 1f; t += Time.deltaTime * travelSpeed) {
 			transform.localPosition = Bezier.GetPoint(a, b, c, t);
+			
+			location.Unit = null;
+			location = Grid.GetCell(transform.localPosition);
+			location.Unit = this;
+			
 			Vector3 d = Bezier.GetDerivative(a, b, c, t);
 			d.y = 0f;
 			transform.localRotation = Quaternion.LookRotation(d);
@@ -132,6 +153,11 @@ public class HexUnit : MonoBehaviour {
 		}
 
 		transform.localPosition = location.Position;
+		
+		location.Unit = null;
+		location = Grid.GetCell(transform.localPosition);
+		location.Unit = this;
+		
 		orientation = transform.localRotation.eulerAngles.y;
 		ListPool<HexCell>.Add(pathToTravel);
 		pathToTravel = null;
