@@ -544,4 +544,23 @@ public class HexGrid : MonoBehaviour {
 			columns[i].localPosition = position;
 		}
 	}
+
+	public void OnShowLabels(bool visible)
+	{
+		string msg = null;
+		if (visible)
+		{
+			for (int i = 0; i < cells.Length; ++i)
+			{
+				cells[i].SetLabel($"{cells[i].coordinates.X},{cells[i].coordinates.Z}");
+			}
+		}
+		else
+		{
+			for (int i = 0; i < cells.Length; ++i)
+			{
+				cells[i].SetLabel(null);
+			}
+		}
+	}
 }

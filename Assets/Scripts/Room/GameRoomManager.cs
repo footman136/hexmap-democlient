@@ -18,6 +18,8 @@ public class GameRoomManager : ClientScript
     public string RoomName;
 
     public PlayerEnter CurrentPlayer;
+
+    public bool IsAIOn;
     
     #region 初始化
     void Awake()

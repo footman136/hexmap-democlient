@@ -952,13 +952,10 @@ PrefabInstance:
       propertyPath: hexGrid
       value: 
       objectReference: {fileID: 1461312361}
-    - target: {fileID: 718894200, guid: f4dc79b8d55334e49938f03db2b749ee, type: 3}
+    - target: {fileID: 1052283722863412194, guid: f4dc79b8d55334e49938f03db2b749ee,
+        type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_BoolArgument
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 718894200, guid: f4dc79b8d55334e49938f03db2b749ee, type: 3}
-      propertyPath: m_IsOn
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f4dc79b8d55334e49938f03db2b749ee, type: 3}

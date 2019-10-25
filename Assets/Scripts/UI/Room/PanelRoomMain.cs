@@ -274,14 +274,30 @@ public class PanelRoomMain : MonoBehaviour
         SetCommand(CommandType.CMD_DESTROY_ACTOR);
     }
 
-    public void OnToggleShowGrid(bool visible)
+    public void ToggleShowGrid(bool visible)
     {
-        hexGrid.showLabel = visible;
         if (visible) {
             terrainMaterial.EnableKeyword("GRID_ON");
         }
         else {
             terrainMaterial.DisableKeyword("GRID_ON");
+        }
+    }
+    public void ToggleShowLabel(bool visible)
+    {
+        hexGrid.showLabel = visible;
+        hexGrid.OnShowLabels(visible);
+    }
+    public void ToggleAI(bool isOn)
+    {
+        GameRoomManager.Instance.IsAIOn = isOn;
+        if (isOn)
+        {
+            Debug.Log("AI is On!!!");
+        }
+        else
+        {
+            Debug.Log("AI is Off!!!");
         }
     }
     #endregion

@@ -776,6 +776,7 @@ MonoBehaviour:
   cellCountX: 20
   cellCountZ: 15
   wrapping: 1
+  showLabel: 0
   cellPrefab: {fileID: 11422220, guid: 94c2312396697489abc866a188f80152, type: 3}
   cellLabelPrefab: {fileID: 11470134, guid: f68794ca03b6f4510b9a5bd6ee9ba2f4, type: 3}
   chunkPrefab: {fileID: 114000010052569294, guid: 7622d007cafd044a1b1189c0b93d2912,
@@ -918,7 +919,7 @@ PrefabInstance:
     - target: {fileID: 2876796149597995463, guid: 0de2b8889ca35084a810473241f9dacd,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.3538091
+      value: 0.3402553
       objectReference: {fileID: 0}
     - target: {fileID: 2876796150142869385, guid: 0de2b8889ca35084a810473241f9dacd,
         type: 3}
