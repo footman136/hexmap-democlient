@@ -19,7 +19,7 @@ public class GameRoomManager : ClientScript
 
     public PlayerEnter CurrentPlayer;
 
-    public bool IsAIOn;
+    public bool IsAiOn;
     
     #region 初始化
     void Awake()
@@ -44,7 +44,7 @@ public class GameRoomManager : ClientScript
             roomData.Port = 8888;
             roomData.RoomName = "遗落の战境";
             roomData.IsCreatingRoom = false;
-            roomData.RoomId = 4641073560387179659;
+            roomData.RoomId = 5707254438682699636;
         }
 
         _address = roomData.Address;
@@ -60,6 +60,8 @@ public class GameRoomManager : ClientScript
 
         if (ClientManager.Instance == null)
             StartCoroutine(LoadMap());
+
+        IsAiOn = true;
     }
 
     IEnumerator LoadMap()

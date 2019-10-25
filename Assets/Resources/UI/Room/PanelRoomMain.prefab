@@ -292,7 +292,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2910463285367878401}
         m_MethodName: ToggleShowGrid
-        m_Mode: 6
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -623,7 +623,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2910463285367878401}
         m_MethodName: ToggleShowLabel
-        m_Mode: 6
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -634,7 +634,7 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Toggle+ToggleEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
-  m_IsOn: 1
+  m_IsOn: 0
 --- !u!1 &694660693910010225
 GameObject:
   m_ObjectHideFlags: 0
@@ -979,6 +979,9 @@ MonoBehaviour:
   _curCreateActor: {fileID: 2800000, guid: c7ee32a4718e5664dbd2b7660379f2e2, type: 3}
   _curDestroyActor: {fileID: 2800000, guid: 6244ae9f1c535764cb3bc3aafb85c589, type: 3}
   _curFindPath: {fileID: 2800000, guid: 51bdafafaea6a794fb6faedac1c71054, type: 3}
+  _togShowGrid: {fileID: 718894200}
+  _togShowLabel: {fileID: 2334818873174039307}
+  _togAi: {fileID: 1052283722863412194}
   terrainMaterial: {fileID: 2100000, guid: 6a3f5c7892e4b478e9e745026e6fe9f7, type: 2}
   _commandType: 0
 --- !u!1 &3486481839274149987
@@ -1596,7 +1599,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2910463285367878401}
         m_MethodName: ToggleAI
-        m_Mode: 6
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

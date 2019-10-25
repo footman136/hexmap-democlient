@@ -6,6 +6,7 @@ using Google.Protobuf;
 using Protobuf.Room;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class PanelRoomMain : MonoBehaviour
 {
@@ -13,7 +14,11 @@ public class PanelRoomMain : MonoBehaviour
     [SerializeField] private Texture2D _curCreateActor;
     [SerializeField] private Texture2D _curDestroyActor;
     [SerializeField] private Texture2D _curFindPath;
-    public Material terrainMaterial;
+    
+    [SerializeField] private Toggle _togShowGrid;
+    [SerializeField] private Toggle _togShowLabel;
+    [SerializeField] private Toggle _togAi;
+    [SerializeField] private Material terrainMaterial;
     
     HexCell currentCell;
     HexUnit selectedUnit;
@@ -35,6 +40,9 @@ public class PanelRoomMain : MonoBehaviour
         // 这一行，查了两个小时。。。如果没有，打包客户端后，地表看不到任何颜色，都是灰色。
         Shader.EnableKeyword("HEX_MAP_EDIT_MODE");
         _commandType = CommandType.CMD_NONE;
+        _togShowGrid.isOn = false;
+        _togShowLabel.isOn = false;
+        _togAi.isOn = true;
     }
 
     #region 鼠标操作
@@ -274,8 +282,9 @@ public class PanelRoomMain : MonoBehaviour
         SetCommand(CommandType.CMD_DESTROY_ACTOR);
     }
 
-    public void ToggleShowGrid(bool visible)
+    public void ToggleShowGrid()
     {
+        bool visible = _togShowGrid.isOn;
         if (visible) {
             terrainMaterial.EnableKeyword("GRID_ON");
         }
@@ -283,14 +292,16 @@ public class PanelRoomMain : MonoBehaviour
             terrainMaterial.DisableKeyword("GRID_ON");
         }
     }
-    public void ToggleShowLabel(bool visible)
+    public void ToggleShowLabel()
     {
+        bool visible = _togShowLabel.isOn;
         hexGrid.showLabel = visible;
         hexGrid.OnShowLabels(visible);
     }
-    public void ToggleAI(bool isOn)
+    public void ToggleAI(bool isOnOn)
     {
-        GameRoomManager.Instance.IsAIOn = isOn;
+        bool isOn = _togAi.isOn;
+        GameRoomManager.Instance.IsAiOn = isOn;
         if (isOn)
         {
             Debug.Log("AI is On!!!");

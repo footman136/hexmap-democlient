@@ -9,6 +9,8 @@ public class HexmapHelper : MonoBehaviour
 {
     public HexGrid hexGrid;
     
+    public Material terrainMaterial;
+    
     const int mapFileVersion = 5;
 
     #region 初始化
@@ -17,6 +19,7 @@ public class HexmapHelper : MonoBehaviour
     {
         // 这一行，查了两个小时。。。如果没有，打包客户端后，地表看不到任何颜色，都是灰色。
         Shader.EnableKeyword("HEX_MAP_EDIT_MODE");
+        terrainMaterial.DisableKeyword("GRID_ON");
     }
     // Start is called before the first frame update
     void Start()

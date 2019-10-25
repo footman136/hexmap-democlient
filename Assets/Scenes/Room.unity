@@ -165,6 +165,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hexGrid: {fileID: 1461312361}
+  terrainMaterial: {fileID: 2100000, guid: 6a3f5c7892e4b478e9e745026e6fe9f7, type: 2}
 --- !u!1 &649458027
 GameObject:
   m_ObjectHideFlags: 0
@@ -718,6 +719,7 @@ MonoBehaviour:
   RoomLogic: {fileID: 1894511336}
   RoomId: 0
   RoomName: 
+  IsAIOn: 0
 --- !u!4 &1778121409
 Transform:
   m_ObjectHideFlags: 0
@@ -954,8 +956,8 @@ PrefabInstance:
       objectReference: {fileID: 1461312361}
     - target: {fileID: 1052283722863412194, guid: f4dc79b8d55334e49938f03db2b749ee,
         type: 3}
-      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_BoolArgument
-      value: 0
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f4dc79b8d55334e49938f03db2b749ee, type: 3}

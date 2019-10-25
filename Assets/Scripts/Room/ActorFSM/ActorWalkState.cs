@@ -1,4 +1,6 @@
-﻿using Assets.Gamelogic.FSM;
+﻿using System;
+using Assets.Gamelogic.FSM;
+using UnityEngine;
 
 namespace AI
 {
@@ -11,15 +13,30 @@ namespace AI
             _actorBehaviour = ab;
         }
 
+        private float TIME_DELAY = 1f;
+        private float timeSpan = 0;
+        private float timeLast = 0;
+        private Vector3 vecLast;
         public override void Enter()
         {
+            float timeNow = Time.time;
+            timeLast = timeNow;
         }
 
         public override void Tick()
         {
-            if(_actorBehaviour.CurrentPosition == _actorBehaviour.TargetPosition)
+            float timeNow = Time.time;
+            timeSpan += timeNow - timeLast;
+            timeLast = timeNow;
+            if (timeSpan > TIME_DELAY)
             {
-                Owner.TriggerTransition(FSMStateActor.StateEnum.IDLE);
+                if(_actorBehaviour.CurrentPosition == vecLast)
+                {
+                    Owner.TriggerTransition(FSMStateActor.StateEnum.IDLE);
+                }
+
+                vecLast = _actorBehaviour.CurrentPosition;
+                timeSpan = 0;
             }
         }
 

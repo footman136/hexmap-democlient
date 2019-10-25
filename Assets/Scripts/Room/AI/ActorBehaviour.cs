@@ -123,7 +123,7 @@ namespace AI
             while (true)
             {
                 AI_Running();
-            
+
                 yield return new WaitForSeconds(ScriptableActorStats.thinkingFrequency);
             }
         }
@@ -137,6 +137,11 @@ namespace AI
 
         private void AI_Running()
         {
+            if (!GameRoomManager.Instance.IsAiOn)
+            {
+                return;
+            }
+
             // 这里的_deltaTime是真实的每次本函数调用的时间间隔（而不是Time.deltaTime）。
             //_deltaTime = Time.deltaTime;
             var nowTime = Time.time;
@@ -150,9 +155,21 @@ namespace AI
                 bFirst = false;
             }
 
-            if (CurrentPosition != TargetPosition && StateMachine.CurrentAiState != FSMStateActor.StateEnum.WALK)
+            float range = 500f;
+            if (StateMachine.CurrentAiState == FSMStateActor.StateEnum.IDLE)
             {
-                StateMachine.TriggerTransition(FSMStateActor.StateEnum.WALK);
+                float offsetX = Random.Range(-range, range);
+                float offsetZ = Random.Range(-range, range);
+                Vector3 newTargetPosition = new Vector3(CurrentPosition.x + offsetX, CurrentPosition.y, CurrentPosition.z + offsetZ);
+                HexCell newCell = HexUnit.Grid.GetCell(newTargetPosition);
+                if (newCell != null)
+                {
+                    if (HexUnit.IsValidDestination(newCell))
+                    {
+                        SetTarget(newCell.Position);
+                        StateMachine.TriggerTransition(FSMStateActor.StateEnum.WALK);
+                    }
+                }
             }
         }
 

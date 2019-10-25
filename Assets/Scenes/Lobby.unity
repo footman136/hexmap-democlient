@@ -151,15 +151,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grid: {fileID: 1906115953}
-  useFixedSeed: 1
+  useFixedSeed: 0
   seed: 1208905299
   jitterProbability: 0.25
   chunkSizeMin: 30
   chunkSizeMax: 100
   highRiseProbability: 0.25
-  sinkProbability: 0.2
-  landPercentage: 50
-  waterLevel: 3
+  sinkProbability: 0.124
+  landPercentage: 80
+  waterLevel: 2
   elevationMinimum: -2
   elevationMaximum: 8
   mapBorderX: 5
@@ -919,7 +919,7 @@ PrefabInstance:
     - target: {fileID: 2876796149597995463, guid: 0de2b8889ca35084a810473241f9dacd,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.3402553
+      value: 0.000035728295
       objectReference: {fileID: 0}
     - target: {fileID: 2876796150142869385, guid: 0de2b8889ca35084a810473241f9dacd,
         type: 3}

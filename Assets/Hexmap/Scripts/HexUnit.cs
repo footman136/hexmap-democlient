@@ -135,15 +135,25 @@ public class HexUnit : MonoBehaviour {
 			for (; t < 1f; t += Time.deltaTime * travelSpeed) {
 				Vector3 pos = Bezier.GetPoint(a, b, c, t);
 				
-				location.Unit = null;
-				location = Grid.GetCell(pos);
-				location.Unit = this;
-				pos.y = location.Position.y;
-				transform.localPosition = pos;
 				
-				Vector3 d = Bezier.GetDerivative(a, b, c, t);
-				d.y = 0f;
-				transform.localRotation = Quaternion.LookRotation(d);
+				HexCell locationNew = Grid.GetCell(pos);
+				if (locationNew.Unit != null && locationNew.Unit != this) // 别人占了这个坑
+				{
+					// 空转。。。等待在这里
+					t -= Time.deltaTime * travelSpeed;
+				}
+				else
+				{
+					location.Unit = null;
+					location = locationNew;
+					location.Unit = this;
+					pos.y = location.Position.y;
+					transform.localPosition = pos;
+				
+					Vector3 d = Bezier.GetDerivative(a, b, c, t);
+					d.y = 0f;
+					transform.localRotation = Quaternion.LookRotation(d);
+				}
 				yield return null;
 			}
 			Grid.DecreaseVisibility(pathToTravel[i], VisionRange);
@@ -159,15 +169,24 @@ public class HexUnit : MonoBehaviour {
 		for (; t < 1f; t += Time.deltaTime * travelSpeed) {
 			Vector3 pos = Bezier.GetPoint(a, b, c, t);
 				
-			location.Unit = null;
-			location = Grid.GetCell(pos);
-			location.Unit = this;
-			pos.y = location.Position.y;
-			transform.localPosition = pos;
-			
-			Vector3 d = Bezier.GetDerivative(a, b, c, t);
-			d.y = 0f;
-			transform.localRotation = Quaternion.LookRotation(d);
+			HexCell locationNew = Grid.GetCell(pos);
+			if (locationNew.Unit != null && locationNew.Unit != this) // 别人占了这个坑
+			{
+				// 空转。。。等待在这里
+				t -= Time.deltaTime * travelSpeed;
+			}
+			else
+			{
+				location.Unit = null;
+				location = locationNew;
+				location.Unit = this;
+				pos.y = location.Position.y;
+				transform.localPosition = pos;
+				
+				Vector3 d = Bezier.GetDerivative(a, b, c, t);
+				d.y = 0f;
+				transform.localRotation = Quaternion.LookRotation(d);
+			}
 			yield return null;
 		}
 
