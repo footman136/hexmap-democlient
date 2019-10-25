@@ -91,7 +91,7 @@ public class RoomLogic : MonoBehaviour
             return;
         }
 
-        GameRoomManager.Instance.HexmapHelper.DoMove(input.ActorId, input.PosToX, input.PosToZ, input.Speed);
+        GameRoomManager.Instance.HexmapHelper.DoMove(input.ActorId, input.PosFromX, input.PosFromZ, input.PosToX, input.PosToZ, input.Speed);
     }
 
     private void OnTroopAiStateReply(byte[] bytes)

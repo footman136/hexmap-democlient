@@ -107,11 +107,12 @@ namespace AI
         
         #region 外部接口
 
-        public void SetTarget(int posX, int posZ)
+        public void SetTarget(Vector3 targetPosition)
         {
-            TargetPosX = posX;
-            TargetPosZ = posZ;
-            TargetPosition = HexUnit.Grid.GetCell(posX, posZ).Position;
+            TargetPosition = targetPosition;
+            HexCell hc = HexUnit.Grid.GetCell(targetPosition);
+            TargetPosX = hc.coordinates.X;
+            TargetPosZ = hc.coordinates.Z;
         }
         #endregion
         

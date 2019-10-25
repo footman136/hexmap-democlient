@@ -10,6 +10,8 @@ public class HexCell : MonoBehaviour {
 
 	public HexGridChunk chunk;
 
+	public static bool showLabel;
+
 	public int Index { get; set; }
 
 	public int ColumnIndex { get; set; }
@@ -571,6 +573,9 @@ public class HexCell : MonoBehaviour {
 
 		IsExplored = header >= 3 ? reader.ReadBoolean() : false;
 		ShaderData.RefreshVisibility(this);
+		
+		if(showLabel)
+			SetLabel($"{coordinates.X},{coordinates.Z}");
 	}
 
 	public void SetLabel (string text) {

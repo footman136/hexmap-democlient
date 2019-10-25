@@ -71,6 +71,21 @@ public class HexUnit : MonoBehaviour {
 		StopAllCoroutines();
 	}
 
+	// 最简单的走路过程
+//	IEnumerator TravelPath () {
+//	
+//		for (int i = 1; i < pathToTravel.Count; i++) 
+//		{
+//			Vector3 a = pathToTravel[i - 1].Position;
+//			Vector3 b = pathToTravel[i].Position;
+//			for (float t = 0f; t < 1f; t += Time.deltaTime * travelSpeed) {
+//				transform.localPosition = Vector3.Lerp(a, b, t);
+//				yield return null;
+//			}
+//		}		
+//	}
+	
+
 	public void Travel (List<HexCell> path, float speed) {
 //		location.Unit = null;
 //		location = path[path.Count - 1];
@@ -118,11 +133,13 @@ public class HexUnit : MonoBehaviour {
 			Grid.IncreaseVisibility(pathToTravel[i], VisionRange);
 
 			for (; t < 1f; t += Time.deltaTime * travelSpeed) {
-				transform.localPosition = Bezier.GetPoint(a, b, c, t);
-
+				Vector3 pos = Bezier.GetPoint(a, b, c, t);
+				
 				location.Unit = null;
-				location = Grid.GetCell(transform.localPosition);
+				location = Grid.GetCell(pos);
 				location.Unit = this;
+				pos.y = location.Position.y;
+				transform.localPosition = pos;
 				
 				Vector3 d = Bezier.GetDerivative(a, b, c, t);
 				d.y = 0f;
@@ -140,11 +157,13 @@ public class HexUnit : MonoBehaviour {
 		c = b;
 		Grid.IncreaseVisibility(location, VisionRange);
 		for (; t < 1f; t += Time.deltaTime * travelSpeed) {
-			transform.localPosition = Bezier.GetPoint(a, b, c, t);
-			
+			Vector3 pos = Bezier.GetPoint(a, b, c, t);
+				
 			location.Unit = null;
-			location = Grid.GetCell(transform.localPosition);
+			location = Grid.GetCell(pos);
 			location.Unit = this;
+			pos.y = location.Position.y;
+			transform.localPosition = pos;
 			
 			Vector3 d = Bezier.GetDerivative(a, b, c, t);
 			d.y = 0f;
@@ -153,11 +172,6 @@ public class HexUnit : MonoBehaviour {
 		}
 
 		transform.localPosition = location.Position;
-		
-		location.Unit = null;
-		location = Grid.GetCell(transform.localPosition);
-		location.Unit = this;
-		
 		orientation = transform.localRotation.eulerAngles.y;
 		ListPool<HexCell>.Add(pathToTravel);
 		pathToTravel = null;

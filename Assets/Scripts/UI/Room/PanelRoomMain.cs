@@ -13,9 +13,11 @@ public class PanelRoomMain : MonoBehaviour
     [SerializeField] private Texture2D _curCreateActor;
     [SerializeField] private Texture2D _curDestroyActor;
     [SerializeField] private Texture2D _curFindPath;
+    public Material terrainMaterial;
     
     HexCell currentCell;
     HexUnit selectedUnit;
+    
     
     public enum CommandType
     {
@@ -208,11 +210,19 @@ public class PanelRoomMain : MonoBehaviour
         var ab = GameRoomManager.Instance.RoomLogic.ActorManager.GetPlayer(av.ActorId);
         if (ab == null)
             return;
-        ab.SetTarget(currentCell.coordinates.X, currentCell.coordinates.Z);
-        if (currentCell.coordinates.X <= 0 || currentCell.coordinates.Z <= 0)
+        HexCell newCell = hexGrid.GetCell(currentCell.coordinates.X, currentCell.coordinates.Z);
+        HexCell newCell2 = hexGrid.GetCell(currentCell.Position);
+        if (newCell.Position != currentCell.Position)
         {
-            Debug.LogError($"MOVE BY MYSELF: Error - <{currentCell.coordinates.X},{currentCell.coordinates.Z}>");
+            Debug.LogError($"Fuck Hexmap!!! - Orgin<{currentCell.coordinates.X},{currentCell.coordinates.Z}> - New<{newCell.coordinates.X},{newCell.coordinates.Z}>");
         }
+        if (newCell2.Position != currentCell.Position)
+        {
+            Debug.LogError($"Fuck Hexmap 2!!! - Orgin<{currentCell.coordinates.X},{currentCell.coordinates.Z}> - New2<{newCell2.coordinates.X},{newCell2.coordinates.Z}>");
+        }
+        ab.SetTarget(currentCell.Position);
+        
+        Debug.Log($"MY BY MYSELF - Dest<{currentCell.coordinates.X},{currentCell.coordinates.Z}> - Dest Pos<{ab.TargetPosition.x},{ab.TargetPosition.z}>");
         ab.StateMachine.TriggerTransition(FSMStateActor.StateEnum.WALK); 
     }
     #endregion
@@ -262,6 +272,17 @@ public class PanelRoomMain : MonoBehaviour
     public void OnClickDestroyActor()
     {
         SetCommand(CommandType.CMD_DESTROY_ACTOR);
+    }
+
+    public void OnToggleShowGrid(bool visible)
+    {
+        hexGrid.showLabel = visible;
+        if (visible) {
+            terrainMaterial.EnableKeyword("GRID_ON");
+        }
+        else {
+            terrainMaterial.DisableKeyword("GRID_ON");
+        }
     }
     #endregion
 }

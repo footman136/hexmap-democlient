@@ -10,6 +10,8 @@ public class HexGrid : MonoBehaviour {
 
 	public bool wrapping;
 
+	public bool showLabel; // 增加是否显示label的开关
+
 	public HexCell cellPrefab;
 	public Text cellLabelPrefab;
 	public HexGridChunk chunkPrefab;
@@ -240,6 +242,9 @@ public class HexGrid : MonoBehaviour {
 		cell.Elevation = 0;
 
 		AddCellToChunk(x, z, cell);
+		
+		if(showLabel)
+			cell.SetLabel($"{cell.coordinates.X},{cell.coordinates.Z}");
 	}
 
 	void AddCellToChunk (int x, int z, HexCell cell) {
@@ -288,6 +293,7 @@ public class HexGrid : MonoBehaviour {
 		bool originalImmediateMode = cellShaderData.ImmediateMode;
 		cellShaderData.ImmediateMode = true;
 
+		HexCell.showLabel = showLabel;
 		for (int i = 0; i < cells.Length; i++) {
 			cells[i].Load(reader, header);
 		}
@@ -322,7 +328,14 @@ public class HexGrid : MonoBehaviour {
 		if (currentPathExists) {
 			HexCell current = currentPathTo;
 			while (current != currentPathFrom) {
-				current.SetLabel(null);
+				if (showLabel)
+				{
+					current.SetLabel($"{current.coordinates.X}, {current.coordinates.Z}");
+				}
+				else
+				{
+					current.SetLabel(null);
+				}
 				current.DisableHighlight();
 				current = current.PathFrom;
 			}

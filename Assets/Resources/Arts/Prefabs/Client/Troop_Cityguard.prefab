@@ -63,6 +63,7 @@ MonoBehaviour:
   PosX: 0
   PosZ: 0
   Orientation: 0
+  Speed: 0
   Species: N/A
   idleStates:
   - stateName: Idle
@@ -81,7 +82,12 @@ MonoBehaviour:
     maxStateTime: 0
     moveSpeed: 6
     turnSpeed: 120
-  runningStates: []
+  runningStates:
+  - stateName: Run
+    animationBool: isRunning
+    maxStateTime: 0
+    moveSpeed: 0
+    turnSpeed: 0
   attackingStates:
   - stateName: Fight_1
     animationBool: isFighting1
@@ -101,10 +107,10 @@ MonoBehaviour:
     animationBool: isFighting8
   deathStates:
   - stateName: Die
-    animationBool: IsDying
-  ScriptableActorStats: {fileID: 11400000, guid: 374c86f0bcf6a654ca22bbbdbae4529b,
-    type: 2}
-  _targetPosition: {x: 0, y: 0, z: 0}
+    animationBool: isDying
+  TargetPosition: {x: 0, y: 0, z: 0}
+  CurrentPosition: {x: 0, y: 0, z: 0}
+  CurrentAiState: 0
   _distance: 0
   _logChanges: 0
 --- !u!1001 &4574439992754241662

@@ -183,6 +183,7 @@ public class HexmapHelper : MonoBehaviour
         }
         return false;
     }
+
     #endregion
     
     #region 单元
@@ -260,7 +261,7 @@ public class HexmapHelper : MonoBehaviour
         return false;
     }
 
-    public void DoMove (long actorId, int posX, int posZ, float speed)
+    public void DoMove (long actorId, int posXFrom, int posZFrom, int posXTo, int posZTo, float speed)
     {
         if (ActorVisualizer.AllActors.ContainsKey(actorId))
         {
@@ -270,18 +271,16 @@ public class HexmapHelper : MonoBehaviour
                 var hu = av.GetComponent<HexUnit>();
                 if (hu != null)
                 {
-                    HexCell hc = GetCell(posX, posZ);
-                    if (hu.IsValidDestination(hc))
+                    HexCell hcFrom = GetCell(posXFrom, posZFrom);
+                    HexCell hcTo = GetCell(posXTo, posZTo);
+                    if (hu.IsValidDestination(hcTo))
                     {
-                        Debug.Log($"DEST: <{posX},{posZ}>");
-                        if (posX < 0 || posZ < 0)
-                        {
-                            Debug.LogError($"DEST: Error - <{posX},{posZ}>");
-                        }
-                        hexGrid.FindPath(hu.Location, hc, hu);
+                        hexGrid.FindPath(hcFrom, hcTo, hu);
                         if (hexGrid.HasPath)
                         {
                             List<HexCell> listPath = hexGrid.GetPath();
+                            Debug.Log($"DoMove: From<{hcFrom.coordinates.X},{hcFrom.coordinates.Z}> - To<{hcTo.coordinates.X},{hcTo.coordinates.Z}>");
+                            Debug.Log($"DoMove: From<{hcFrom.Position.x},{hcFrom.Position.z}> - To<{hcTo.Position.x},{hcTo.Position.z}>");
                             hu.Travel(listPath, speed);
                         }
                     }

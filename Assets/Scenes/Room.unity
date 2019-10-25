@@ -425,6 +425,7 @@ MonoBehaviour:
   cellCountX: 20
   cellCountZ: 15
   wrapping: 1
+  showLabel: 0
   cellPrefab: {fileID: 11422220, guid: 94c2312396697489abc866a188f80152, type: 3}
   cellLabelPrefab: {fileID: 11470134, guid: f68794ca03b6f4510b9a5bd6ee9ba2f4, type: 3}
   chunkPrefab: {fileID: 114000010052569294, guid: 7622d007cafd044a1b1189c0b93d2912,
@@ -951,6 +952,14 @@ PrefabInstance:
       propertyPath: hexGrid
       value: 
       objectReference: {fileID: 1461312361}
+    - target: {fileID: 718894200, guid: f4dc79b8d55334e49938f03db2b749ee, type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_BoolArgument
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 718894200, guid: f4dc79b8d55334e49938f03db2b749ee, type: 3}
+      propertyPath: m_IsOn
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f4dc79b8d55334e49938f03db2b749ee, type: 3}
 --- !u!224 &1849122630173041704 stripped

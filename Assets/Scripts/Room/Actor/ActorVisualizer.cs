@@ -75,6 +75,7 @@ namespace Animation
             _hexUnit = GetComponent<HexUnit>();
             CurrentPosition = _hexUnit.Location.Position;
             TargetPosition = _hexUnit.Location.Position;
+            PlayAnimation(idleStates);
         }
 
         void OnEnable()
@@ -135,8 +136,8 @@ namespace Animation
                     aniState = idleStates;
                     break;
                 case FSMStateActor.StateEnum.WALK:
-                    GameRoomManager.Instance.HexmapHelper.DoMove(input.ActorId, input.PosToX, input.PosToZ, input.Speed);
-                    Debug.Log($"MSG: TroopAiState - {CurrentAiState} - From<{PosX},{PosZ}> - To<{input.PosToX},{input.PosToZ}>");
+                    GameRoomManager.Instance.HexmapHelper.DoMove(input.ActorId, input.PosFromX, input.PosFromZ, input.PosToX, input.PosToZ, input.Speed);
+                    Debug.Log($"MSG: TroopAiState - {CurrentAiState} - From<{input.PosFromX},{input.PosFromZ}> - To<{input.PosToX},{input.PosToZ}>");
                     aniState = movementStates;
                     break;
                 case FSMStateActor.StateEnum.FIGHT:
@@ -159,16 +160,42 @@ namespace Animation
         #endregion
         
         #region 播放动画
+
+        private void StopAllAnimations()
+        {
+//            foreach (var state in idleStates)
+//            {
+//                animator.SetBool(state.animationBool, false);
+//            }
+//            foreach (var state in movementStates)
+//            {
+//                animator.SetBool(state.animationBool, false);
+//            }
+//            foreach (var state in attackingStates)
+//            {
+//                animator.SetBool(state.animationBool, false);
+//            }
+//            foreach (var state in deathStates)
+//            {
+//                animator.SetBool(state.animationBool, false);
+//            }
+//            foreach (var state in runningStates)
+//            {
+//                animator.SetBool(state.animationBool, false);
+//            }
+            animator.SetBool(idleStates[0].animationBool, false);
+            animator.SetBool(movementStates[0].animationBool, false);
+            animator.SetBool(attackingStates[0].animationBool, false);
+            animator.SetBool(deathStates[0].animationBool, false);
+            animator.SetBool(runningStates[0].animationBool, false);
+        }
         
         private void PlayAnimation([NotNull] AnimationState[] animationState)
         {
             if (animationState == null) throw new ArgumentNullException(nameof(animationState));
-            int totalState = animationState.Length;
+            StopAllAnimations();
+            int totalState = 1;//animationState.Length;
             int randomValue = Random.Range(0, totalState);
-            foreach (var state in animationState)
-            {
-                animator.SetBool(state.animationBool, false);
-            }
             animator.SetBool(animationState[randomValue].animationBool, true);
         }
         
