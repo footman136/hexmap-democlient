@@ -62,6 +62,8 @@ public class HexUnit : MonoBehaviour {
 	}
 
 	public bool IsValidDestination (HexCell cell) {
+		if(cell.Unit)
+			Debug.LogWarning($"HexUnit - IsValidDestination - cell is ocuppied! - {cell.coordinates}");
 		return cell.IsExplored && !cell.IsUnderwater && !cell.Unit;
 	}
 
@@ -84,12 +86,13 @@ public class HexUnit : MonoBehaviour {
 //			}
 //		}		
 //	}
-	
 
+	private HexCell lastLocation;
 	public void Travel (List<HexCell> path, float speed) {
 //		location.Unit = null;
 //		location = path[path.Count - 1];
 //		location.Unit = this;
+		lastLocation = location;
 		pathToTravel = path;
 		travelSpeed = speed;
 		StopAllCoroutines();
@@ -105,6 +108,7 @@ public class HexUnit : MonoBehaviour {
 		}
 		Grid.DecreaseVisibility(currentTravelLocation, VisionRange);
 		int currentColumn = currentTravelLocation.ColumnIndex;
+		float originalTravelSpeed = travelSpeed;
 
 		float t = Time.deltaTime * travelSpeed;
 		for (int i = 1; i < pathToTravel.Count; i++) {
@@ -144,11 +148,18 @@ public class HexUnit : MonoBehaviour {
 				}
 				else
 				{
+					lastLocation.SetLabel("");
+					lastLocation = location;
 					location.Unit = null;
 					location = locationNew;
 					location.Unit = this;
+					location.SetLabel(location.GetLabelStr());
+					
 					pos.y = location.Position.y;
 					transform.localPosition = pos;
+					
+					// 获取本地块的速度
+					travelSpeed = originalTravelSpeed * Grid.GetCellSpeed(location);
 				
 					Vector3 d = Bezier.GetDerivative(a, b, c, t);
 					d.y = 0f;
@@ -161,7 +172,14 @@ public class HexUnit : MonoBehaviour {
 		}
 		currentTravelLocation = null;
 
+		// 最后一个节点，要单独设置一下
+		lastLocation = location;
+		location.Unit = null;
 		location = pathToTravel[pathToTravel.Count - 1];
+		location.Unit = this;
+		lastLocation.SetLabel(lastLocation.GetLabelStr());
+		location.SetLabel(location.GetLabelStr());
+		
 		a = c;
 		b = location.Position;
 		c = b;
@@ -177,11 +195,17 @@ public class HexUnit : MonoBehaviour {
 			}
 			else
 			{
+				lastLocation.SetLabel("");
+				lastLocation = location;
 				location.Unit = null;
 				location = locationNew;
 				location.Unit = this;
+				location.SetLabel(location.GetLabelStr());
 				pos.y = location.Position.y;
 				transform.localPosition = pos;
+				
+				// 获取本地块的速度
+				travelSpeed = originalTravelSpeed * Grid.GetCellSpeed(location);
 				
 				Vector3 d = Bezier.GetDerivative(a, b, c, t);
 				d.y = 0f;
@@ -192,7 +216,7 @@ public class HexUnit : MonoBehaviour {
 
 		transform.localPosition = location.Position;
 		orientation = transform.localRotation.eulerAngles.y;
-		ListPool<HexCell>.Add(pathToTravel);
+		ListPool<HexCell>.Add(pathToTravel); // 还回缓冲池
 		pathToTravel = null;
 	}
 
@@ -245,7 +269,9 @@ public class HexUnit : MonoBehaviour {
 			moveCost = 1;
 		}
 		else if (fromCell.Walled != toCell.Walled) {
-			return -1;
+			//return -1;
+			// 现在改为城墙没有阻挡作用
+			return 1;
 		}
 		else {
 			moveCost = edgeType == HexEdgeType.Flat ? 5 : 10;

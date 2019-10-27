@@ -26,6 +26,7 @@ namespace AI
         public int PosZ;
         public float Orientation;
         public string Species = "N/A";
+        public long CellIndex; // 根据PosX，PosZ有时候会获取到错误的cell（当PosX,PosZ有一个为负数的时候），所以保存Index是不会出错的
 
         //This specific animal stats asset, create a new one from the asset menu under (LowPolyAnimals/NewAnimalStats)
         private ActorStats ScriptableActorStats;
@@ -46,7 +47,7 @@ namespace AI
         
         #region 初始化
 
-        public void Init(long roomId, long ownerId, long actorId, int posX, int posZ, float orientation, string species, HexUnit hu)
+        public void Init(long roomId, long ownerId, long actorId, int posX, int posZ, float orientation, string species, HexUnit hu, int cellIndex)
         {
             Species = species;
             TIME_DELAY = 1f;
@@ -59,6 +60,7 @@ namespace AI
             Species = species;
             StateMachine = new StateMachineActor(this);
             HexUnit = hu;
+            CellIndex = cellIndex;
             
             CurrentPosition = HexUnit.transform.localPosition;
             TargetPosition = HexUnit.transform.localPosition;
@@ -78,10 +80,10 @@ namespace AI
             int posZOld = PosZ;
             PosX = HexUnit.Grid.GetCell(CurrentPosition).coordinates.X;
             PosZ = HexUnit.Grid.GetCell(CurrentPosition).coordinates.Z;
-            if (posXOld != PosX || posZOld != PosZ)
-            {
-                Debug.Log($"MOVE : From<{posXOld},{posZOld}> - To<{PosX},{PosZ}>");
-            }
+//            if (posXOld != PosX || posZOld != PosZ)
+//            {
+//                Debug.Log($"MOVE : From<{posXOld},{posZOld}> - To<{PosX},{PosZ}>");
+//            }
             
             StateMachine.Tick();
             
@@ -155,7 +157,7 @@ namespace AI
                 bFirst = false;
             }
 
-            float range = 500f;
+            float range = 100f;
             if (StateMachine.CurrentAiState == FSMStateActor.StateEnum.IDLE)
             {
                 float offsetX = Random.Range(-range, range);

@@ -129,4 +129,15 @@ public class HexCellShaderData : MonoBehaviour {
 		cellTextureData[index] = data;
 		return stillUpdating;
 	}
+
+	/// <summary>
+	/// 得到指定地块的地表数据，该数据被保存在alpha通道
+	/// </summary>
+	/// <param name="cell">指定的地块</param>
+	/// <returns>Sand-0; Grass-1; Mud-2; Stone-3; Snow-4</returns>
+	public int GetCellTypeIndex(HexCell cell)
+	{
+		int indexOfCell = cell.Index;
+		return cellTextureData[indexOfCell].a;
+	}
 }

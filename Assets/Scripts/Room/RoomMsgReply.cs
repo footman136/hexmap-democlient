@@ -144,13 +144,21 @@ public class RoomMsgReply
             GameRoomManager.Instance.HexmapHelper.Load(mapName);
             GameRoomManager.Instance.Log($"MSG: DOWNLOAD_MAP_REPLY - 显示地图！地图名：{mapName}");
             
-            // 进入房间整体流程完成
+            // 设置房间ID和名字
             GameRoomManager.Instance.RoomId = input.RoomId;
             GameRoomManager.Instance.RoomName = input.RoomName;
             string msg = $"进入房间 - {input.RoomName}";
             GameRoomManager.Instance.Log("MSG: DOWNLOAD_MAP_REPLY - " + msg);
             UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Success);
-            UIManager.Instance.EndLoading();
+            
+            // 补充内容，获取城市信息
+            AskForCities output = new AskForCities()
+            {
+                RoomId = input.RoomId,
+                OwnerId = GameRoomManager.Instance.CurrentPlayer.TokenId,
+            };
+            GameRoomManager.Instance.SendMsg(ROOM.AskForCities, output.ToByteArray());
+            
         }
     }
 

@@ -573,9 +573,24 @@ public class HexCell : MonoBehaviour {
 
 		IsExplored = header >= 3 ? reader.ReadBoolean() : false;
 		ShaderData.RefreshVisibility(this);
-		
-		if(showLabel)
-			SetLabel($"{coordinates.X},{coordinates.Z}");
+
+		if (showLabel)
+		{
+			SetLabel(GetLabelStr());
+		}
+	}
+
+	public string GetLabelStr()
+	{
+		bool hasUnit = Unit != null;
+		string hasUnitStr = "";
+		if (hasUnit)
+		{
+			hasUnitStr = ",<color=#FF0000FF>T</color>";
+		}
+
+		string label = $"{coordinates.X},{coordinates.Z}{hasUnitStr}";
+		return label;
 	}
 
 	public void SetLabel (string text) {

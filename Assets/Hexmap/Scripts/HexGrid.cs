@@ -244,7 +244,7 @@ public class HexGrid : MonoBehaviour {
 		AddCellToChunk(x, z, cell);
 		
 		if(showLabel)
-			cell.SetLabel($"{cell.coordinates.X},{cell.coordinates.Z}");
+			cell.SetLabel(cell.GetLabelStr());
 	}
 
 	void AddCellToChunk (int x, int z, HexCell cell) {
@@ -330,7 +330,7 @@ public class HexGrid : MonoBehaviour {
 			while (current != currentPathFrom) {
 				if (showLabel)
 				{
-					current.SetLabel($"{current.coordinates.X}, {current.coordinates.Z}");
+					current.SetLabel(current.GetLabelStr());
 				}
 				else
 				{
@@ -354,7 +354,11 @@ public class HexGrid : MonoBehaviour {
 			HexCell current = currentPathTo;
 			while (current != currentPathFrom) {
 				int turn = (current.Distance - 1) / speed;
-				current.SetLabel(turn.ToString());
+				
+				string label = $"{turn}";
+				if(current.Unit)
+					label = $"{turn}-<color=#FF0000FF>T</color>";
+				current.SetLabel(label);
 				current.EnableHighlight(Color.white);
 				current = current.PathFrom;
 			}
@@ -552,7 +556,14 @@ public class HexGrid : MonoBehaviour {
 		{
 			for (int i = 0; i < cells.Length; ++i)
 			{
-				cells[i].SetLabel($"{cells[i].coordinates.X},{cells[i].coordinates.Z}");
+				if (showLabel)
+				{
+					bool hasUnit = cells[i].Unit != null;
+					string hasUnitStr = "F";
+					if (hasUnit)
+						hasUnitStr = "T";
+					cells[i].SetLabel(cells[i].GetLabelStr());
+				}
 			}
 		}
 		else
@@ -562,5 +573,32 @@ public class HexGrid : MonoBehaviour {
 				cells[i].SetLabel(null);
 			}
 		}
+	}
+
+	/// <summary>
+	/// 得到指定地块的地表速度，地表类型的数据被保存在cellShaderData的alpha通道
+	/// Sand-0; Grass-1; Mud-2; Stone-3; Snow-4
+	/// </summary>
+	/// <param name="cell">指定的地块</param>
+	/// <returns>在该地块上行走的速度（率），以1为标准单位</returns>
+	public float  GetCellSpeed(HexCell cell)
+	{
+		float[] speedRate = new float[] { 0.75f, 1f, 1.25f, 1.5f, 0.5f};
+		int cellType = cellShaderData.GetCellTypeIndex(cell);
+		if (cellType < 0 || cellType >= 5)
+		{
+			Debug.Log($"HexGrid Error : Cell Type is out of range：{cellType} - valid type should between: {0}~{4}");			
+			return 1f;
+		}
+
+		float rateRiver = 1f; // 有河流流过的话，速度再降低一半
+		if (cell.HasRiver)
+			rateRiver = 0.5f;
+
+		float rateRoad = 1f; // 有道路的话，速度提升一倍
+		if (cell.HasRoads)
+			rateRoad = 2.0f;
+
+		return speedRate[cellType] * rateRiver * rateRoad;
 	}
 }

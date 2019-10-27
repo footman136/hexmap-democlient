@@ -132,6 +132,7 @@ public class PanelRoomMain : MonoBehaviour
                 PosZ = cell.coordinates.Z,
                 Orientation = Random.Range(0f, 360f),
                 Species = unitName, // 预制件的名字
+                CellIndex = cell.Index,
             };
             GameRoomManager.Instance.SendMsg(ROOM.CreateAtroop, output.ToByteArray());
             return true;
@@ -171,8 +172,8 @@ public class PanelRoomMain : MonoBehaviour
         }
     }
 
-    void DoPathfinding () {
-        if (UpdateCurrentCell()) {
+    void DoPathfinding (bool calc = false) {
+        if (UpdateCurrentCell() || calc) {
             if (currentCell && selectedUnit.IsValidDestination(currentCell)) {
                 hexGrid.FindPath(selectedUnit.Location, currentCell, selectedUnit);
             }
@@ -208,6 +209,8 @@ public class PanelRoomMain : MonoBehaviour
 
     private void MoveByMyself()
     {
+        DoPathfinding(true);
+        
         if (!hexGrid.HasPath)
             return;
         if (currentCell == null || selectedUnit == null)

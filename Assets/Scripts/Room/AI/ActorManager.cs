@@ -12,10 +12,10 @@ namespace AI
         private Dictionary<long, ActorBehaviour> _allActors = new Dictionary<long, ActorBehaviour>();
         public Dictionary<long, ActorBehaviour> AllActors => _allActors;
 
-        public void AddActor(long roomId, long ownerId, long actorId, int posX, int posZ, float orientation, string species, HexUnit hu)
+        public void AddActor(long roomId, long ownerId, long actorId, int posX, int posZ, float orientation, string species, HexUnit hu, int cellIndex)
         {
             ActorBehaviour ab = new ActorBehaviour();
-            ab.Init(roomId, ownerId, actorId, posX, posZ, orientation, species, hu);
+            ab.Init(roomId, ownerId, actorId, posX, posZ, orientation, species, hu, cellIndex);
             
             _allActors.Add(actorId, ab);
         }

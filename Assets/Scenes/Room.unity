@@ -165,6 +165,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hexGrid: {fileID: 1461312361}
+  hexCamera: {fileID: 2100098650}
   terrainMaterial: {fileID: 2100000, guid: 6a3f5c7892e4b478e9e745026e6fe9f7, type: 2}
 --- !u!1 &649458027
 GameObject:
@@ -719,7 +720,7 @@ MonoBehaviour:
   RoomLogic: {fileID: 1894511336}
   RoomId: 0
   RoomName: 
-  IsAIOn: 0
+  IsAiOn: 0
 --- !u!4 &1778121409
 Transform:
   m_ObjectHideFlags: 0

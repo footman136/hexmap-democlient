@@ -4,10 +4,12 @@ using System.Collections.Generic;
 using System.IO;
 using Animation;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class HexmapHelper : MonoBehaviour
 {
     public HexGrid hexGrid;
+    public HexMapCamera hexCamera;
     
     public Material terrainMaterial;
     
@@ -186,6 +188,56 @@ public class HexmapHelper : MonoBehaviour
         }
         return false;
     }
+    #endregion
+
+    #region 城市
+    public void AddCity(int cellIndex, int citySize)
+    {
+        HexCell current = hexGrid.GetCell(cellIndex);
+        if (current)
+        {
+            current.Walled = true;
+            current.UrbanLevel = 3;
+            current.IncreaseVisibility();
+            if (citySize == 1) // 大号城市，大了一圈
+            {
+                for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
+                {
+                    HexCell neighbor = current.GetNeighbor(d);
+                    neighbor.Walled = true;
+                    neighbor.UrbanLevel = Random.Range(2,3);
+                    neighbor.IncreaseVisibility();
+                }
+            }
+        }
+    }
+
+    public void RemoveCity(int cellIndex, int citySize)
+    {
+        HexCell current = hexGrid.GetCell(cellIndex);
+        if (current)
+        {
+            current.Walled = false;
+            current.UrbanLevel = 0;
+            current.ResetVisibility();
+            if (citySize == 1)// 大号城市
+            {
+                for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
+                {
+                    HexCell neighbor = current.GetNeighbor(d);
+                    neighbor.Walled = false;
+                    neighbor.UrbanLevel = 0;
+                    neighbor.ResetVisibility();
+                }
+            }
+        }
+    }
+
+    public void SetCameraPosition(int cellIndex)
+    {
+        HexCell current = hexGrid.GetCell(cellIndex);
+        hexCamera.SetPosition(current);
+    }
 
     #endregion
     
@@ -200,8 +252,9 @@ public class HexmapHelper : MonoBehaviour
     /// <param name="posZ"></param>
     /// <param name="orientation"></param>
     /// <param name="unitName"></param>
+    /// <param name="cellIndex">该单位在地形块HexCell中的Index，因为根据PosX,PosZ可能得不到正确的cell，只能用这个数据确保正确</param>
     /// <returns></returns>
-    public bool CreateUnit (long roomId, long ownerId, long actorId, int posX, int posZ, float orientation, string unitName)
+    public bool CreateUnit (long roomId, long ownerId, long actorId, int posX, int posZ, float orientation, string unitName, int cellIndex)
     {
         HexCell cell = GetCell(posX, posZ);
         if (cell && !cell.Unit)
@@ -224,11 +277,12 @@ public class HexmapHelper : MonoBehaviour
                         av.PosZ = posZ;
                         av.Orientation = orientation;
                         av.Species = unitName;
+                        av.CellIndex = cellIndex;
                     }
 
                     if (!GameRoomManager.Instance.RoomLogic.ActorManager.AllActors.ContainsKey(actorId))
                     {
-                        GameRoomManager.Instance.RoomLogic.ActorManager.AddActor(roomId, ownerId, actorId, posX, posZ, orientation, unitName, hu);
+                        GameRoomManager.Instance.RoomLogic.ActorManager.AddActor(roomId, ownerId, actorId, posX, posZ, orientation, unitName, hu, cellIndex);
                     }
                     GameRoomManager.Instance.Log($"MSG: CreateATroopReply - 创建了一个Actor - {unitName}");
                     return true;

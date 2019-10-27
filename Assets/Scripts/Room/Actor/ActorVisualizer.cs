@@ -25,6 +25,7 @@ namespace Animation
         public float Orientation;
         public float Speed;
         public string Species = "N/A";
+        public long CellIndex; // 根据PosX，PosZ有时候会获取到错误的cell（当PosX,PosZ有一个为负数的时候），所以保存Index是不会出错的
         
         [Header("Animation States"), Space(5)]
         [SerializeField]

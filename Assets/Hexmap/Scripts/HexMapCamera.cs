@@ -163,4 +163,9 @@ public class HexMapCamera : MonoBehaviour {
 			}
 		}
 	}
+
+	public void SetPosition(HexCell cell)
+	{
+		transform.position = new Vector3(cell.Position.x, 0, cell.Position.z);
+	}
 }
