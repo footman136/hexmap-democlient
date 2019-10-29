@@ -1,28 +1,27 @@
 // Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 
-Shader "Cartoon FX/Alpha Blended Tint"
+Shader "beffio/ParticleAlphaBlendStroke"
 {
 Properties
 {
+	_MainTex ("MainTexture", 2D) = "white" {}
 	_TintColor ("Tint Color", Color) = (0.5,0.5,0.5,0.5)
-	_MainTex ("Particle Texture", 2D) = "white" {}
 }
 
 Category
 {
-	Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" }
-	Blend SrcAlpha OneMinusSrcAlpha
-	AlphaTest Greater .01
-	ColorMask RGB
-	Cull Off Lighting Off ZWrite Off
-	BindChannels
-	{
-		Bind "Color", color
-		Bind "Vertex", vertex
-		Bind "TexCoord", texcoord
+	Tags { 
+	"Queue"="Transparent" 
+	"IgnoreProjector"="True" 
+	"RenderType"="Transparent" 
 	}
 	
-	// ---- Fragment program cards
+	Blend SrcAlpha OneMinusSrcAlpha
+	AlphaTest Greater .01
+	Cull Off 
+	Lighting Off 
+	ZWrite Off
+	
 	SubShader
 	{
 		Pass
@@ -39,14 +38,6 @@ Category
 			sampler2D _MainTex;
 			fixed4 _TintColor;
 			
-			struct appdata_t
-			{
-				float4 vertex : POSITION;
-				float3 normal : NORMAL;
-				fixed4 color : COLOR;
-				float2 texcoord : TEXCOORD0;
-			};
-			
 			struct v2f
 			{
 				float4 vertex : POSITION;
@@ -55,17 +46,25 @@ Category
 				float2 texcoord : TEXCOORD0;
 			};
 			
+			struct appdata_a
+			{
+				float4 vertex : POSITION;
+				float3 normal : NORMAL;
+				fixed4 color : COLOR;
+				float2 texcoord : TEXCOORD0;
+			};
+			
 			float4 _MainTex_ST;
 			
-			v2f vert (appdata_t v)
+			v2f vert (appdata_a v)
 			{
-				v2f o;
-				o.vertex = UnityObjectToClipPos(v.vertex);
-				o.color = v.color;
-				o.texcoord = TRANSFORM_TEX(v.texcoord,_MainTex);
-				o.normal = v.normal;
+				v2f g;
+				g.vertex = UnityObjectToClipPos(v.vertex);
+				g.color = v.color;
+				g.texcoord = TRANSFORM_TEX(v.texcoord,_MainTex);
+				g.normal = v.normal;
 				
-				return o;
+				return g;
 			}
 			
 			sampler2D _CameraDepthTexture;
@@ -78,33 +77,5 @@ Category
 		}
 	} 	
 	
-	// ---- Dual texture cards
-	SubShader
-	{
-		Pass
-		{
-			SetTexture [_MainTex]
-			{
-				constantColor [_TintColor]
-				combine constant * primary
-			}
-			SetTexture [_MainTex]
-			{
-				combine texture * previous DOUBLE
-			}
-		}
-	}
-	
-	// ---- Single texture cards (does not do color tint)
-	SubShader
-	{
-		Pass
-		{
-			SetTexture [_MainTex]
-			{
-				combine texture * primary
-			}
-		}
-	}
 }
 }

@@ -85,7 +85,7 @@ public class PanelRoomMain : MonoBehaviour
             }
             else if (selectedUnit)
             {
-                if (Input.GetMouseButtonUp(1)) 
+                if (Input.GetMouseButtonUp(0)) 
                 {
                     //AskMove();
                     MoveByMyself();
