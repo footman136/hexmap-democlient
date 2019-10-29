@@ -62,8 +62,8 @@ public class HexUnit : MonoBehaviour {
 	}
 
 	public bool IsValidDestination (HexCell cell) {
-		if(cell.Unit)
-			Debug.LogWarning($"HexUnit - IsValidDestination - cell is ocuppied! - {cell.coordinates}");
+//		if(cell.Unit)
+//			Debug.LogWarning($"HexUnit - IsValidDestination - cell is ocuppied! - {cell.coordinates}");
 		return cell.IsExplored && !cell.IsUnderwater && !cell.Unit;
 	}
 

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using Animation;
 using UnityEngine;
+using UnityStandardAssets.Characters.ThirdPerson;
 using Random = UnityEngine.Random;
 
 public class HexmapHelper : MonoBehaviour
@@ -259,7 +260,7 @@ public class HexmapHelper : MonoBehaviour
         HexCell cell = GetCell(posX, posZ);
         if (cell && !cell.Unit)
         {
-            string unitPathName = $"Arts/Prefabs/Client/{unitName}";
+            string unitPathName = $"Arts/BeffioPrefabs/Soldiers/{unitName}";
             var go = Resources.Load<HexUnit>(unitPathName);
             if (go != null)
             {
@@ -278,7 +279,14 @@ public class HexmapHelper : MonoBehaviour
                         av.Orientation = orientation;
                         av.Species = unitName;
                         av.CellIndex = cellIndex;
+                        
                     }
+
+                    // 关闭预制件上没用的东西，看以后这东西能否用得上，如果没用，就完全干掉
+                    hu.GetComponentInChildren<ThirdPersonUserControl>().enabled = false;
+                    hu.GetComponentInChildren<ThirdPersonCharacter>().enabled = false;
+                    hu.GetComponentInChildren<CapsuleCollider>().enabled = false;
+                    EnableFollowCamera(hu, false);
 
                     if (!GameRoomManager.Instance.RoomLogic.ActorManager.AllActors.ContainsKey(actorId))
                     {
@@ -361,6 +369,11 @@ public class HexmapHelper : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void EnableFollowCamera(HexUnit unit, bool bEnable)
+    {
+        unit.transform.FindChild("CameraFollow").gameObject.SetActive(bEnable);
     }
 
     #endregion

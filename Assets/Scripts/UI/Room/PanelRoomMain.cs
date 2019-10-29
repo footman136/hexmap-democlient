@@ -6,11 +6,13 @@ using Google.Protobuf;
 using Protobuf.Room;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
+using UnityEngine.UIElements;
+using Cursor = UnityEngine.Cursor;
+using Toggle = UnityEngine.UI.Toggle;
 
 public class PanelRoomMain : MonoBehaviour
 {
-    [SerializeField] private HexGrid hexGrid;
+    [SerializeField] private HexmapHelper hexmapHelper;
     [SerializeField] private Texture2D _curCreateActor;
     [SerializeField] private Texture2D _curDestroyActor;
     [SerializeField] private Texture2D _curFindPath;
@@ -18,10 +20,17 @@ public class PanelRoomMain : MonoBehaviour
     [SerializeField] private Toggle _togShowGrid;
     [SerializeField] private Toggle _togShowLabel;
     [SerializeField] private Toggle _togAi;
+    [SerializeField] private Toggle _togFollowCamera;
     [SerializeField] private Material terrainMaterial;
     
     HexCell currentCell;
     HexUnit selectedUnit;
+
+    private bool _isFollowCamera;
+    [SerializeField] private GameObject _selectObjTemplate;
+    private GameObject _selectObj;
+    [SerializeField] private GameObject _hitGroundTemplate;
+    private GameObject _hitGround;
     
     
     public enum CommandType
@@ -43,9 +52,16 @@ public class PanelRoomMain : MonoBehaviour
         _togShowGrid.isOn = false;
         _togShowLabel.isOn = false;
         _togAi.isOn = true;
+
+        _selectObj = Instantiate(_selectObjTemplate);
+        _selectObj.SetActive(false);
+        _hitGround = Instantiate(_hitGroundTemplate);
+        _hitGround.SetActive(false);
     }
 
     #region 鼠标操作
+
+    private int soldierIndex = 0;
     // Update is called once per frame
     void Update()
     {
@@ -61,7 +77,17 @@ public class PanelRoomMain : MonoBehaviour
         {
             if (Input.GetMouseButtonUp(0))
             {
-                var ret = AskCreateUnit("Troop_Cityguard");
+                string[] soldierNames = new string [24]
+                {
+                    "Horse_BLUE_CC", "Horse_GREEN_CC", "Horse_RED_CC", "Horse_YELLOW_CC", 
+                    "Hunter_BLUE_CC", "Hunter_GREEN_CC", "Hunter_RED_CC", "Hunter_YELLOW_CC", 
+                    "Knight_BLUE_CC", "Knight_GREEN_CC", "Knight_RED_CC", "Knight_YELLOW_CC", 
+                    "LanceKnight_BLUE_CC", "LanceKnight_GREEN_CC", "LanceKnight_RED_CC", "LanceKnight_YELLOW_CC", 
+                    "Leader_BLUE_CC", "Leader_GREEN_CC", "Leader_RED_", "Leader_YELLOW_CC",  
+                    "SwordsMan_BLUE_CC", "SwordsMan_GREEN_CC", "SwordsMan_RED_CC", "SwordsMan_YELLOW_CC", 
+                };
+                var ret = AskCreateUnit(soldierNames[soldierIndex++]);
+                soldierIndex = soldierIndex % 24;
                 if (!ret)
                     SetCommand(CommandType.CMD_NONE);
                 selectedUnit = null;
@@ -81,41 +107,73 @@ public class PanelRoomMain : MonoBehaviour
         {
             if (Input.GetMouseButtonUp(0))
             {
-                DoSelection();
-            }
-            else if (selectedUnit)
-            {
-                if (Input.GetMouseButtonUp(0)) 
+                if (selectedUnit)
                 {
                     //AskMove();
-                    MoveByMyself();
+                    if (currentCell && currentCell.Unit == null)
+                    {
+                        ShowHitGround(Input.mousePosition);
+                        MoveByMyself();
+                    }
+                    else
+                    {
+                        DoSelection();    
+                    }
                 }
-                else 
+                else
                 {
-                    DoPathfinding();
+                    DoSelection();    
                 }
+            }
+            else
+            {
+                DoPathfinding();
             }
         }
     }
 
     HexCell GetCellUnderCursor () {
         return
-            hexGrid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
+            hexmapHelper.hexGrid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
     }
 
     HexCell GetCell(int posX, int posZ)
     {
-        return hexGrid.GetCell(new HexCoordinates(posX, posZ));
+        return hexmapHelper.hexGrid.GetCell(new HexCoordinates(posX, posZ));
     }
     
     bool UpdateCurrentCell () {
         HexCell cell =
-            hexGrid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
+            hexmapHelper.hexGrid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
         if (cell != currentCell) {
             currentCell = cell;
             return true;
         }
         return false;
+    }
+
+    private void ShowHitGround(Vector3 position)
+    {
+        var ray = Camera.main.ScreenPointToRay(position);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit))
+        {
+            Vector3 point = hit.point;
+            point.y += 0.2f;
+            _hitGround.transform.position = point;
+            _hitGround.SetActive(false);
+            _hitGround.SetActive(true);
+        }
+    }
+
+    private void ShowSelector( HexUnit unit, bool bShow)
+    {
+        if(unit)
+        {
+            _selectObj.transform.parent = unit.transform;
+            _selectObj.transform.localPosition = Vector3.up * 0.2f;
+        }
+        _selectObj.SetActive(bShow);
     }
 
     bool AskCreateUnit(string unitName)
@@ -165,27 +223,44 @@ public class PanelRoomMain : MonoBehaviour
     }
 
     void DoSelection () {
-        hexGrid.ClearPath();
+        hexmapHelper.hexGrid.ClearPath();
         UpdateCurrentCell();
-        if (currentCell) {
+        if (currentCell)
+        {
+            if(selectedUnit)
+                hexmapHelper.EnableFollowCamera(selectedUnit, false);
+            else
+            {
+                ShowSelector(null, false);
+            }
             selectedUnit = currentCell.Unit;
+            if(_isFollowCamera && selectedUnit)
+                hexmapHelper.EnableFollowCamera(selectedUnit, true);
+            if (selectedUnit)
+            {
+                ShowSelector(selectedUnit, true);
+            }
+        }
+        else
+        {
+            ShowSelector(null, false);
         }
     }
 
     void DoPathfinding (bool calc = false) {
         if (UpdateCurrentCell() || calc) {
-            if (currentCell && selectedUnit.IsValidDestination(currentCell)) {
-                hexGrid.FindPath(selectedUnit.Location, currentCell, selectedUnit);
+            if (currentCell && selectedUnit && selectedUnit.IsValidDestination(currentCell)) {
+                hexmapHelper.hexGrid.FindPath(selectedUnit.Location, currentCell, selectedUnit);
             }
             else {
-                hexGrid.ClearPath();
+                hexmapHelper.hexGrid.ClearPath();
             }
         }
     }
 
     void AskMove()
     {
-        if (!hexGrid.HasPath)
+        if (!hexmapHelper.hexGrid.HasPath)
             return;
         if (currentCell == null || selectedUnit == null)
             return;
@@ -211,7 +286,7 @@ public class PanelRoomMain : MonoBehaviour
     {
         DoPathfinding(true);
         
-        if (!hexGrid.HasPath)
+        if (!hexmapHelper.hexGrid.HasPath)
             return;
         if (currentCell == null || selectedUnit == null)
             return;
@@ -221,8 +296,8 @@ public class PanelRoomMain : MonoBehaviour
         var ab = GameRoomManager.Instance.RoomLogic.ActorManager.GetPlayer(av.ActorId);
         if (ab == null)
             return;
-        HexCell newCell = hexGrid.GetCell(currentCell.coordinates.X, currentCell.coordinates.Z);
-        HexCell newCell2 = hexGrid.GetCell(currentCell.Position);
+        HexCell newCell = hexmapHelper.hexGrid.GetCell(currentCell.coordinates.X, currentCell.coordinates.Z);
+        HexCell newCell2 = hexmapHelper.hexGrid.GetCell(currentCell.Position);
         if (newCell.Position != currentCell.Position)
         {
             Debug.LogError($"Fuck Hexmap!!! - Orgin<{currentCell.coordinates.X},{currentCell.coordinates.Z}> - New<{newCell.coordinates.X},{newCell.coordinates.Z}>");
@@ -298,8 +373,8 @@ public class PanelRoomMain : MonoBehaviour
     public void ToggleShowLabel()
     {
         bool visible = _togShowLabel.isOn;
-        hexGrid.showLabel = visible;
-        hexGrid.OnShowLabels(visible);
+        hexmapHelper.hexGrid.showLabel = visible;
+        hexmapHelper.hexGrid.OnShowLabels(visible);
     }
     public void ToggleAI(bool isOnOn)
     {
@@ -314,5 +389,17 @@ public class PanelRoomMain : MonoBehaviour
             Debug.Log("AI is Off!!!");
         }
     }
+
+    public void ToggleFollowCamera()
+    {
+        bool bFollow = _togFollowCamera.isOn;
+        if (selectedUnit)
+        {
+            hexmapHelper.EnableFollowCamera(selectedUnit, bFollow);
+        }
+
+        _isFollowCamera = bFollow;
+    }
+
     #endregion
 }
