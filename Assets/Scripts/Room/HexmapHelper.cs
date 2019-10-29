@@ -373,6 +373,8 @@ public class HexmapHelper : MonoBehaviour
 
     public void EnableFollowCamera(HexUnit unit, bool bEnable)
     {
+        if (!unit)
+            return;
         unit.transform.FindChild("CameraFollow").gameObject.SetActive(bEnable);
     }
 

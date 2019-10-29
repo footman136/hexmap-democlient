@@ -90,6 +90,7 @@ public class PanelRoomMain : MonoBehaviour
                 soldierIndex = soldierIndex % 24;
                 if (!ret)
                     SetCommand(CommandType.CMD_NONE);
+                ShowSelector(selectedUnit, false);
                 selectedUnit = null;
             }
         }
@@ -100,6 +101,7 @@ public class PanelRoomMain : MonoBehaviour
                 var ret = AskDestroyUnit();
                 if (!ret)
                     SetCommand(CommandType.CMD_NONE);
+                ShowSelector(selectedUnit, false);
                 selectedUnit = null;
             }
         }
@@ -168,12 +170,14 @@ public class PanelRoomMain : MonoBehaviour
 
     private void ShowSelector( HexUnit unit, bool bShow)
     {
+        _selectObj.SetActive(bShow);
         if(unit)
         {
+            bShow = bShow & _isFollowCamera;
             _selectObj.transform.parent = unit.transform;
             _selectObj.transform.localPosition = Vector3.up * 0.2f;
+            hexmapHelper.EnableFollowCamera(unit, bShow);
         }
-        _selectObj.SetActive(bShow);
     }
 
     bool AskCreateUnit(string unitName)
@@ -227,19 +231,9 @@ public class PanelRoomMain : MonoBehaviour
         UpdateCurrentCell();
         if (currentCell)
         {
-            if(selectedUnit)
-                hexmapHelper.EnableFollowCamera(selectedUnit, false);
-            else
-            {
-                ShowSelector(null, false);
-            }
+            ShowSelector(selectedUnit, false);
             selectedUnit = currentCell.Unit;
-            if(_isFollowCamera && selectedUnit)
-                hexmapHelper.EnableFollowCamera(selectedUnit, true);
-            if (selectedUnit)
-            {
-                ShowSelector(selectedUnit, true);
-            }
+            ShowSelector(selectedUnit, true);
         }
         else
         {
