@@ -45,14 +45,30 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   urbanCollections:
   - prefabs:
-    - {fileID: 4000011812086372, guid: 21b1020286582424ab6d62085ed5ee87, type: 3}
-    - {fileID: 4000011812086372, guid: 5d26578fd32c84d1ab4d755ab7f23577, type: 3}
+    - {fileID: 400000, guid: b596d1abfc9216b4cbb6d937a3c94d91, type: 3}
+    - {fileID: 400000, guid: f7938e210a26ec34b93aef6e604d497c, type: 3}
+    - {fileID: 400000, guid: 1b1398590bb5cb9479c6daca5b50e330, type: 3}
   - prefabs:
-    - {fileID: 4000013436407900, guid: 89adbf41f320f4141964bfa388ba2865, type: 3}
-    - {fileID: 4000013436407900, guid: 2fad1b4af64d84c8e810f040299dec1e, type: 3}
+    - {fileID: 400000, guid: bf85a22c1367d4c46baef3075d46f8be, type: 3}
+    - {fileID: 400000, guid: f7938e210a26ec34b93aef6e604d497c, type: 3}
+    - {fileID: 400000, guid: 1b1398590bb5cb9479c6daca5b50e330, type: 3}
   - prefabs:
-    - {fileID: 4000013997932258, guid: bca46d0c670c447a0a5c7208498000ab, type: 3}
-    - {fileID: 4000013997932258, guid: 4c4b904516a814dc7b4433a49713c96f, type: 3}
+    - {fileID: 400000, guid: b596d1abfc9216b4cbb6d937a3c94d91, type: 3}
+    - {fileID: 400000, guid: c9c27007c9c7c5a4d98a1c28c963f1a3, type: 3}
+    - {fileID: 400000, guid: 1b1398590bb5cb9479c6daca5b50e330, type: 3}
+  urbanEnemyCollections:
+  - prefabs:
+    - {fileID: 400000, guid: bb0fed20a9bbbf544a36238d599c7c8c, type: 3}
+    - {fileID: 400000, guid: 3e69b669423a71c4c844b349a93a60f6, type: 3}
+    - {fileID: 400000, guid: e29ef4404540f304fade286231d27f7d, type: 3}
+  - prefabs:
+    - {fileID: 400000, guid: 51bfae29db73d4f4ab8496877c2fbf31, type: 3}
+    - {fileID: 400000, guid: 3e69b669423a71c4c844b349a93a60f6, type: 3}
+    - {fileID: 400000, guid: e29ef4404540f304fade286231d27f7d, type: 3}
+  - prefabs:
+    - {fileID: 400000, guid: bb0fed20a9bbbf544a36238d599c7c8c, type: 3}
+    - {fileID: 400000, guid: 76399e0483d727a4a80e28310b9b6b3c, type: 3}
+    - {fileID: 400000, guid: e29ef4404540f304fade286231d27f7d, type: 3}
   farmCollections:
   - prefabs:
     - {fileID: 4000011812086372, guid: 694c4113acb734a299b240d50494600c, type: 3}
@@ -65,14 +81,28 @@ MonoBehaviour:
     - {fileID: 4000013997932258, guid: 5c6c17863f6cc4021bdced61fe712fb1, type: 3}
   plantCollections:
   - prefabs:
-    - {fileID: 4000011812086372, guid: e64480d9f2c5c42439cac262a22f542f, type: 3}
-    - {fileID: 4000011812086372, guid: 3b3f395112d654a6a85e97ebefaf4d91, type: 3}
+    - {fileID: 400000, guid: 71bdd0cccd41d964199f95e8b22b99a6, type: 3}
+    - {fileID: 400000, guid: 10a24eba343857a4ca4f6a6f652ed884, type: 3}
   - prefabs:
-    - {fileID: 4000013436407900, guid: db065bb94d2684adf9f80eb695f76fed, type: 3}
-    - {fileID: 4000013436407900, guid: 0e9a5fa1d0db54bd09163d3d6509d210, type: 3}
+    - {fileID: 400000, guid: e863959f5d37d394fab218df2e2063b3, type: 3}
+    - {fileID: 400000, guid: 33fd4f4e75f83aa4d8468c34909eda1c, type: 3}
   - prefabs:
-    - {fileID: 4000013997932258, guid: eeb3748a5f0ed40f3ad86263ab781421, type: 3}
-    - {fileID: 4000013997932258, guid: 2fe8d139a980145f997e9f4c3e1c2606, type: 3}
+    - {fileID: 400000, guid: f396cc8b0337fa347815f7b542551af4, type: 3}
+    - {fileID: 400000, guid: d3dccfcf9b2bdf0479388b1837060c34, type: 3}
+    - {fileID: 400000, guid: 0514dd5db0a18ca45bbf8b8e457e02eb, type: 3}
+  mineCollections:
+  - prefabs:
+    - {fileID: 400000, guid: a21916d27181f8d43b8c16a398335544, type: 3}
+    - {fileID: 400000, guid: 95331a12343f59741adcd7f8da44b060, type: 3}
+    - {fileID: 400000, guid: 197d9a42b60c84b478415cbbd5eb4017, type: 3}
+  - prefabs:
+    - {fileID: 400000, guid: f147c33177c01254ab3513775fbaba79, type: 3}
+    - {fileID: 400000, guid: fe55626e5798fb14a96c593512881f18, type: 3}
+    - {fileID: 400000, guid: bd2cf582206e1f34d9834ed5fc3e8e80, type: 3}
+  - prefabs:
+    - {fileID: 400000, guid: e9574798fac16ee47801be5427c49e05, type: 3}
+    - {fileID: 400000, guid: fefd526ffbf42c9419208fe567fd841b, type: 3}
+    - {fileID: 400000, guid: 4af79e7e702968a4b9373b8765571659, type: 3}
   walls: {fileID: 114000013599494320}
   wallTower: {fileID: 4000011665626236, guid: 1589993158ba34786b54f448bdeb6085, type: 3}
   bridge: {fileID: 4000012598710820, guid: 234387bb7219042168570e127fbd5b58, type: 3}
@@ -114,7 +144,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0.1}
+  m_AnchoredPosition: {x: 0, y: 0.5}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
 --- !u!223 &223000012302594078

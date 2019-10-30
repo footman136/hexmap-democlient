@@ -14,6 +14,8 @@ public class PanelNewMapMenu : MonoBehaviour {
 	[SerializeField] private InputField _name;
 	[SerializeField] private InputField _countMax;
 	[SerializeField] private HexmapHelper _hexmapHelper;
+	[SerializeField] private Toggle _togGen;
+	[SerializeField] private Toggle _togWrap;
 
 	bool generateMaps = true;
 
@@ -22,12 +24,13 @@ public class PanelNewMapMenu : MonoBehaviour {
 	const int mapFileVersion = 5;
 	
 
-	public void ToggleMapGeneration (bool toggle) {
-		generateMaps = toggle;
+	public void ToggleMapGeneration ()
+	{
+		generateMaps = _togGen.isOn;
 	}
 
-	public void ToggleWrapping (bool toggle) {
-		wrapping = toggle;
+	public void ToggleWrapping () {
+		wrapping = _togWrap.isOn;
 	}
 
 	public void Open () {

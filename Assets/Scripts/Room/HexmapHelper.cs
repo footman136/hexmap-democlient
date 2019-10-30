@@ -14,7 +14,7 @@ public class HexmapHelper : MonoBehaviour
     
     public Material terrainMaterial;
     
-    const int mapFileVersion = 5;
+    const int mapFileVersion = 6;
 
     #region 初始化
     

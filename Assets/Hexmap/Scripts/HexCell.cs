@@ -10,7 +10,9 @@ public class HexCell : MonoBehaviour {
 
 	public HexGridChunk chunk;
 
-	public static bool showLabel;
+	public HexResource Res;
+
+	public static int showLabel;
 
 	public int Index { get; set; }
 
@@ -192,6 +194,18 @@ public class HexCell : MonoBehaviour {
 		}
 	}
 
+	public int MineLevel {
+		get {
+			return mineLevel;
+		}
+		set {
+			if (mineLevel != value) {
+				mineLevel = value;
+				RefreshSelfOnly();
+			}
+		}
+	}
+
 	public int SpecialIndex {
 		get {
 			return specialIndex;
@@ -284,7 +298,7 @@ public class HexCell : MonoBehaviour {
 	int elevation = int.MinValue;
 	int waterLevel;
 
-	int urbanLevel, farmLevel, plantLevel;
+	int urbanLevel, farmLevel, plantLevel, mineLevel;
 
 	int specialIndex;
 
@@ -574,22 +588,32 @@ public class HexCell : MonoBehaviour {
 		IsExplored = header >= 3 ? reader.ReadBoolean() : false;
 		ShaderData.RefreshVisibility(this);
 
-		if (showLabel)
-		{
-			SetLabel(GetLabelStr());
-		}
+		SetLabel(GetLabelStr(showLabel));
 	}
 
-	public string GetLabelStr()
+	public string GetLabelStr(int showLabel)
 	{
-		bool hasUnit = Unit != null;
-		string hasUnitStr = "";
-		if (hasUnit)
+		string label = "";
+		if (showLabel == 1)
 		{
-			hasUnitStr = ",<color=#FF0000FF>T</color>";
+			bool hasUnit = Unit != null;
+			string hasUnitStr = "";
+			if (hasUnit)
+			{
+				hasUnitStr = ",<color=#FF0000FF>T</color>";
+			}
+
+			label = $"{coordinates.X},{coordinates.Z}{hasUnitStr}";
+		}
+		else if(showLabel == 2)
+		{
+			if (Res.GetAmount(Res.ResType) > 0)
+			{
+				string[] resTypeStr = new string[] {"木", "粮", "铁"};
+				label = $"{resTypeStr[Res.ResType]}\n{Res.GetAmount(Res.ResType)}";
+			}
 		}
 
-		string label = $"{coordinates.X},{coordinates.Z}{hasUnitStr}";
 		return label;
 	}
 
@@ -611,5 +635,10 @@ public class HexCell : MonoBehaviour {
 
 	public void SetMapData (float data) {
 		ShaderData.SetMapData(this, data);
+	}
+
+	public void AddRes(HexResource res)
+	{
+		Res = res;
 	}
 }

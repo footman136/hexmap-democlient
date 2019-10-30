@@ -42,9 +42,9 @@ public class GameRoomManager : ClientScript
         {// 单独运行本场景的时候，CliengtManager不存在
             roomData.Address = "192.168.20.131";
             roomData.Port = 8888;
-            roomData.RoomName = "遗落の战境5";
+            roomData.RoomName = "遗落の战境20";
             roomData.IsCreatingRoom = false;
-            roomData.RoomId = 4896976416507178390;
+            roomData.RoomId = 4787989458105721498;
         }
 
         _address = roomData.Address;

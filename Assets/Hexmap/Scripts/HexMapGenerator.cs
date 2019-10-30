@@ -116,10 +116,11 @@ public class HexMapGenerator : MonoBehaviour {
 	List<HexDirection> flowDirections = new List<HexDirection>();
 
 	struct Biome {
-		public int terrain, plant;
+		public int terrain, farm, plant;
 
-		public Biome (int terrain, int plant) {
+		public Biome (int terrain, int farm, int plant) {
 			this.terrain = terrain;
+			this.farm = farm;
 			this.plant = plant;
 		}
 	}
@@ -128,11 +129,16 @@ public class HexMapGenerator : MonoBehaviour {
 
 	static float[] moistureBands = { 0.12f, 0.28f, 0.85f };
 
+	/// <summary>
+	/// 生物群落-树木/农田/：水分作为X维度，将温度作为Y维度
+	/// Biome(地形，农田等级，树木等级)
+	/// Sand-0; Grass-1; Mud-2; Stone-3; Snow-4
+	/// </summary>
 	static Biome[] biomes = {
-		new Biome(0, 0), new Biome(4, 0), new Biome(4, 0), new Biome(4, 0),
-		new Biome(0, 0), new Biome(2, 0), new Biome(2, 1), new Biome(2, 2),
-		new Biome(0, 0), new Biome(1, 0), new Biome(1, 1), new Biome(1, 2),
-		new Biome(0, 0), new Biome(1, 1), new Biome(1, 2), new Biome(1, 3)
+		new Biome(0, 0, 0), new Biome(4, 0, 0), new Biome(4, 0, 0), new Biome(4, 0, 0),
+		new Biome(0, 0, 0), new Biome(2, 0, 2), new Biome(2, 0, 2), new Biome(2, 0, 3),
+		new Biome(0, 0, 0), new Biome(1, 0, 1), new Biome(1, 1, 0), new Biome(1, 2, 0),
+		new Biome(0, 0, 0), new Biome(1, 1, 0), new Biome(1, 2, 0), new Biome(1, 3, 0)
 	};
 
 	public void GenerateMap (int x, int z, bool wrapping) {
@@ -159,6 +165,10 @@ public class HexMapGenerator : MonoBehaviour {
 		CreateClimate();
 		CreateRivers();
 		SetTerrainType();
+		
+		// 配置初始资源数量。Oct.30.2019. Liu Gang.
+		InitResourceData();
+		
 		for (int i = 0; i < cellCount; i++) {
 			grid.GetCell(i).SearchPhase = 0;
 		}
@@ -669,6 +679,7 @@ public class HexMapGenerator : MonoBehaviour {
 				}
 				Biome cellBiome = biomes[t * 4 + m];
 
+				// Sand-0; Grass-1; Mud-2; Stone-3; Snow-4
 				if (cellBiome.terrain == 0) {
 					if (cell.Elevation >= rockDesertElevation) {
 						cellBiome.terrain = 3;
@@ -678,15 +689,28 @@ public class HexMapGenerator : MonoBehaviour {
 					cellBiome.terrain = 4;
 				}
 
-				if (cellBiome.terrain == 4) {
+				if (cellBiome.terrain == 4 || cellBiome.terrain == 0 || cellBiome.terrain == 3) {
 					cellBiome.plant = 0;
+					cellBiome.farm = 0;
 				}
 				else if (cellBiome.plant < 3 && cell.HasRiver) {
 					cellBiome.plant += 1;
+					cellBiome.farm += 1;
 				}
 
+				// 只能有一种植被存在：树木或农田
+				if (cellBiome.plant > cellBiome.farm)
+					cellBiome.farm = 0;
+				else if (cellBiome.plant <= cellBiome.farm)
+					cellBiome.plant = 0;
+				if (cellBiome.plant > 3)
+					cellBiome.plant = 3;
+				if (cellBiome.farm > 3)
+					cellBiome.farm = 3;
+					
 				cell.TerrainTypeIndex = cellBiome.terrain;
 				cell.PlantLevel = cellBiome.plant;
+				cell.FarmLevel = cellBiome.farm;
 			}
 			else {
 				int terrain;
@@ -737,6 +761,9 @@ public class HexMapGenerator : MonoBehaviour {
 				cell.TerrainTypeIndex = terrain;
 			}
 		}
+		
+		// 初始化矿脉资源
+		SetMineLevel();
 	}
 
 	float DetermineTemperature (HexCell cell) {
@@ -770,5 +797,68 @@ public class HexMapGenerator : MonoBehaviour {
 			Random.Range(region.xMin, region.xMax),
 			Random.Range(region.zMin, region.zMax)
 		);
+	}
+
+	/// <summary>
+	/// 生成初始资源数据。Oct.30.2019. Liu Gang.
+	/// 配置了资源的数量以后还会影响地图表现，也就是会修改HexCell里的数据
+	/// 因为和植被（树木/农田）资源不一样，这里仅初始化矿山资源
+	/// </summary>
+	static float[] oreBands = { 0.1f, 0.3f, 0.6f, 1.0f };
+	void SetMineLevel()
+	{
+		var channel = Random.Range(0, 4);
+		for (int i = 0; i < cellCount; ++i)
+		{
+			HexCell cell = grid.GetCell(i);
+			if (cell.TerrainTypeIndex == 3)
+			{
+				float level = HexMetrics.SampleNoise(cell.Position)[channel];
+				for(int j = oreBands.Length - 1; j >= 0; --j)
+				{
+					if (level >= oreBands[j])
+					{
+						cell.MineLevel = j;
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	// 根据在HexCell上已经配置好的Plane,Farm,Mine的等级，生成资源数据层
+	// 木材-0；粮食-1；铁矿-2
+	void InitResourceData()
+	{
+		int[] Values = new int[] { 0, 100, 500, 1000};
+		for (int i = 0; i < cellCount; ++i)
+		{
+			HexCell cell = grid.GetCell(i);
+			if (cell.PlantLevel > 0)
+			{
+				if (cell.FarmLevel != 0 || cell.MineLevel != 0)
+				{
+					Debug.LogError("HexMapGenerator - InitResourceData - 一个格子只能保存一种资源。（1）");
+				}
+
+				cell.Res.ResType = 0;
+				cell.Res.SetAmount(0, Values[cell.PlantLevel]);
+			}
+			else if (cell.FarmLevel > 0)
+			{
+				if (cell.MineLevel != 0)
+				{
+					Debug.LogError("HexMapGenerator - InitResourceData - 一个格子只能保存一种资源。（2）");
+				}
+				
+				cell.Res.ResType = 1;
+				cell.Res.SetAmount(1, Values[cell.FarmLevel]);
+			}
+			else if (cell.MineLevel > 0)
+			{
+				cell.Res.ResType = 2;
+				cell.Res.SetAmount(2, Values[cell.MineLevel]);
+			}
+		}
 	}
 }

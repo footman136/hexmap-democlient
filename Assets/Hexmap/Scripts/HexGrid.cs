@@ -10,7 +10,7 @@ public class HexGrid : MonoBehaviour {
 
 	public bool wrapping;
 
-	public bool showLabel; // 增加是否显示label的开关
+	public int showLabel; // 增加是否显示label的开关，0-不显示，1-显示坐标；2-显示资源
 
 	public HexCell cellPrefab;
 	public Text cellLabelPrefab;
@@ -45,6 +45,9 @@ public class HexGrid : MonoBehaviour {
 	List<HexUnit> units = new List<HexUnit>();
 
 	HexCellShaderData cellShaderData;
+	
+	// Oct.30.2019. Liu Gang
+	HexResource[] resLayer; // 资源数据
 
 	void Awake () {
 		HexMetrics.noiseSource = noiseSource;
@@ -98,6 +101,7 @@ public class HexGrid : MonoBehaviour {
 		cellShaderData.Initialize(cellCountX, cellCountZ);
 		CreateChunks();
 		CreateCells();
+		CreateResources();
 		return true;
 	}
 
@@ -123,6 +127,17 @@ public class HexGrid : MonoBehaviour {
 		for (int z = 0, i = 0; z < cellCountZ; z++) {
 			for (int x = 0; x < cellCountX; x++) {
 				CreateCell(x, z, i++);
+			}
+		}
+	}
+
+	void CreateResources()
+	{
+		resLayer = new HexResource[cellCountZ * cellCountX];
+
+		for (int z = 0, i = 0; z < cellCountZ; z++) {
+			for (int x = 0; x < cellCountX; x++) {
+				CreateResource(x, z, i++);
 			}
 		}
 	}
@@ -242,9 +257,14 @@ public class HexGrid : MonoBehaviour {
 		cell.Elevation = 0;
 
 		AddCellToChunk(x, z, cell);
-		
-		if(showLabel)
-			cell.SetLabel(cell.GetLabelStr());
+
+		cell.SetLabel(cell.GetLabelStr(showLabel));
+	}
+
+	void CreateResource(int x, int y, int i)
+	{
+		HexResource res = resLayer[i] = new HexResource();
+		AddResToCell(i, res);
 	}
 
 	void AddCellToChunk (int x, int z, HexCell cell) {
@@ -255,6 +275,11 @@ public class HexGrid : MonoBehaviour {
 		int localX = x - chunkX * HexMetrics.chunkSizeX;
 		int localZ = z - chunkZ * HexMetrics.chunkSizeZ;
 		chunk.AddCell(localX + localZ * HexMetrics.chunkSizeX, cell);
+	}
+
+	void AddResToCell(int i, HexResource res)
+	{
+		cells[i].AddRes(res);
 	}
 
 	public void Save (BinaryWriter writer) {
@@ -269,6 +294,22 @@ public class HexGrid : MonoBehaviour {
 		writer.Write(units.Count);
 		for (int i = 0; i < units.Count; i++) {
 			units[i].Save(writer);
+		}
+
+		// header version 6，保存资源数据
+		int resCount = 0;
+		for (int i = 0; i < cells.Length; i++)
+		{
+			if (resLayer[i].GetAmount(resLayer[i].ResType) > 0)
+				resCount++;
+		}
+		writer.Write(resCount);
+		for (int i = 0; i < cells.Length; i++) {
+			if (resLayer[i].GetAmount(resLayer[i].ResType) > 0)
+			{
+				writer.Write(i);
+				resLayer[i].Save(writer);
+			}
 		}
 	}
 
@@ -307,6 +348,17 @@ public class HexGrid : MonoBehaviour {
 				HexUnit.Load(reader, this);
 			}
 		}
+		
+		// header version 6
+		if (header >= 6)
+		{
+			int resCount = reader.ReadInt32();
+			for(int i = 0; i < resCount; i++)
+			{
+				int index = reader.ReadInt32();
+				resLayer[index].Load(reader, header);
+			}
+		}
 
 		cellShaderData.ImmediateMode = originalImmediateMode;
 	}
@@ -328,14 +380,7 @@ public class HexGrid : MonoBehaviour {
 		if (currentPathExists) {
 			HexCell current = currentPathTo;
 			while (current != currentPathFrom) {
-				if (showLabel)
-				{
-					current.SetLabel(current.GetLabelStr());
-				}
-				else
-				{
-					current.SetLabel(null);
-				}
+				current.SetLabel(current.GetLabelStr(showLabel));
 				current.DisableHighlight();
 				current = current.PathFrom;
 			}
@@ -549,29 +594,12 @@ public class HexGrid : MonoBehaviour {
 		}
 	}
 
-	public void OnShowLabels(bool visible)
+	public void OnShowLabels(int showLabel)
 	{
 		string msg = null;
-		if (visible)
+		for (int i = 0; i < cells.Length; ++i)
 		{
-			for (int i = 0; i < cells.Length; ++i)
-			{
-				if (showLabel)
-				{
-					bool hasUnit = cells[i].Unit != null;
-					string hasUnitStr = "F";
-					if (hasUnit)
-						hasUnitStr = "T";
-					cells[i].SetLabel(cells[i].GetLabelStr());
-				}
-			}
-		}
-		else
-		{
-			for (int i = 0; i < cells.Length; ++i)
-			{
-				cells[i].SetLabel(null);
-			}
+			cells[i].SetLabel(cells[i].GetLabelStr(showLabel));
 		}
 	}
 

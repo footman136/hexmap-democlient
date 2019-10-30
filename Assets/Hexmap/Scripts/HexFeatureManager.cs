@@ -3,7 +3,7 @@
 public class HexFeatureManager : MonoBehaviour {
 
 	public HexFeatureCollection[]
-		urbanCollections, farmCollections, plantCollections;
+		urbanCollections, urbanEnemyCollections, farmCollections, plantCollections, mineCollections;
 
 	public HexMesh walls;
 
@@ -63,34 +63,30 @@ public class HexFeatureManager : MonoBehaviour {
 		Transform prefab = PickPrefab(
 			urbanCollections, cell.UrbanLevel, hash.a, hash.d
 		);
-		Transform otherPrefab = PickPrefab(
-			farmCollections, cell.FarmLevel, hash.b, hash.d
-		);
-		float usedHash = hash.a;
-		if (prefab) {
-			if (otherPrefab && hash.b < hash.a) {
-				prefab = otherPrefab;
-				usedHash = hash.b;
+		if (!prefab)
+		{
+			prefab = PickPrefab(
+				farmCollections, cell.FarmLevel, hash.b, hash.d
+			);
+		}
+		if (!prefab)
+		{
+			prefab = PickPrefab(
+				plantCollections, cell.PlantLevel, hash.c, hash.d
+			);
+		}
+		if (!prefab)
+		{
+			prefab = PickPrefab(
+				mineCollections, cell.MineLevel, hash.c, hash.d
+			);
+			if (prefab)
+			{
+				Debug.Log("铁矿初始化。。。");
 			}
 		}
-		else if (otherPrefab) {
-			prefab = otherPrefab;
-			usedHash = hash.b;
-		}
-		otherPrefab = PickPrefab(
-			plantCollections, cell.PlantLevel, hash.c, hash.d
-		);
-		if (prefab) {
-			if (otherPrefab && hash.c < usedHash) {
-				prefab = otherPrefab;
-			}
-		}
-		else if (otherPrefab) {
-			prefab = otherPrefab;
-		}
-		else {
+		if (!prefab)
 			return;
-		}
 
 		Transform instance = Instantiate(prefab);
 		position.y += instance.localScale.y * 0.5f;
@@ -99,6 +95,51 @@ public class HexFeatureManager : MonoBehaviour {
 		instance.SetParent(container, false);
 	}
 
+//	public void AddFeature (HexCell cell, Vector3 position) {
+//		if (cell.IsSpecial) {
+//			return;
+//		}
+//
+//		HexHash hash = HexMetrics.SampleHashGrid(position);
+//		Transform prefab = PickPrefab(
+//			urbanCollections, cell.UrbanLevel, hash.a, hash.d
+//		);
+//		Transform otherPrefab = PickPrefab(
+//			farmCollections, cell.FarmLevel, hash.b, hash.d
+//		);
+//		float usedHash = hash.a;
+//		if (prefab) {
+//			if (otherPrefab && hash.b < hash.a) {
+//				prefab = otherPrefab;
+//				usedHash = hash.b;
+//			}
+//		}
+//		else if (otherPrefab) {
+//			prefab = otherPrefab;
+//			usedHash = hash.b;
+//		}
+//		otherPrefab = PickPrefab(
+//			plantCollections, cell.PlantLevel, hash.c, hash.d
+//		);
+//		if (prefab) {
+//			if (otherPrefab && hash.c < usedHash) {
+//				prefab = otherPrefab;
+//			}
+//		}
+//		else if (otherPrefab) {
+//			prefab = otherPrefab;
+//		}
+//		else {
+//			return;
+//		}
+//
+//		Transform instance = Instantiate(prefab);
+//		position.y += instance.localScale.y * 0.5f;
+//		instance.localPosition = HexMetrics.Perturb(position);
+//		instance.localRotation = Quaternion.Euler(0f, 360f * hash.e, 0f);
+//		instance.SetParent(container, false);
+//	}
+	
 	public void AddSpecialFeature (HexCell cell, Vector3 position) {
 		HexHash hash = HexMetrics.SampleHashGrid(position);
 		Transform instance = Instantiate(special[cell.SpecialIndex - 1]);

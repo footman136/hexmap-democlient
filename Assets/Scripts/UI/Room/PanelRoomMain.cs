@@ -21,6 +21,7 @@ public class PanelRoomMain : MonoBehaviour
     [SerializeField] private Toggle _togShowLabel;
     [SerializeField] private Toggle _togAi;
     [SerializeField] private Toggle _togFollowCamera;
+    [SerializeField] private Toggle _togShowRes;
     [SerializeField] private Material terrainMaterial;
     
     HexCell currentCell;
@@ -367,8 +368,8 @@ public class PanelRoomMain : MonoBehaviour
     public void ToggleShowLabel()
     {
         bool visible = _togShowLabel.isOn;
-        hexmapHelper.hexGrid.showLabel = visible;
-        hexmapHelper.hexGrid.OnShowLabels(visible);
+        hexmapHelper.hexGrid.showLabel = visible?1:0;
+        hexmapHelper.hexGrid.OnShowLabels(visible?1:0);
     }
     public void ToggleAI(bool isOnOn)
     {
@@ -393,6 +394,13 @@ public class PanelRoomMain : MonoBehaviour
         }
 
         _isFollowCamera = bFollow;
+    }
+
+    public void ToggleShowRes()
+    {
+        bool visible = _togShowRes.isOn;
+        hexmapHelper.hexGrid.showLabel = visible?2:0;
+        hexmapHelper.hexGrid.OnShowLabels(visible?2:0);
     }
 
     #endregion

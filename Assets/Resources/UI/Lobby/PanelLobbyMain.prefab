@@ -506,7 +506,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hexGrid: {fileID: 0}
-  terrainMaterial: {fileID: 0}
+  hexCamera: {fileID: 0}
+  terrainMaterial: {fileID: 2100000, guid: 6a3f5c7892e4b478e9e745026e6fe9f7, type: 2}
 --- !u!1 &1013939148
 GameObject:
   m_ObjectHideFlags: 0
@@ -3113,7 +3114,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.00004268109}
+  m_AnchoredPosition: {x: 0, y: 0.00017156512}
   m_SizeDelta: {x: 0, y: 60}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &2876796149597995460
@@ -4108,7 +4109,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 2876796150960408558}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.9987282
+  m_Size: 0.96349144
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -4480,6 +4481,8 @@ MonoBehaviour:
   _name: {fileID: 380646180}
   _countMax: {fileID: 27656267}
   _hexmapHelper: {fileID: 772698408}
+  _togGen: {fileID: 2876796149824801862}
+  _togWrap: {fileID: 2876796149188073588}
 --- !u!1 &2876796150152615206
 GameObject:
   m_ObjectHideFlags: 0

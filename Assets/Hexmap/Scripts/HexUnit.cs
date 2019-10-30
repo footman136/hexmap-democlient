@@ -153,7 +153,7 @@ public class HexUnit : MonoBehaviour {
 					location.Unit = null;
 					location = locationNew;
 					location.Unit = this;
-					location.SetLabel(location.GetLabelStr());
+					location.SetLabel(location.GetLabelStr(1));
 					
 					pos.y = location.Position.y;
 					transform.localPosition = pos;
@@ -177,8 +177,8 @@ public class HexUnit : MonoBehaviour {
 		location.Unit = null;
 		location = pathToTravel[pathToTravel.Count - 1];
 		location.Unit = this;
-		lastLocation.SetLabel(lastLocation.GetLabelStr());
-		location.SetLabel(location.GetLabelStr());
+		lastLocation.SetLabel(lastLocation.GetLabelStr(1));
+		location.SetLabel(location.GetLabelStr(1));
 		
 		a = c;
 		b = location.Position;
@@ -200,7 +200,7 @@ public class HexUnit : MonoBehaviour {
 				location.Unit = null;
 				location = locationNew;
 				location.Unit = this;
-				location.SetLabel(location.GetLabelStr());
+				location.SetLabel(location.GetLabelStr(1));
 				pos.y = location.Position.y;
 				transform.localPosition = pos;
 				
