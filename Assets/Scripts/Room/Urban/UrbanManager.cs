@@ -15,7 +15,7 @@ public class UrbanManager
     public UrbanCity CreateRandomCity()
     {
         int size;
-        HexCell cityCenter = SearchAnBurbanArea(out size);
+        HexCell cityCenter = SearchAnUrbanArea(out size);
         UrbanCity city = new UrbanCity()
         {
             RoomId = GameRoomManager.Instance.RoomId,
@@ -30,7 +30,36 @@ public class UrbanManager
         return city;
     }
 
-    private HexCell SearchAnBurbanArea(out int size)
+    public UrbanCity CreateCityHere(HexCell cell)
+    {
+        int size = 1;
+        bool bSuccess = TryALargeCityHere(cell);
+        if (!bSuccess)
+        {
+            bSuccess = TryASmallCityHere(cell);
+            size = 0;
+        }
+
+        if (bSuccess)
+        {
+            UrbanCity city = new UrbanCity()
+            {
+                RoomId = GameRoomManager.Instance.RoomId,
+                OwnerId = GameRoomManager.Instance.CurrentPlayer.TokenId,
+                CityId = Utils.GuidToLongId(),
+                PosX = cell.coordinates.X,
+                PosZ = cell.coordinates.Z,
+                CellIndex = cell.Index,
+                CityName = "N/A",
+                CitySize = size,
+            };
+            return city;
+        }
+
+        return null;
+    }
+
+    private HexCell SearchAnUrbanArea(out int size)
     {
         const int tryCount = 100;
         size = 0;
@@ -40,36 +69,7 @@ public class UrbanManager
             int x = Random.Range(0, _HexmapHelper.hexGrid.cellCountX);
             int y = Random.Range(0, _HexmapHelper.hexGrid.cellCountZ);
             HexCell current = _HexmapHelper.hexGrid.GetCell(x, y);
-            if (current.IsUnderwater)
-            {
-                continue;
-            }
-
-            if (current.UrbanLevel > 0)
-            {
-                continue;
-            }
-            int elevation = current.Elevation;
-            bool bSuccess = true;
-            for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
-            {
-                HexCell neighbor = current.GetNeighbor(d);
-                if (neighbor != null)
-                {
-                    if (neighbor.Elevation < elevation - 1 || neighbor.Elevation > elevation + 1)
-                    {
-                        bSuccess = false;
-                        break;
-                    }
-                }
-
-                if (neighbor.UrbanLevel > 0)
-                {
-                    bSuccess = false;
-                    break;
-                }
-            }
-
+            bool bSuccess = TryALargeCityHere(current);
             if (bSuccess)
             {
                 findCity = current;
@@ -84,26 +84,69 @@ public class UrbanManager
                 int x = Random.Range(0, _HexmapHelper.hexGrid.cellCountX);
                 int y = Random.Range(0, _HexmapHelper.hexGrid.cellCountZ);
                 HexCell current = _HexmapHelper.hexGrid.GetCell(x, y);
-                if (current.IsUnderwater)
+                bool bSuccess = TryASmallCityHere(current);
+                if (bSuccess)
                 {
-                    continue;
+                    findCity = current;
+                    break;
                 }
-
-                if (current.UrbanLevel > 0)
-                {
-                    continue;
-                }
-
-                findCity = current;
-                break;
             }
         }
-
 
         return findCity;
     }
 
-    public void AddCity(UrbanCity city)
+    public bool TryALargeCityHere(HexCell current)
+    {
+        if (current.IsUnderwater)
+        {
+            return false;
+        }
+
+        if (current.UrbanLevel > 0)
+        {
+            return false;
+        }
+        int elevation = current.Elevation;
+        bool bSuccess = true;
+        for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
+        {
+            HexCell neighbor = current.GetNeighbor(d);
+            if (neighbor != null)
+            {
+                if (neighbor.Elevation < elevation - 1 || neighbor.Elevation > elevation + 1) // 城市的周边6格高度差只能相差正负1
+                {
+                    bSuccess = false;
+                    break;
+                }
+            }
+
+            if (neighbor.UrbanLevel > 0) // 城市不能挨着
+            {
+                bSuccess = false;
+                break;
+            }
+        }
+
+        return bSuccess;
+    }
+
+    public bool TryASmallCityHere(HexCell current)
+    {
+        if (current.IsUnderwater)
+        {
+            return false;
+        }
+
+        if (current.UrbanLevel > 0)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    public void AddCity(UrbanCity city, bool isMyCity)
     {
         if (Cities.ContainsKey(city.CityId))
         {
@@ -113,7 +156,7 @@ public class UrbanManager
         {
             Cities.Add(city.CityId, city);
         }
-        _HexmapHelper.AddCity(city.CellIndex, city.CitySize);
+        _HexmapHelper.AddCity(city.CellIndex, city.CitySize, isMyCity);
     }
 
     public void RemoveCity(long cityId)

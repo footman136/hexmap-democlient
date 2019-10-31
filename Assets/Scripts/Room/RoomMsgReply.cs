@@ -57,8 +57,10 @@ public class RoomMsgReply
         PlayerEnterReply input = PlayerEnterReply.Parser.ParseFrom(bytes);
         if (input.Ret)
         {
-            if(ClientManager.Instance != null)
+            if (ClientManager.Instance != null)
+            {
                 ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.CONNECTED_ROOM);
+            }
         }
         else
         {

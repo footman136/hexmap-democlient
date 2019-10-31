@@ -128,9 +128,16 @@ public class AsynSocketClient
         /// </summary>
         private void ReceiveAsync()
         {
-            StateObject obj = new StateObject();
-            obj.TcpClient = tcpClient;
-            tcpClient.Client.BeginReceive(obj.ListData, 0, obj.ListData.Length, SocketFlags.None, ReceiveCallBack, obj);
+            try
+            {
+                StateObject obj = new StateObject();
+                obj.TcpClient = tcpClient;
+                tcpClient.Client.BeginReceive(obj.ListData, 0, obj.ListData.Length, SocketFlags.None, ReceiveCallBack, obj);
+            }
+            catch (Exception e)
+            {
+                Log($"AsynSocketClient ReceiveAsync Exception - {e}");
+            }
         }
  
         private void ReceiveCallBack(IAsyncResult ar)

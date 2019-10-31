@@ -192,14 +192,14 @@ public class HexmapHelper : MonoBehaviour
     #endregion
 
     #region 城市
-    public void AddCity(int cellIndex, int citySize)
+    public void AddCity(int cellIndex, int citySize, bool isMyCity)
     {
         HexCell current = hexGrid.GetCell(cellIndex);
         if (current)
         {
             current.Walled = true;
             current.UrbanLevel = 3;
-            //current.ClearRes(); // 把城内的其它资源都干掉
+            current.ClearRes(); // 把城内的其它资源都干掉
             current.IncreaseVisibility();
             if (citySize == 1) // 大号城市，大了一圈
             {
@@ -208,7 +208,7 @@ public class HexmapHelper : MonoBehaviour
                     HexCell neighbor = current.GetNeighbor(d);
                     neighbor.Walled = true;
                     neighbor.UrbanLevel = Random.Range(2,3);
-                    //neighbor.ClearRes();
+                    neighbor.ClearRes();
                     neighbor.IncreaseVisibility();
                 }
             }

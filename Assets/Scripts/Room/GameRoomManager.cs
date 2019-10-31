@@ -11,6 +11,8 @@ public class GameRoomManager : ClientScript
 {
     public static GameRoomManager Instance;
 
+    private const float _heartBeatInterval = 15f; // 心跳间隔(秒)
+    
     public HexmapHelper HexmapHelper;
     public RoomLogic RoomLogic;
 
@@ -62,6 +64,7 @@ public class GameRoomManager : ClientScript
             StartCoroutine(LoadMap());
 
         IsAiOn = true;
+        InvokeRepeating(nameof(HeartBeat), _heartBeatInterval, _heartBeatInterval);
     }
 
     IEnumerator LoadMap()
@@ -83,9 +86,30 @@ public class GameRoomManager : ClientScript
     {
         base.Update();
     }
+    
+    #endregion
+
+    #region 心跳
+    
+    private void StartHeartBeat()
+    {
+        InvokeRepeating(nameof(HeartBeat), 0, _heartBeatInterval);
+    }
+
+    private void StopHeartBeat()
+    {
+        CancelInvoke(nameof(HeartBeat));
+    }
+    private void HeartBeat()
+    {
+        HeartBeat output = new HeartBeat();
+        SendMsg(ROOM.HeartBeat, output.ToByteArray());
+    }
+    
     #endregion
 
     #region 收发消息
+    
     /// <summary>
     /// 新增的发送消息函数，增加了消息ID，会把前面的消息ID（4字节）和后面的消息内容组成一个包再发送
     /// </summary>
@@ -123,6 +147,7 @@ public class GameRoomManager : ClientScript
 
                 CurrentPlayer = data; // 保存当前玩家的信息在本类，这样以后不用大老远去找ClientManager
                 SendMsg(ROOM.PlayerEnter, data.ToByteArray());
+                StartHeartBeat(); // 开始心跳
             }
                 break;
             case SocketAction.Send:
@@ -130,6 +155,7 @@ public class GameRoomManager : ClientScript
             case SocketAction.Receive:
                 break;
             case SocketAction.Close:
+                StopHeartBeat();
                 UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
                 break;
             case SocketAction.Error:
@@ -142,6 +168,7 @@ public class GameRoomManager : ClientScript
     {
         RoomMsgReply.ProcessMsg(data, data.Length);
     }
+    
     #endregion
     
     #region 事件处理

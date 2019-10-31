@@ -115,7 +115,7 @@ public class RoomLogic : MonoBehaviour
         if (!input.Ret)
         {
             string msg = $"查询城市信息失败！";
-            GameRoomManager.Instance.Log("MSG: AskForCities Error - " + msg);
+            GameRoomManager.Instance.Log("MSG: AskForCitiesReply Error - " + msg);
             return;
         }
         GameRoomManager.Instance.Log($"MSG: AskForCitiesReply OK - 城市个数:{input.MyCityCount}/{input.TotalCityCount}");
@@ -126,9 +126,9 @@ public class RoomLogic : MonoBehaviour
             UrbanCity city = GameRoomManager.Instance.RoomLogic.UrbanManager.CreateRandomCity();
             if (city == null)
             {
-                string msg2 = "自动创建城市失败！";
-                UIManager.Instance.SystemTips(msg2, PanelSystemTips.MessageType.Error);
-                GameRoomManager.Instance.Log("MSG: DOWNLOAD_MAP_REPLY - " + msg2);
+                string msg = "自动创建城市失败！";
+                UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
+                GameRoomManager.Instance.Log("MSG: AskForCitiesReply - " + msg);
             }
             else
             {
@@ -144,7 +144,7 @@ public class RoomLogic : MonoBehaviour
                     CitySize = city.CitySize,
                 };
                 GameRoomManager.Instance.SendMsg(ROOM.CityAdd, output.ToByteArray());
-                GameRoomManager.Instance.Log("MSG: DOWNLOAD_MAP_REPLY - 申请创建房间...");
+                GameRoomManager.Instance.Log("MSG: AskForCitiesReply OK - 申请创建城市...");
             }
         }
         
@@ -173,7 +173,8 @@ public class RoomLogic : MonoBehaviour
             CitySize = input.CitySize,
             IsCapital = input.IsCapital,
         };
-        UrbanManager.AddCity(city);
+        bool isMyCity = input.OwnerId == GameRoomManager.Instance.CurrentPlayer.TokenId;
+        UrbanManager.AddCity(city, isMyCity);
 
         if (city.OwnerId == GameRoomManager.Instance.CurrentPlayer.TokenId
             && city.IsCapital)

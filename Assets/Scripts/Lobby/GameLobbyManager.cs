@@ -12,6 +12,8 @@ using Protobuf.Lobby;
 
 public class GameLobbyManager : ClientScript
 {
+    private const float _heartBeatInterval = 15f; // 心跳间隔(秒) 
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -34,6 +36,27 @@ public class GameLobbyManager : ClientScript
         base.Update();
     }
 
+    #region 心跳
+    
+    private void StartHeartBeat()
+    {
+        InvokeRepeating(nameof(HeartBeat), 0, _heartBeatInterval);
+    }
+
+    private void StopHeartBeat()
+    {
+        CancelInvoke(nameof(HeartBeat));
+    }
+    private void HeartBeat()
+    {
+        HeartBeat output = new HeartBeat();
+        SendMsg(LOBBY.HeartBeat, output.ToByteArray());
+    }
+    
+    #endregion
+    
+    #region 收发消息
+    
     /// <summary>
     /// 新增的发送消息函数，增加了消息ID，会把前面的消息ID（4字节）和后面的消息内容组成一个包再发送
     /// </summary>
@@ -63,6 +86,7 @@ public class GameLobbyManager : ClientScript
                     TokenId = ClientManager.Instance.Player.TokenId,
                 };
                 SendMsg(LOBBY.PlayerEnter, data.ToByteArray());
+                StartHeartBeat(); // 连接上以后开始心跳
             }
                 break;
             case SocketAction.Send:
@@ -70,6 +94,7 @@ public class GameLobbyManager : ClientScript
             case SocketAction.Receive:
                 break;
             case SocketAction.Close:
+                StopHeartBeat();
                 UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
                 break;
             case SocketAction.Error:
@@ -82,4 +107,6 @@ public class GameLobbyManager : ClientScript
     {
         LobbyMsgReply.ProcessMsg(data, data.Length);
     }
+    
+    #endregion
 }

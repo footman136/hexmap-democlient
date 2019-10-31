@@ -16,6 +16,7 @@ public class PanelRoomMain : MonoBehaviour
     [SerializeField] private Texture2D _curCreateActor;
     [SerializeField] private Texture2D _curDestroyActor;
     [SerializeField] private Texture2D _curFindPath;
+    [SerializeField] private Texture2D _curBuildCity;
     
     [SerializeField] private Toggle _togShowGrid;
     [SerializeField] private Toggle _togShowLabel;
@@ -40,6 +41,7 @@ public class PanelRoomMain : MonoBehaviour
         CMD_CREATE_ACTOR = 1,
         CMD_DESTROY_ACTOR = 2,
         CMD_FIND_PATH = 3,
+        CMD_BUILD_CITY = 4,
     };
 
     public CommandType _commandType;
@@ -101,6 +103,17 @@ public class PanelRoomMain : MonoBehaviour
             {
                 var ret = AskDestroyUnit();
                 if (!ret)
+                    SetCommand(CommandType.CMD_NONE);
+                ShowSelector(selectedUnit, false);
+                selectedUnit = null;
+            }
+        }
+        else if (_commandType == CommandType.CMD_BUILD_CITY)
+        {
+            if (Input.GetMouseButtonUp(0))
+            {
+                var ret = AskBuildCity();
+                if(!ret)
                     SetCommand(CommandType.CMD_NONE);
                 ShowSelector(selectedUnit, false);
                 selectedUnit = null;
@@ -227,6 +240,43 @@ public class PanelRoomMain : MonoBehaviour
         return false;
     }
 
+    bool AskBuildCity()
+    {
+        HexCell cell = GetCellUnderCursor();
+        if (cell && cell.Unit)
+        {
+            string msg = $"这里有部队存在,不能创建城市!";
+            UIManager.Instance.SystemTips(msg,PanelSystemTips.MessageType.Error);
+            GameRoomManager.Instance.Log("AskBuildCity - " + msg);
+            return false;
+        }
+        UrbanCity city = GameRoomManager.Instance.RoomLogic.UrbanManager.CreateCityHere(cell);
+        if (city == null)
+        {
+            string msg = "无法创建城市!";
+            UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
+            GameRoomManager.Instance.Log("AskBuildCity - " + msg);
+            return false;
+        }
+        else
+        {
+            CityAdd output = new CityAdd()
+            {
+                RoomId = city.RoomId,
+                OwnerId = city.OwnerId,
+                CityId = city.CityId,
+                PosX = city.PosX,
+                PosZ = city.PosZ,
+                CellIndex= city.CellIndex,
+                CityName = city.CityName,
+                CitySize = city.CitySize,
+            };
+            GameRoomManager.Instance.SendMsg(ROOM.CityAdd, output.ToByteArray());
+            GameRoomManager.Instance.Log("AskBuildCity - 申请创建城市...");
+        }
+        return true;
+    }
+
     void DoSelection () {
         hexmapHelper.hexGrid.ClearPath();
         UpdateCurrentCell();
@@ -329,6 +379,9 @@ public class PanelRoomMain : MonoBehaviour
             case CommandType.CMD_FIND_PATH:
                 Cursor.SetCursor(_curFindPath, Vector2.zero, CursorMode.Auto);
                 break;
+            case CommandType.CMD_BUILD_CITY:
+                Cursor.SetCursor(_curBuildCity, Vector2.zero, CursorMode.Auto);
+                break;
         }
     }
     #endregion
@@ -353,6 +406,11 @@ public class PanelRoomMain : MonoBehaviour
     public void OnClickDestroyActor()
     {
         SetCommand(CommandType.CMD_DESTROY_ACTOR);
+    }
+
+    public void OnClickBuildCity()
+    {
+        SetCommand(CommandType.CMD_BUILD_CITY);
     }
 
     public void ToggleShowGrid()
