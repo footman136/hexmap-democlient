@@ -25,8 +25,9 @@ public class PanelRoomMain : MonoBehaviour
     [SerializeField] private Toggle _togShowRes;
     [SerializeField] private Material terrainMaterial;
     
-    HexCell currentCell;
-    HexUnit selectedUnit;
+    private HexCell currentCell;
+    private HexUnit selectedUnit;
+    private UrbanCity selectedCity;
 
     private bool _isFollowCamera;
     [SerializeField] private GameObject _selectObjTemplate;
@@ -126,7 +127,7 @@ public class PanelRoomMain : MonoBehaviour
                 if (selectedUnit)
                 {
                     //AskMove();
-                    if (currentCell && currentCell.Unit == null)
+                    if (currentCell && currentCell.Unit == null && currentCell.UrbanLevel == 0)
                     {
                         ShowHitGround(Input.mousePosition);
                         MoveByMyself();
@@ -136,9 +137,13 @@ public class PanelRoomMain : MonoBehaviour
                         DoSelection();    
                     }
                 }
+                else if (selectedCity != null)
+                {
+                    DoSelection();
+                }
                 else
                 {
-                    DoSelection();    
+                    DoSelection();
                 }
             }
             else
@@ -191,6 +196,33 @@ public class PanelRoomMain : MonoBehaviour
             _selectObj.transform.parent = unit.transform;
             _selectObj.transform.localPosition = Vector3.up * 0.2f;
             hexmapHelper.EnableFollowCamera(unit, bShow);
+            SelectCircle sc = _selectObj.GetComponent<SelectCircle>();
+            if (sc)
+            {
+                sc.SetSize(2);
+            }
+        }
+    }
+
+    private void ShowSelectorCity( UrbanCity city, bool bShow)
+    {
+        _selectObj.SetActive(bShow);
+        if(city != null)
+        {
+            HexCell cell = hexmapHelper.GetCell(city.CellIndex);
+            if (cell)
+            {
+                _selectObj.transform.parent = cell.transform;
+                _selectObj.transform.localPosition = Vector3.up * 0.2f;
+                SelectCircle sc = _selectObj.GetComponent<SelectCircle>();
+                if (sc)
+                {
+                    if(city.CitySize == 1)
+                        sc.SetSize(20);
+                    else
+                        sc.SetSize(8);
+                }
+            }
         }
     }
 
@@ -285,6 +317,16 @@ public class PanelRoomMain : MonoBehaviour
             ShowSelector(selectedUnit, false);
             selectedUnit = currentCell.Unit;
             ShowSelector(selectedUnit, true);
+            if (!selectedUnit)
+            { //选择城市
+                if (currentCell.UrbanLevel > 0)
+                {
+                    var city = GameRoomManager.Instance.RoomLogic.UrbanManager.FindCity(currentCell);
+                    ShowSelectorCity(selectedCity, false);
+                    selectedCity = city;
+                    ShowSelectorCity(selectedCity, true);
+                }
+            }
         }
         else
         {

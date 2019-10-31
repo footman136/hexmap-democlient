@@ -178,6 +178,11 @@ public class HexmapHelper : MonoBehaviour
         return hexGrid.GetCell(position);
     }
 
+    public HexCell GetCell(int cellIndex)
+    {
+        return hexGrid.GetCell(cellIndex);
+    }
+
     HexCell currentCell;
     HexUnit selectedUnit;
     bool UpdateCurrentCell () {

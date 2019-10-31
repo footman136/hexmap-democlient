@@ -168,4 +168,27 @@ public class UrbanManager
             Cities.Remove(cityId);
         }
     }
+    public UrbanCity FindCity(HexCell current)
+    {
+        if (current.UrbanLevel <= 0)
+            return null;
+        foreach (var keyValue in Cities)
+        {
+            var city = keyValue.Value;
+            var cityCell = _HexmapHelper.GetCell(city.CellIndex);
+            if (cityCell == current)
+                return city;
+            for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
+            {
+                HexCell neighbor = cityCell.GetNeighbor(d);
+                if (neighbor != null)
+                {
+                    if (neighbor == current)
+                        return city;
+                }
+            }
+        }
+
+        return null;
+    }
 }

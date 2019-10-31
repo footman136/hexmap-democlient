@@ -28,4 +28,5 @@ public class UrbanCity
         CityName = cityName;
         CitySize = citySize;
     }
+
 }
