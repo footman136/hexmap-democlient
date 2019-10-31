@@ -513,13 +513,15 @@ public class HexCell : MonoBehaviour {
 		}
 	}
 
+	#region 存盘/取盘
 	public void Save (BinaryWriter writer) {
 		writer.Write((byte)terrainTypeIndex);
 		writer.Write((byte)(elevation + 127));
 		writer.Write((byte)waterLevel);
 		writer.Write((byte)urbanLevel);
-		writer.Write((byte)farmLevel);
-		writer.Write((byte)plantLevel);
+//		writer.Write((byte)farmLevel); // 添加了资源层以后,这里farm,plant,mine的数据其实不再需要保存,而使用过HexResource来保存了
+//		writer.Write((byte)plantLevel);
+//		writer.Write((byte)mineLevel);
 		writer.Write((byte)specialIndex);
 		writer.Write(walled);
 
@@ -557,8 +559,13 @@ public class HexCell : MonoBehaviour {
 		RefreshPosition();
 		waterLevel = reader.ReadByte();
 		urbanLevel = reader.ReadByte();
-		farmLevel = reader.ReadByte();
-		plantLevel = reader.ReadByte();
+		if (header < 6)
+		{
+			farmLevel = reader.ReadByte(); // 添加了资源层以后,这里farm,plant,mine的数据其实不再需要保存,而使用过HexResource来保存了
+			plantLevel = reader.ReadByte();
+			mineLevel = reader.ReadByte();
+		}
+
 		specialIndex = reader.ReadByte();
 		walled = reader.ReadBoolean();
 
@@ -590,6 +597,7 @@ public class HexCell : MonoBehaviour {
 
 		SetLabel(GetLabelStr(showLabel));
 	}
+	#endregion
 
 	public string GetLabelStr(int showLabel)
 	{
@@ -610,7 +618,7 @@ public class HexCell : MonoBehaviour {
 			if (Res.GetAmount(Res.ResType) > 0)
 			{
 				string[] resTypeStr = new string[] {"木", "粮", "铁"};
-				label = $"{resTypeStr[Res.ResType]}\n{Res.GetAmount(Res.ResType)}";
+				label = $"{resTypeStr[(int)Res.ResType]}\n{Res.GetAmount(Res.ResType)}";
 			}
 		}
 
@@ -636,9 +644,39 @@ public class HexCell : MonoBehaviour {
 	public void SetMapData (float data) {
 		ShaderData.SetMapData(this, data);
 	}
-
-	public void AddRes(HexResource res)
+	
+	#region 资源管理
+	/// <summary>
+	/// 从资源层[Res]的数据更新到farm Level,plantLevel,mineLevel
+	/// </summary>
+	public void UpdateFeatureLevelFromRes()
 	{
-		Res = res;
+		int level = Res.GetLevel(Res.ResType);
+		if (level > 0)
+		{
+			switch (Res.ResType)
+			{
+				case HexResource.RESOURCE_TYPE.WOOD:
+					plantLevel = level;
+					break;
+				case HexResource.RESOURCE_TYPE.FOOD:
+					farmLevel = level;
+					break;
+				case HexResource.RESOURCE_TYPE.IRON:
+					mineLevel = level;
+					break;
+			}
+		}
 	}
+
+	public void ClearRes()
+	{
+		Res.SetAmount(HexResource.RESOURCE_TYPE.WOOD, 0);
+		Res.SetAmount(HexResource.RESOURCE_TYPE.FOOD, 0);
+		Res.SetAmount(HexResource.RESOURCE_TYPE.IRON, 0);
+		plantLevel = 0;
+		farmLevel = 0;
+		mineLevel = 0;
+	}
+	#endregion
 }

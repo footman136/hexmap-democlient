@@ -80,10 +80,6 @@ public class HexFeatureManager : MonoBehaviour {
 			prefab = PickPrefab(
 				mineCollections, cell.MineLevel, hash.c, hash.d
 			);
-			if (prefab)
-			{
-				Debug.Log("铁矿初始化。。。");
-			}
 		}
 		if (!prefab)
 			return;

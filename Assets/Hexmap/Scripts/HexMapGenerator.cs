@@ -136,9 +136,9 @@ public class HexMapGenerator : MonoBehaviour {
 	/// </summary>
 	static Biome[] biomes = {
 		new Biome(0, 0, 0), new Biome(4, 0, 0), new Biome(4, 0, 0), new Biome(4, 0, 0),
-		new Biome(0, 0, 0), new Biome(2, 0, 2), new Biome(2, 0, 2), new Biome(2, 0, 3),
-		new Biome(0, 0, 0), new Biome(1, 0, 1), new Biome(1, 1, 0), new Biome(1, 2, 0),
-		new Biome(0, 0, 0), new Biome(1, 1, 0), new Biome(1, 2, 0), new Biome(1, 3, 0)
+		new Biome(0, 0, 0), new Biome(2, 0, 1), new Biome(2, 0, 2), new Biome(2, 0, 2),
+		new Biome(0, 0, 0), new Biome(1, 1, 0), new Biome(1, 1, 1), new Biome(1, 1, 1),
+		new Biome(0, 0, 0), new Biome(1, 2, 0), new Biome(1, 2, 0), new Biome(1, 2, 0)
 	};
 
 	public void GenerateMap (int x, int z, bool wrapping) {
@@ -698,15 +698,15 @@ public class HexMapGenerator : MonoBehaviour {
 					cellBiome.farm += 1;
 				}
 
-				// 只能有一种植被存在：树木或农田
-				if (cellBiome.plant > cellBiome.farm)
-					cellBiome.farm = 0;
-				else if (cellBiome.plant <= cellBiome.farm)
+				// 农田优先,有了农田就没有树木
+				if (cellBiome.farm>=cellBiome.plant)
 					cellBiome.plant = 0;
-				if (cellBiome.plant > 3)
-					cellBiome.plant = 3;
-				if (cellBiome.farm > 3)
-					cellBiome.farm = 3;
+				else if (cellBiome.farm < cellBiome.plant)
+					cellBiome.farm = 0;
+				if (cellBiome.plant > 0)
+					cellBiome.plant --; // 降低一个等级
+				if (cellBiome.farm > 0)
+					cellBiome.farm --;
 					
 				cell.TerrainTypeIndex = cellBiome.terrain;
 				cell.PlantLevel = cellBiome.plant;
@@ -804,7 +804,7 @@ public class HexMapGenerator : MonoBehaviour {
 	/// 配置了资源的数量以后还会影响地图表现，也就是会修改HexCell里的数据
 	/// 因为和植被（树木/农田）资源不一样，这里仅初始化矿山资源
 	/// </summary>
-	static float[] oreBands = { 0.1f, 0.3f, 0.6f, 1.0f };
+	static float[] oreBands = { 0.4f, 0.6f, 0.8f, 1.0f };
 	void SetMineLevel()
 	{
 		var channel = Random.Range(0, 4);
@@ -814,6 +814,7 @@ public class HexMapGenerator : MonoBehaviour {
 			if (cell.TerrainTypeIndex == 3)
 			{
 				float level = HexMetrics.SampleNoise(cell.Position)[channel];
+				level = level * (1 + (cell.Elevation-4) / 10f);
 				for(int j = oreBands.Length - 1; j >= 0; --j)
 				{
 					if (level >= oreBands[j])
@@ -841,8 +842,8 @@ public class HexMapGenerator : MonoBehaviour {
 					Debug.LogError("HexMapGenerator - InitResourceData - 一个格子只能保存一种资源。（1）");
 				}
 
-				cell.Res.ResType = 0;
-				cell.Res.SetAmount(0, Values[cell.PlantLevel]);
+				cell.Res.ResType = HexResource.RESOURCE_TYPE.WOOD;
+				cell.Res.SetAmount(HexResource.RESOURCE_TYPE.WOOD, Values[cell.PlantLevel]);
 			}
 			else if (cell.FarmLevel > 0)
 			{
@@ -851,13 +852,13 @@ public class HexMapGenerator : MonoBehaviour {
 					Debug.LogError("HexMapGenerator - InitResourceData - 一个格子只能保存一种资源。（2）");
 				}
 				
-				cell.Res.ResType = 1;
-				cell.Res.SetAmount(1, Values[cell.FarmLevel]);
+				cell.Res.ResType = HexResource.RESOURCE_TYPE.FOOD;
+				cell.Res.SetAmount(HexResource.RESOURCE_TYPE.FOOD, Values[cell.FarmLevel]);
 			}
 			else if (cell.MineLevel > 0)
 			{
-				cell.Res.ResType = 2;
-				cell.Res.SetAmount(2, Values[cell.MineLevel]);
+				cell.Res.ResType = HexResource.RESOURCE_TYPE.IRON;
+				cell.Res.SetAmount(HexResource.RESOURCE_TYPE.IRON, Values[cell.MineLevel]);
 			}
 		}
 	}

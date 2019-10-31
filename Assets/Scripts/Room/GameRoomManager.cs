@@ -42,9 +42,9 @@ public class GameRoomManager : ClientScript
         {// 单独运行本场景的时候，CliengtManager不存在
             roomData.Address = "192.168.20.131";
             roomData.Port = 8888;
-            roomData.RoomName = "遗落の战境20";
+            roomData.RoomName = "遗落の战境3";
             roomData.IsCreatingRoom = false;
-            roomData.RoomId = 4787989458105721498;
+            roomData.RoomId = 5061721643152661511;
         }
 
         _address = roomData.Address;
@@ -118,7 +118,7 @@ public class GameRoomManager : ClientScript
                 else
                 {
                     data.Account = "Footman";
-                    data.TokenId = 123456;
+                    data.TokenId = 123452;
                 }
 
                 CurrentPlayer = data; // 保存当前玩家的信息在本类，这样以后不用大老远去找ClientManager

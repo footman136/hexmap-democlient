@@ -22,6 +22,20 @@ public class PanelNewMapMenu : MonoBehaviour {
 	bool wrapping = true;
 	
 	const int mapFileVersion = 5;
+
+	private string _originalRoomName;
+
+	void Awake()
+	{
+		_originalRoomName = _name.text;
+	}
+	void Start()
+	{
+		int nextId = PlayerPrefs.GetInt("RoomNextId");
+		_name.text = _originalRoomName + nextId.ToString();
+		nextId++;
+		PlayerPrefs.SetInt("RoomNextId", nextId);
+	}
 	
 
 	public void ToggleMapGeneration ()

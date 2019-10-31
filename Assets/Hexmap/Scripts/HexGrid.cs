@@ -279,7 +279,7 @@ public class HexGrid : MonoBehaviour {
 
 	void AddResToCell(int i, HexResource res)
 	{
-		cells[i].AddRes(res);
+		cells[i].Res = res;
 	}
 
 	public void Save (BinaryWriter writer) {
@@ -351,13 +351,37 @@ public class HexGrid : MonoBehaviour {
 		
 		// header version 6
 		if (header >= 6)
-		{
+		{// 读取资源层resLayer的数据
+			// Sand-0; Grass-1; Mud-2; Stone-3; Snow-4
+			int[] terrainTypeCount = { 0,0,0,0,0};
+			for (int i = 0; i < cells.Length; i++)
+			{
+				terrainTypeCount[cells[i].TerrainTypeIndex]++;
+			}
+
+			Debug.Log($"HexGrid Load - Terrain Type Count - Sand:{terrainTypeCount[0]} - Grass:{terrainTypeCount[1]} - Mud:{terrainTypeCount[2]} - Stone:{terrainTypeCount[3]} - Snow:{terrainTypeCount[4]}");
+
+			List<int> resList = new List<int>();
 			int resCount = reader.ReadInt32();
+			Debug.Log($"HexGrid Load - Res Count Total:{resCount}");
+			int[] resTypeCount = {0, 0, 0};
 			for(int i = 0; i < resCount; i++)
 			{
 				int index = reader.ReadInt32();
 				resLayer[index].Load(reader, header);
+				resList.Add(index);
+				cells[index].UpdateFeatureLevelFromRes();
+
+				resTypeCount[(int) resLayer[index].ResType]++;
 			}
+
+			string format = string.Format("HexGrid Load - Res Count Wood:{0}({1:P})", resTypeCount[0],
+				resTypeCount[0] / (float)terrainTypeCount[1]);
+			format += string.Format("Res Count Food:{0}({1:P})", resTypeCount[1],
+				resTypeCount[1] / (float)terrainTypeCount[2]);
+			format += string.Format("Res Count Iron:{0}({1:P})", resTypeCount[2],
+				resTypeCount[2] / (float)terrainTypeCount[3]);
+			Debug.Log(format);
 		}
 
 		cellShaderData.ImmediateMode = originalImmediateMode;
@@ -629,4 +653,5 @@ public class HexGrid : MonoBehaviour {
 
 		return speedRate[cellType] * rateRiver * rateRoad;
 	}
+	
 }
