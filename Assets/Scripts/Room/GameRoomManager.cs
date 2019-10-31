@@ -44,9 +44,9 @@ public class GameRoomManager : ClientScript
         {// 单独运行本场景的时候，CliengtManager不存在
             roomData.Address = "192.168.20.131";
             roomData.Port = 8888;
-            roomData.RoomName = "遗落の战境3";
+            roomData.RoomName = "遗落の战境18";
             roomData.IsCreatingRoom = false;
-            roomData.RoomId = 5061721643152661511;
+            roomData.RoomId = 4739125571824462819;
         }
 
         _address = roomData.Address;
