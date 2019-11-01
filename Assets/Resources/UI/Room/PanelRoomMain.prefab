@@ -105,7 +105,7 @@ RectTransform:
   - {fileID: 866464300}
   - {fileID: 573606042}
   m_Father: {fileID: 1849122630173041704}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -488,7 +488,7 @@ RectTransform:
   - {fileID: 1690161255}
   - {fileID: 1389917969}
   m_Father: {fileID: 1849122630173041704}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1122,7 +1122,7 @@ RectTransform:
   - {fileID: 1555456935}
   - {fileID: 1204766268}
   m_Father: {fileID: 1849122630173041704}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1220,7 +1220,7 @@ RectTransform:
   - {fileID: 4114851706610816312}
   - {fileID: 1379084800153775488}
   m_Father: {fileID: 1849122630173041704}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1398,7 +1398,7 @@ RectTransform:
   m_Children:
   - {fileID: 5973072268756465835}
   m_Father: {fileID: 1849122630173041704}
-  m_RootOrder: 8
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
@@ -1736,12 +1736,12 @@ RectTransform:
   - {fileID: 4511065684427595081}
   - {fileID: 385620305}
   - {fileID: 1074147382472634705}
+  - {fileID: 6338837185982154459}
   - {fileID: 718894199}
   - {fileID: 1703613941736826374}
   - {fileID: 6593063881795690925}
   - {fileID: 325669698}
   - {fileID: 2048948418}
-  - {fileID: 6338837185982154459}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2415,7 +2415,7 @@ RectTransform:
   - {fileID: 6661573304639725023}
   - {fileID: 5962254659210864610}
   m_Father: {fileID: 1849122630173041704}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}

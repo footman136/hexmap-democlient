@@ -6,7 +6,7 @@ using Google.Protobuf;
 using Protobuf.Room;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UIElements;
+using static PanelCommands;
 using Cursor = UnityEngine.Cursor;
 using Toggle = UnityEngine.UI.Toggle;
 
@@ -24,6 +24,7 @@ public class PanelRoomMain : MonoBehaviour
     [SerializeField] private Toggle _togFollowCamera;
     [SerializeField] private Toggle _togShowRes;
     [SerializeField] private Material terrainMaterial;
+    [SerializeField] private PanelCommands _commands;
     
     private HexCell currentCell;
     private HexUnit selectedUnit;
@@ -34,17 +35,9 @@ public class PanelRoomMain : MonoBehaviour
     private GameObject _selectObj;
     [SerializeField] private GameObject _hitGroundTemplate;
     private GameObject _hitGround;
-    
-    
-    public enum CommandType
-    {
-        CMD_NONE = 0,
-        CMD_CREATE_ACTOR = 1,
-        CMD_DESTROY_ACTOR = 2,
-        CMD_FIND_PATH = 3,
-        CMD_BUILD_CITY = 4,
-    };
 
+    public SelectorType _selectorType;
+    
     public CommandType _commandType;
     
     // Start is called before the first frame update
@@ -61,6 +54,8 @@ public class PanelRoomMain : MonoBehaviour
         _selectObj.SetActive(false);
         _hitGround = Instantiate(_hitGroundTemplate);
         _hitGround.SetActive(false);
+        _commands.gameObject.SetActive(false);
+        _selectorType = SelectorType.NONE;
     }
 
     #region 鼠标操作
@@ -314,6 +309,7 @@ public class PanelRoomMain : MonoBehaviour
         UpdateCurrentCell();
         if (currentCell)
         {
+            _selectorType = SelectorType.CELL;
             ShowSelector(selectedUnit, false);
             selectedUnit = currentCell.Unit;
             ShowSelector(selectedUnit, true);
@@ -325,13 +321,26 @@ public class PanelRoomMain : MonoBehaviour
                     ShowSelectorCity(selectedCity, false);
                     selectedCity = city;
                     ShowSelectorCity(selectedCity, true);
+                    if(selectedCity != null)
+                        _selectorType = SelectorType.CITY;
                 }
+                else if(currentCell.Res.GetAmount(currentCell.Res.ResType) > 0)
+                {
+                    _selectorType = SelectorType.RESOURCE;
+                }
+            }
+            else
+            {
+                _selectorType = SelectorType.TROOP;
             }
         }
         else
         {
+            _selectorType = SelectorType.NONE;
             ShowSelector(null, false);
         }
+
+        _commands.SetSelector(_selectorType);
     }
 
     void DoPathfinding (bool calc = false) {
@@ -407,6 +416,7 @@ public class PanelRoomMain : MonoBehaviour
         _commandType = command;
         if (!bSetCursor)
             return;
+        _commands.SetCommand(command);
         switch (command)
         {
             case CommandType.CMD_NONE:
