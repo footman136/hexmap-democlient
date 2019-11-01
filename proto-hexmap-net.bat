@@ -1,7 +1,7 @@
 @echo off
 
 set WorkPath=..\hexmap-proto-generator\
-set SrcPath=..\hexmap-proto-generator\proto
+set SrcPath=..\hexmap-proto-generator\proto-net
 rem 这个路径要从proto-generator-template这个bat所在位置寻找
 set OutputPathClient=..\hexmap-democlient\Assets\Scripts\Network\protobuf
 set OutputPathLobbyServer=..\hexmap-lobbyserver\Assets\Scripts\Network\protobuf
