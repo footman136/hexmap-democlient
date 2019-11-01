@@ -4,15 +4,16 @@ using UnityEngine;
 
 public class CmdMining : MonoBehaviour, ICommand
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public GameObject Cmd{set;get;}
 
-    // Update is called once per frame
-    void Update()
+    public bool CanRun ()
     {
-        
+        return true;
+    }
+    public void Run()
+    {
+    }
+    public void Stop()
+    {
     }
 }

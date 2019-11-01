@@ -36,9 +36,10 @@ public class PanelRoomMain : MonoBehaviour
     [SerializeField] private GameObject _hitGroundTemplate;
     private GameObject _hitGround;
 
-    public SelectorType _selectorType;
-    
     public CommandType _commandType;
+
+    public PickInfo _pickInfoMaster;// 发动指令的对象
+    public PickInfo _pickInfoApprentice; // 被发动指令的对象
     
     // Start is called before the first frame update
     void Start()
@@ -55,7 +56,9 @@ public class PanelRoomMain : MonoBehaviour
         _hitGround = Instantiate(_hitGroundTemplate);
         _hitGround.SetActive(false);
         _commands.gameObject.SetActive(false);
-        _selectorType = SelectorType.NONE;
+        
+        _pickInfoMaster = new PickInfo();
+        _pickInfoApprentice = new PickInfo();
     }
 
     #region 鼠标操作
@@ -309,38 +312,39 @@ public class PanelRoomMain : MonoBehaviour
         UpdateCurrentCell();
         if (currentCell)
         {
-            _selectorType = SelectorType.CELL;
+            _pickInfoMaster.CurrentCell = currentCell;
+            
             ShowSelector(selectedUnit, false);
             selectedUnit = currentCell.Unit;
             ShowSelector(selectedUnit, true);
-            if (!selectedUnit)
+            if (selectedUnit)
+            {
+                _pickInfoMaster.CurrentUnit = currentCell.Unit;
+            }
+            else
             { //选择城市
+                _pickInfoMaster.CurrentUnit = null;
                 if (currentCell.UrbanLevel > 0)
                 {
                     var city = GameRoomManager.Instance.RoomLogic.UrbanManager.FindCity(currentCell);
                     ShowSelectorCity(selectedCity, false);
                     selectedCity = city;
+                    _pickInfoMaster.CurrentCity = city;
                     ShowSelectorCity(selectedCity, true);
-                    if(selectedCity != null)
-                        _selectorType = SelectorType.CITY;
                 }
-                else if(currentCell.Res.GetAmount(currentCell.Res.ResType) > 0)
+                else
                 {
-                    _selectorType = SelectorType.RESOURCE;
+                    _pickInfoMaster.CurrentCity = null;
                 }
-            }
-            else
-            {
-                _selectorType = SelectorType.TROOP;
             }
         }
         else
         {
-            _selectorType = SelectorType.NONE;
+            _pickInfoMaster.CurrentCell = null; 
             ShowSelector(null, false);
         }
 
-        _commands.SetSelector(_selectorType);
+        _commands.SetSelector(_pickInfoMaster);
     }
 
     void DoPathfinding (bool calc = false) {

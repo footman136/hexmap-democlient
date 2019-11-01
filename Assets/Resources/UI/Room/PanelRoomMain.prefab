@@ -208,7 +208,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -150, y: 0}
   m_SizeDelta: {x: 192, y: 64}
   m_Pivot: {x: 1, y: 0}
 --- !u!222 &385620308
@@ -1402,7 +1402,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -383, y: 0}
+  m_AnchoredPosition: {x: -533, y: 0}
   m_SizeDelta: {x: 192, y: 64}
   m_Pivot: {x: 1, y: 0}
 --- !u!222 &2115192684440326059
@@ -1773,6 +1773,7 @@ MonoBehaviour:
   _togFollowCamera: {fileID: 325669699}
   _togShowRes: {fileID: 2048948419}
   terrainMaterial: {fileID: 2100000, guid: 6a3f5c7892e4b478e9e745026e6fe9f7, type: 2}
+  _commands: {fileID: 0}
   _selectObjTemplate: {fileID: 100006, guid: c040f7ccd795db54f898d253a9ed2e7a, type: 3}
   _hitGroundTemplate: {fileID: 100004, guid: 4794486a71fe1b542b984f399803eb07, type: 3}
   _commandType: 0
@@ -2193,7 +2194,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -192, y: 0}
+  m_AnchoredPosition: {x: -342, y: 0}
   m_SizeDelta: {x: 192, y: 64}
   m_Pivot: {x: 1, y: 0}
 --- !u!222 &673679041078038642

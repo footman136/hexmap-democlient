@@ -6,6 +6,7 @@ using Google.Protobuf;
 using Protobuf.Room;
 using System;
 using System.IO;
+using GameUtils;
 
 public class GameRoomManager : ClientScript
 {
@@ -15,6 +16,7 @@ public class GameRoomManager : ClientScript
     
     public HexmapHelper HexmapHelper;
     public RoomLogic RoomLogic;
+    public CsvDataManager CsvDataManager;
 
     public long RoomId;
     public string RoomName;
@@ -52,19 +54,30 @@ public class GameRoomManager : ClientScript
         _address = roomData.Address;
         _port = roomData.Port;
         
-        base.Start();
         UIManager.Instance.BeginLoading();
+        
+        base.Start();
 
+        //网络
         Completed += OnComplete;
         Received += OnReceiveMsg;
         RoomLogic.Init();
         Log($"GameRoomManager.Start()! 开始链接RoomServer - {_address}:{_port}");
+        
+        //读取数据
+        CsvDataManager.LoadDataAll();
+        string test = CsvDataManager.GetTable("command_set").GetValue("10001", "Name");
+        Debug.LogError($"Read table: {test}");
 
+        //载入地图(调试Only)
         if (ClientManager.Instance == null)
             StartCoroutine(LoadMap());
 
-        IsAiOn = true;
+        //心跳
         InvokeRepeating(nameof(HeartBeat), _heartBeatInterval, _heartBeatInterval);
+        
+        //初始化结束
+        IsAiOn = true;
     }
 
     IEnumerator LoadMap()
@@ -88,7 +101,7 @@ public class GameRoomManager : ClientScript
     }
     
     #endregion
-
+    
     #region 心跳
     
     private void StartHeartBeat()
