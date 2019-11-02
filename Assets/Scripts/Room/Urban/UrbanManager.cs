@@ -119,12 +119,11 @@ public class UrbanManager
                     bSuccess = false;
                     break;
                 }
-            }
-
-            if (neighbor.UrbanLevel > 0) // 城市不能挨着
-            {
-                bSuccess = false;
-                break;
+                if (neighbor.UrbanLevel > 0) // 城市不能挨着
+                {
+                    bSuccess = false;
+                    break;
+                }
             }
         }
 
