@@ -27,16 +27,12 @@ public class PanelRoomMain : MonoBehaviour
     [SerializeField] private PanelCommands _commands;
     
     private HexCell currentCell;
-    private HexUnit selectedUnit;
-    private UrbanCity selectedCity;
 
     private bool _isFollowCamera;
     [SerializeField] private GameObject _selectObjTemplate;
     private GameObject _selectObj;
     [SerializeField] private GameObject _hitGroundTemplate;
     private GameObject _hitGround;
-
-    public CommandType _commandType;
 
     public PickInfo _pickInfoMaster;// 发动指令的对象
     public PickInfo _pickInfoApprentice; // 被发动指令的对象
@@ -46,7 +42,6 @@ public class PanelRoomMain : MonoBehaviour
     {
         // 这一行，查了两个小时。。。如果没有，打包客户端后，地表看不到任何颜色，都是灰色。
         Shader.EnableKeyword("HEX_MAP_EDIT_MODE");
-        _commandType = CommandType.CMD_NONE;
         _togShowGrid.isOn = false;
         _togShowLabel.isOn = false;
         _togAi.isOn = true;
@@ -67,87 +62,13 @@ public class PanelRoomMain : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButton(1))
-        {
-            SetCommand(CommandType.CMD_NONE, false);
-        }
-
         // 本函数用来判定，是否点击到了界面，只有没有点击界面，才处理战场内的事件
         if (EventSystem.current.IsPointerOverGameObject())
             return;
-        if (_commandType == CommandType.CMD_CREATE_ACTOR)
+
+        if (Input.GetMouseButtonUp(0))
         {
-            if (Input.GetMouseButtonUp(0))
-            {
-                string[] soldierNames = new string [24]
-                {
-                    "Horse_BLUE_CC", "Horse_GREEN_CC", "Horse_RED_CC", "Horse_YELLOW_CC", 
-                    "Hunter_BLUE_CC", "Hunter_GREEN_CC", "Hunter_RED_CC", "Hunter_YELLOW_CC", 
-                    "Knight_BLUE_CC", "Knight_GREEN_CC", "Knight_RED_CC", "Knight_YELLOW_CC", 
-                    "LanceKnight_BLUE_CC", "LanceKnight_GREEN_CC", "LanceKnight_RED_CC", "LanceKnight_YELLOW_CC", 
-                    "Leader_BLUE_CC", "Leader_GREEN_CC", "Leader_RED_", "Leader_YELLOW_CC",  
-                    "SwordsMan_BLUE_CC", "SwordsMan_GREEN_CC", "SwordsMan_RED_CC", "SwordsMan_YELLOW_CC", 
-                };
-                var ret = AskCreateUnit(soldierNames[soldierIndex++]);
-                soldierIndex = soldierIndex % 24;
-                if (!ret)
-                    SetCommand(CommandType.CMD_NONE);
-                ShowSelector(selectedUnit, false);
-                selectedUnit = null;
-            }
-        }
-        else if (_commandType == CommandType.CMD_DESTROY_ACTOR)
-        {
-            if (Input.GetMouseButtonUp(0))
-            {
-                var ret = AskDestroyUnit();
-                if (!ret)
-                    SetCommand(CommandType.CMD_NONE);
-                ShowSelector(selectedUnit, false);
-                selectedUnit = null;
-            }
-        }
-        else if (_commandType == CommandType.CMD_BUILD_CITY)
-        {
-            if (Input.GetMouseButtonUp(0))
-            {
-                var ret = AskBuildCity();
-                if(!ret)
-                    SetCommand(CommandType.CMD_NONE);
-                ShowSelector(selectedUnit, false);
-                selectedUnit = null;
-            }
-        }
-        if(_commandType == CommandType.CMD_NONE)
-        {
-            if (Input.GetMouseButtonUp(0))
-            {
-                if (selectedUnit)
-                {
-                    //AskMove();
-                    if (currentCell && currentCell.Unit == null && currentCell.UrbanLevel == 0)
-                    {
-                        ShowHitGround(Input.mousePosition);
-                        MoveByMyself();
-                    }
-                    else
-                    {
-                        DoSelection();    
-                    }
-                }
-                else if (selectedCity != null)
-                {
-                    DoSelection();
-                }
-                else
-                {
-                    DoSelection();
-                }
-            }
-            else
-            {
-                DoPathfinding();
-            }
+            DoSelection();
         }
     }
 
@@ -224,7 +145,7 @@ public class PanelRoomMain : MonoBehaviour
         }
     }
 
-    bool AskCreateUnit(string unitName)
+    bool AskCreateUnit(int actorInfoId, string unitName)
     {
         HexCell cell = GetCellUnderCursor();
         if (cell && !cell.Unit)
@@ -239,6 +160,7 @@ public class PanelRoomMain : MonoBehaviour
                 Orientation = Random.Range(0f, 360f),
                 Species = unitName, // 预制件的名字
                 CellIndex = cell.Index,
+                ActorInfoId = actorInfoId,
             };
             GameRoomManager.Instance.SendMsg(ROOM.CreateAtroop, output.ToByteArray());
             return true;
@@ -310,47 +232,40 @@ public class PanelRoomMain : MonoBehaviour
     void DoSelection () {
         hexmapHelper.hexGrid.ClearPath();
         UpdateCurrentCell();
+        _pickInfoMaster.Clear();
         if (currentCell)
         {
             _pickInfoMaster.CurrentCell = currentCell;
-            
-            ShowSelector(selectedUnit, false);
-            selectedUnit = currentCell.Unit;
-            ShowSelector(selectedUnit, true);
-            if (selectedUnit)
+            if (currentCell.Unit)
             {
                 _pickInfoMaster.CurrentUnit = currentCell.Unit;
             }
             else
             { //选择城市
-                _pickInfoMaster.CurrentUnit = null;
                 if (currentCell.UrbanLevel > 0)
                 {
                     var city = GameRoomManager.Instance.RoomLogic.UrbanManager.FindCity(currentCell);
-                    ShowSelectorCity(selectedCity, false);
-                    selectedCity = city;
                     _pickInfoMaster.CurrentCity = city;
-                    ShowSelectorCity(selectedCity, true);
-                }
-                else
-                {
-                    _pickInfoMaster.CurrentCity = null;
                 }
             }
         }
-        else
-        {
-            _pickInfoMaster.CurrentCell = null; 
-            ShowSelector(null, false);
-        }
 
+        ShowSelector(null, false);
         _commands.SetSelector(_pickInfoMaster);
+        if (_pickInfoMaster.CurrentCity != null)
+        {
+            ShowSelectorCity(_pickInfoMaster.CurrentCity, true);            
+        }
+        else if (_pickInfoMaster.CurrentUnit)
+        {
+            ShowSelector(_pickInfoMaster.CurrentUnit, true);    
+        }
     }
 
     void DoPathfinding (bool calc = false) {
         if (UpdateCurrentCell() || calc) {
-            if (currentCell && selectedUnit && selectedUnit.IsValidDestination(currentCell)) {
-                hexmapHelper.hexGrid.FindPath(selectedUnit.Location, currentCell, selectedUnit);
+            if (currentCell && _pickInfoMaster.CurrentUnit && _pickInfoMaster.CurrentUnit.IsValidDestination(currentCell)) {
+                hexmapHelper.hexGrid.FindPath(_pickInfoMaster.CurrentUnit.Location, currentCell, _pickInfoMaster.CurrentUnit);
             }
             else {
                 hexmapHelper.hexGrid.ClearPath();
@@ -362,9 +277,9 @@ public class PanelRoomMain : MonoBehaviour
     {
         if (!hexmapHelper.hexGrid.HasPath)
             return;
-        if (currentCell == null || selectedUnit == null)
+        if (currentCell == null || _pickInfoMaster.CurrentUnit == null)
             return;
-        var av = selectedUnit.GetComponent<ActorVisualizer>();
+        var av = _pickInfoMaster.CurrentUnit.GetComponent<ActorVisualizer>();
         if (av == null)
             return;
 
@@ -377,7 +292,6 @@ public class PanelRoomMain : MonoBehaviour
             PosFromZ = av.PosZ,
             PosToX = currentCell.coordinates.X,
             PosToZ = currentCell.coordinates.Z,
-            Speed = 0.5f,
         };
         GameRoomManager.Instance.SendMsg(ROOM.TroopMove, output.ToByteArray());
     }
@@ -388,9 +302,9 @@ public class PanelRoomMain : MonoBehaviour
         
         if (!hexmapHelper.hexGrid.HasPath)
             return;
-        if (currentCell == null || selectedUnit == null)
+        if (currentCell == null || _pickInfoMaster.CurrentUnit == null)
             return;
-        var av = selectedUnit.GetComponent<ActorVisualizer>();
+        var av = _pickInfoMaster.CurrentUnit.GetComponent<ActorVisualizer>();
         if (av == null)
             return;
         var ab = GameRoomManager.Instance.RoomLogic.ActorManager.GetPlayer(av.ActorId);
@@ -413,35 +327,6 @@ public class PanelRoomMain : MonoBehaviour
     }
     #endregion
 
-    #region 状态改变
-
-        void SetCommand(CommandType command, bool bSetCursor = true)
-    {
-        _commandType = command;
-        if (!bSetCursor)
-            return;
-        _commands.SetCommand(command);
-        switch (command)
-        {
-            case CommandType.CMD_NONE:
-                Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
-                break;
-            case CommandType.CMD_CREATE_ACTOR:
-                Cursor.SetCursor(_curCreateActor, Vector2.zero, CursorMode.Auto);
-                break;
-            case CommandType.CMD_DESTROY_ACTOR:
-                Cursor.SetCursor(_curDestroyActor, Vector2.zero, CursorMode.Auto);
-                break;
-            case CommandType.CMD_FIND_PATH:
-                Cursor.SetCursor(_curFindPath, Vector2.zero, CursorMode.Auto);
-                break;
-            case CommandType.CMD_BUILD_CITY:
-                Cursor.SetCursor(_curBuildCity, Vector2.zero, CursorMode.Auto);
-                break;
-        }
-    }
-    #endregion
-
     #region 事件处理
     public void OnClickExit()
     {
@@ -452,21 +337,6 @@ public class PanelRoomMain : MonoBehaviour
         };
         if(GameRoomManager.Instance)
             GameRoomManager.Instance.SendMsg(ROOM.LeaveRoom, output.ToByteArray());
-    }
-
-    public void OnClickCreateActor()
-    {
-        SetCommand(CommandType.CMD_CREATE_ACTOR);
-    }
-    
-    public void OnClickDestroyActor()
-    {
-        SetCommand(CommandType.CMD_DESTROY_ACTOR);
-    }
-
-    public void OnClickBuildCity()
-    {
-        SetCommand(CommandType.CMD_BUILD_CITY);
     }
 
     public void ToggleShowGrid()
@@ -502,9 +372,9 @@ public class PanelRoomMain : MonoBehaviour
     public void ToggleFollowCamera()
     {
         bool bFollow = _togFollowCamera.isOn;
-        if (selectedUnit)
+        if (_pickInfoMaster.CurrentUnit)
         {
-            hexmapHelper.EnableFollowCamera(selectedUnit, bFollow);
+            hexmapHelper.EnableFollowCamera(_pickInfoMaster.CurrentUnit, bFollow);
         }
 
         _isFollowCamera = bFollow;

@@ -4,9 +4,9 @@ using UnityEngine.UI;
 
 public class CommandItem : MonoBehaviour
 {
+    [SerializeField] private CommandManager.CommandID _cmdId; 
     [SerializeField] private Text _label;
-    public delegate void ClickCallBack(GameObject obj);
-    private ClickCallBack _clickCallBack;
+    private ICommand _iCommand;
     
     // Start is called before the first frame update
     void Start()
@@ -20,14 +20,23 @@ public class CommandItem : MonoBehaviour
         
     }
 
-    public void Init(string label, ClickCallBack callBack)
+    public void Init(CommandManager.CommandID cmdId, string label, ICommand iCommand)
     {
+        _cmdId = cmdId;
         _label.text = label;
-        _clickCallBack = callBack;
+        _iCommand = iCommand;
+        if(!_iCommand.CanRun())
+            gameObject.SetActive(false);
+    }
+
+    public void Fini()
+    {
+        _iCommand?.Stop();
     }
     
-    public void OnClickCommand()
+    public void OnClick()
     {
-        _clickCallBack?.Invoke(gameObject);
+        CommandManager.Instance.InvokeCmd(_cmdId);
+        _iCommand?.Run();
     }
 }

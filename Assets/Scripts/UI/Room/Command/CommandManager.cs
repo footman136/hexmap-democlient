@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,7 +13,7 @@ public class CommandManager : MonoBehaviour
     private ICommand _runningCommand;
     
     private const int COMMAND_ID_NONE = 0;
-    public HexUnit CurrentExecuter; // 目前仅支持单选
+    public PickInfo CurrentExecuter; // 目前仅支持单选
 
     private bool _monitingSelection; // 是否允许切换被选中的物体(如果在命令执行中,再次点击,选中的是宾语,而不是主语)
     
@@ -47,6 +48,7 @@ public class CommandManager : MonoBehaviour
     
     public class CommandInfo
     {
+        public CommandID CmdId;
         public string Name;
         public string Icon;
         public int Order;
@@ -63,7 +65,6 @@ public class CommandManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        LoadCommands();
     }
 
     // Update is called once per frame
@@ -119,7 +120,7 @@ public class CommandManager : MonoBehaviour
 
     #region  全部命令
 
-    private void LoadCommands()
+    public void LoadCommands()
     {
         // create and attach child object
         GameObject obj = new GameObject("Commands");
@@ -129,49 +130,130 @@ public class CommandManager : MonoBehaviour
         
         // create all the commands
         CommandInfo ci = null; 
-        ci = new CommandInfo(){Name = "建造城市", Func = obj.AddComponent<CmdBuildCity>(),};
-        Commands.Add(CommandID.BuildCity, ci);
-        ci = new CommandInfo(){Name = "废弃城市", Func = obj.AddComponent<CmdAbandonCity>(),};
-        Commands.Add(CommandID.AbandonCity, ci);
-        ci = new CommandInfo(){Name = "废弃", Func = obj.AddComponent<CmdAbandonBuilding>(),};
-        Commands.Add(CommandID.AbandonBuilding, ci);
+        CsvStreamReader csv = CsvDataManager.Instance.GetTable("command_id");
+
+        CommandID cmdId = CommandID.BuildCity;
+        string cmdName = csv.GetValue((int)cmdId, "Name");
+        int order = csv.GetValueInt((int)cmdId, "Order");
+        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, Func = obj.AddComponent<CmdBuildCity>(),};
+        Commands.Add(cmdId, ci);
         
-        ci = new CommandInfo(){Name = "生产农民", Func = obj.AddComponent<CmdCreateFarmer>(),};
-        Commands.Add(CommandID.CreateFarmer, ci);
-        ci = new CommandInfo(){Name = "生产开拓者", Func = obj.AddComponent<CmdCreateSettler>(),};
-        Commands.Add(CommandID.CreateSettler, ci);
-        ci = new CommandInfo(){Name = "生产刀兵", Func = obj.AddComponent<CmdCreateSoldier1>(),};
-        Commands.Add(CommandID.CreateSoldier1, ci);
-        ci = new CommandInfo(){Name = "生产长枪兵", Func = obj.AddComponent<CmdCreateSoldier2>(),};
-        Commands.Add(CommandID.CreateSoldier2, ci);
-        ci = new CommandInfo(){Name = "生产弓箭手", Func = obj.AddComponent<CmdCreateSoldier3>(),};
-        Commands.Add(CommandID.CreateSoldier3, ci);
-        ci = new CommandInfo(){Name = "生产骑兵", Func = obj.AddComponent<CmdCreateSoldier4>(),};
-        Commands.Add(CommandID.CreateSoldier4, ci);
+        cmdId = CommandID.AbandonCity;
+        cmdName = csv.GetValue((int)cmdId, "Name");
+        order = csv.GetValueInt((int)cmdId, "Order");
+        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, Func = obj.AddComponent<CmdAbandonCity>(),};
+        Commands.Add(cmdId, ci);
         
-        ci = new CommandInfo(){Name = "伐木", Func = obj.AddComponent<CmdLumberjack>(),};
-        Commands.Add(CommandID.Lumberjack, ci);
-        ci = new CommandInfo(){Name = "收割", Func = obj.AddComponent<CmdHarvest>(),};
-        Commands.Add(CommandID.Harvest, ci);
-        ci = new CommandInfo(){Name = "采矿", Func = obj.AddComponent<CmdMining>(),};
-        Commands.Add(CommandID.Mining, ci);
-        ci = new CommandInfo(){Name = "修路", Func = obj.AddComponent<CmdBuildRoad>(),};
-        Commands.Add(CommandID.BuildRoad, ci);
-        ci = new CommandInfo(){Name = "搭桥", Func = obj.AddComponent<CmdBuildBridge>(),};
-        Commands.Add(CommandID.BuildBridge, ci);
-        ci = new CommandInfo(){Name = "解散", Func = obj.AddComponent<CmdDismissTroop>(),};
-        Commands.Add(CommandID.DismissTroop, ci);
+        cmdId = CommandID.AbandonBuilding;
+        cmdName = csv.GetValue((int)cmdId, "Name");
+        order = csv.GetValueInt((int)cmdId, "Order");
+        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, Func = obj.AddComponent<CmdAbandonBuilding>(),};
+        Commands.Add(cmdId, ci);
         
-        ci = new CommandInfo(){Name = "行军", Func = obj.AddComponent<CmdMarch>(),};
-        Commands.Add(CommandID.March, ci);
-        ci = new CommandInfo(){Name = "进攻", Func = obj.AddComponent<CmdAttack>(),};
-        Commands.Add(CommandID.Attack, ci);
-        ci = new CommandInfo(){Name = "驻守", Func = obj.AddComponent<CmdGuard>(),};
-        Commands.Add(CommandID.Guard, ci);
-        ci = new CommandInfo(){Name = "急行军", Func = obj.AddComponent<CmdRapidMarch>(),};
-        Commands.Add(CommandID.RapidMarch, ci);
-        ci = new CommandInfo(){Name = "冲锋", Func = obj.AddComponent<CmdCharge>(),};
-        Commands.Add(CommandID.Charge, ci);
+        
+        cmdId = CommandID.CreateFarmer;
+        cmdName = csv.GetValue((int)cmdId, "Name");
+        order = csv.GetValueInt((int)cmdId, "Order");
+        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, Func = obj.AddComponent<CmdCreateFarmer>(),};
+        Commands.Add(cmdId, ci);
+        
+        cmdId = CommandID.CreateSettler;
+        cmdName = csv.GetValue((int)cmdId, "Name");
+        order = csv.GetValueInt((int)cmdId, "Order");
+        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, Func = obj.AddComponent<CmdCreateSettler>(),};
+        Commands.Add(cmdId, ci);
+        
+        cmdId = CommandID.CreateSoldier1;
+        cmdName = csv.GetValue((int)cmdId, "Name");
+        order = csv.GetValueInt((int)cmdId, "Order");
+        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, Func = obj.AddComponent<CmdCreateSoldier1>(),};
+        Commands.Add(cmdId, ci);
+        
+        cmdId = CommandID.CreateSoldier2;
+        cmdName = csv.GetValue((int)cmdId, "Name");
+        order = csv.GetValueInt((int)cmdId, "Order");
+        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, Func = obj.AddComponent<CmdCreateSoldier2>(),};
+        Commands.Add(cmdId, ci);
+        
+        cmdId = CommandID.CreateSoldier3;
+        cmdName = csv.GetValue((int)cmdId, "Name");
+        order = csv.GetValueInt((int)cmdId, "Order");
+        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, Func = obj.AddComponent<CmdCreateSoldier3>(),};
+        Commands.Add(cmdId, ci);
+        
+        cmdId = CommandID.CreateSoldier4;
+        cmdName = csv.GetValue((int)cmdId, "Name");
+        order = csv.GetValueInt((int)cmdId, "Order");
+        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, Func = obj.AddComponent<CmdCreateSoldier4>(),};
+        Commands.Add(cmdId, ci);
+        
+        
+        cmdId = CommandID.Lumberjack;
+        cmdName = csv.GetValue((int)cmdId, "Name");
+        order = csv.GetValueInt((int)cmdId, "Order");
+        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, Func = obj.AddComponent<CmdLumberjack>(),};
+        Commands.Add(cmdId, ci);
+        
+        cmdId = CommandID.Harvest;
+        cmdName = csv.GetValue((int)cmdId, "Name");
+        order = csv.GetValueInt((int)cmdId, "Order");
+        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, Func = obj.AddComponent<CmdHarvest>(),};
+        Commands.Add(cmdId, ci);
+        
+        cmdId = CommandID.Mining;
+        cmdName = csv.GetValue((int)cmdId, "Name");
+        order = csv.GetValueInt((int)cmdId, "Order");
+        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, Func = obj.AddComponent<CmdMining>(),};
+        Commands.Add(cmdId, ci);
+        
+        cmdId = CommandID.BuildRoad;
+        cmdName = csv.GetValue((int)cmdId, "Name");
+        order = csv.GetValueInt((int)cmdId, "Order");
+        ci = new CommandInfo(){CmdId = cmdId, Name =cmdName, Order = order, Func = obj.AddComponent<CmdBuildRoad>(),};
+        Commands.Add(cmdId, ci);
+        
+        cmdId = CommandID.BuildBridge;
+        cmdName = csv.GetValue((int)cmdId, "Name");
+        order = csv.GetValueInt((int)cmdId, "Order");
+        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, Func = obj.AddComponent<CmdBuildBridge>(),};
+        Commands.Add(cmdId, ci);
+        
+        cmdId = CommandID.DismissTroop;
+        cmdName = csv.GetValue((int)cmdId, "Name");
+        order = csv.GetValueInt((int)cmdId, "Order");
+        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, Func = obj.AddComponent<CmdDismissTroop>(),};
+        Commands.Add(cmdId, ci);
+        
+
+        cmdId = CommandID.March;
+        cmdName = csv.GetValue((int)cmdId, "Name");
+        order = csv.GetValueInt((int)cmdId, "Order");
+        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, Func = obj.AddComponent<CmdMarch>(),};
+        Commands.Add(cmdId, ci);
+        
+        cmdId = CommandID.Attack;
+        cmdName = csv.GetValue((int)cmdId, "Name");
+        order = csv.GetValueInt((int)cmdId, "Order");
+        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, Func = obj.AddComponent<CmdAttack>(),};
+        Commands.Add(cmdId, ci);
+        
+        cmdId = CommandID.Guard;
+        cmdName = csv.GetValue((int)cmdId, "Name");
+        order = csv.GetValueInt((int)cmdId, "Order");
+        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, Func = obj.AddComponent<CmdGuard>(),};
+        Commands.Add(cmdId, ci);
+        
+        cmdId = CommandID.RapidMarch;
+        cmdName = csv.GetValue((int)cmdId, "Name");
+        order = csv.GetValueInt((int)cmdId, "Order");
+        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, Func = obj.AddComponent<CmdRapidMarch>(),};
+        Commands.Add(cmdId, ci);
+        
+        cmdId = CommandID.Charge;
+        cmdName = csv.GetValue((int)cmdId, "Name");
+        order = csv.GetValueInt((int)cmdId, "Order");
+        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, Func = obj.AddComponent<CmdCharge>(),};
+        Commands.Add(cmdId, ci);
     }
 
     #endregion

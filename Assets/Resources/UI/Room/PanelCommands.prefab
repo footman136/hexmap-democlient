@@ -67,10 +67,10 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 14
+    m_FontSize: 24
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 10
+    m_MinSize: 2
     m_MaxSize: 40
     m_Alignment: 4
     m_AlignByGeometry: 0
@@ -116,8 +116,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 80, y: 80}
+  m_AnchoredPosition: {x: -10, y: -93.5}
+  m_SizeDelta: {x: 120, y: 48}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6985150046004896923
 CanvasRenderer:
@@ -199,12 +199,12 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2622756082506892002}
-        m_MethodName: 
+      - m_Target: {fileID: 3332934349699493797}
+        m_MethodName: OnClick
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -224,7 +224,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af7679e7cc41c35499ccc550be262675, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _label: {fileID: 0}
+  _cmdId: 0
+  _label: {fileID: 720416050533967424}
 --- !u!1 &6119271195011462311
 GameObject:
   m_ObjectHideFlags: 0
@@ -521,7 +522,7 @@ MonoBehaviour:
   m_ChildAlignment: 8
   m_StartCorner: 3
   m_StartAxis: 0
-  m_CellSize: {x: 100, y: 100}
+  m_CellSize: {x: 120, y: 50}
   m_Spacing: {x: 0, y: 0}
   m_Constraint: 0
   m_ConstraintCount: 2
@@ -653,4 +654,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _cmdItemTemplate: {fileID: 3332934349699493797}
   _container: {fileID: 22408310478323514}
-  _toggleRoot: {fileID: 0}
+  _toggleRoot: {fileID: 2618616165578021319}
+  _toggleText: {fileID: 1280127852513634889}

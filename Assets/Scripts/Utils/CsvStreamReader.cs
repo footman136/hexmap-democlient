@@ -585,18 +585,50 @@ public class CsvStreamReader
         return fileCellData;
     }
     
-    public string GetValue(string KeyRowName, string GetColName)
+    public string GetValue(int Key, string GetColName)
     {
-        if (rowMap.ContainsKey(KeyRowName))
+        string strKey = Key.ToString();
+        if (rowMap.ContainsKey(strKey))
         {
-            ArrayList colAL = rowMap[KeyRowName];
+            ArrayList colAL = rowMap[strKey];
             if (colTitleMap.ContainsKey(GetColName))
             {
                 return colAL[colTitleMap[GetColName]].ToString();
             }
         }
-        Debug.LogError($"CsvStreamReader GetValue Error - Data not found! TableName:{fileName} - Key:{KeyRowName} - Value:{GetColName}");
+        Debug.LogError($"CsvStreamReader GetValue Error - Data not found! TableName:{fileName} - Key:{Key} - Value:{GetColName}");
 
         return "";
+    }
+    public int GetValueInt(int Key, string GetColName)
+    {
+        string strKey = Key.ToString();
+        if (rowMap.ContainsKey(strKey))
+        {
+            ArrayList colAL = rowMap[strKey];
+            if (colTitleMap.ContainsKey(GetColName))
+            {
+                return int.Parse(colAL[colTitleMap[GetColName]].ToString());
+            }
+        }
+        Debug.LogError($"CsvStreamReader GetValue Error - Data not found! TableName:{fileName} - Key:{Key} - Value:{GetColName}");
+
+        return 0;
+    }
+    
+    public float GetValueFloat(int Key, string GetColName)
+    {
+        string strKey = Key.ToString();
+        if (rowMap.ContainsKey(strKey))
+        {
+            ArrayList colAL = rowMap[strKey];
+            if (colTitleMap.ContainsKey(GetColName))
+            {
+                return float.Parse(colAL[colTitleMap[GetColName]].ToString());
+            }
+        }
+        Debug.LogError($"CsvStreamReader GetValue Error - Data not found! TableName:{fileName} - Key:{Key} - Value:{GetColName}");
+
+        return 0;
     }
 }

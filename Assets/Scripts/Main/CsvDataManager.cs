@@ -6,7 +6,7 @@ using GameUtils;
 
 public class CsvDataManager : MonoBehaviour
 {
-    public CsvDataManager Instance;
+    public static CsvDataManager Instance;
     private Dictionary<string, CsvStreamReader> _liStreamReaders = new Dictionary<string, CsvStreamReader>();
     
     void Awake()
@@ -35,9 +35,9 @@ public class CsvDataManager : MonoBehaviour
             
             int index = fullname.LastIndexOf('/');
             int index2 = fullname.LastIndexOf('.');
-            string nakedname = fullname.Substring(index+1, index2-index-1);
+            string nakedName = fullname.Substring(index+1, index2-index-1);
             CsvStreamReader csv = new CsvStreamReader(fullname, System.Text.Encoding.UTF8);
-            _liStreamReaders.Add(nakedname, csv);
+            _liStreamReaders.Add(nakedName, csv);
         }
     }
 

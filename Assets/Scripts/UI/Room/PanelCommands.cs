@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Animation;
+using Ionic.Zlib;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,40 +10,8 @@ public class PanelCommands : MonoBehaviour
     [SerializeField] private CommandItem _cmdItemTemplate;
     [SerializeField] private Transform _container;
     [SerializeField] private Toggle _toggleRoot;
+    [SerializeField] private Text _toggleText;
     
-    public enum CommandType
-    {
-        CMD_NONE = 0,
-        CMD_CREATE_ACTOR = 1,
-        CMD_DESTROY_ACTOR = 2,
-        CMD_FIND_PATH = 3,
-        CMD_BUILD_CITY = 4,
-    };
-
-    public const int SELECTOR_TYPE_MAX = 16; 
-    public const int SELECTOR_COMMAND_MAX = 8; 
-//    public enum SelectorType
-//    {
-//        NONE = 0,
-//        CELL = 1,
-//        CITY = 2,
-//        RESOURCE_WOOD = 3,
-//        RESOURCE_FOOD = 4,
-//        RESOURCE_IRON = 5,
-//        RESERVED_1 = 6,
-//        RESERVED_2 = 7,
-//        TROOP_FARMER = 8,
-//        TROOP_SETTLER = 9,
-//        RESERVED_3 = 10,
-//        TROOP_SOLDIER_1 = 11,
-//        TROOP_SOLDIER_2 = 12,
-//        TROOP_SOLDIER_3 = 13,
-//        TROOP_SOLDIER_4 = 14,
-//        RESERVED_4 = 15,
-//    }
-
-    private List<CommandItem> _commandList = new List<CommandItem>();
-
     private bool _isExpand;
     // Start is called before the first frame update
     void Start()
@@ -59,67 +29,108 @@ public class PanelCommands : MonoBehaviour
     {
         ClearCommands();
 
-        string[,] labels = new string[SELECTOR_TYPE_MAX,SELECTOR_COMMAND_MAX]{
-            /*NONE*/{"","","","","","","","",},
-            /*CELL*/{"","","","","","","","",}, 
-            /*CITY*/{"生产农民", "生产拓荒者","生产刀兵","生产长枪兵","生产弓箭手","生产骑兵","废弃城市","",}, 
-            /*RESOURCE_WOOD*/{"","","","","","","","",}, 
-            /*RESOURCE_FOOD*/{"","","","","","","","", }, 
-            /*RESOURCE_IRON*/{"","","","","","","","", },
-            /*RESERVED_1*/{"","","","","","","","",},
-            /*RESERVED_2*/{"","","","","","","","",},
-            /*TROOP_FARMER*/{"伐木","收割","采矿","修路","架桥","解散","","",},
-            /*TROOP_SETTLER*/{"建造城市","解散","","","","","","",},
-            /*RESERVED_3*/{"","","","","","","","",},
-            /*TROOP_SOLDIER_1*/{"移动","攻击","驻守","解散","","","","",},
-            /*TROOP_SOLDIER_2*/{"移动","攻击","驻守","解散","","","","",},
-            /*TROOP_SOLDIER_3*/{"移动","攻击","驻守","解散","","","","",},
-            /*TROOP_SOLDIER_4*/{"移动","攻击","驻守","解散","","","","",},
-            /*RESERVED_4*/{"","","","","","","","",},
-        };
-        
-    }
+        GameRoomManager.Instance.CommandManager.CurrentExecuter = pickInfo;
 
-    public void SetCommand(CommandType type)
-    {
-        switch (type)
+        //从“command_set”表格中读取对应于该单位的指令菜单集
+        CsvStreamReader CommandSet = CsvDataManager.Instance.GetTable("command_set");
+        if (CommandSet == null)
+            return;
+        string strCmdSet = "";
+        string toggleRootName = "";
+        if (pickInfo.CurrentCity != null)
         {
-            case CommandType.CMD_NONE:
-                break;
-            case CommandType.CMD_BUILD_CITY:
-                break;
-            case CommandType.CMD_CREATE_ACTOR:
-                break;
-            case CommandType.CMD_FIND_PATH:
-                break;
+            strCmdSet = CommandSet.GetValue(2001, "CommandSet");
+            toggleRootName = "城市";
         }
+        else if (pickInfo.CurrentUnit != null)
+        {
+            var av = pickInfo.CurrentUnit.GetComponent<ActorVisualizer>();
+            if (av)
+            {
+                strCmdSet = CommandSet.GetValue(av.ActorInfoId, "CommandSet");
+                CsvStreamReader csv = CsvDataManager.Instance.GetTable("actor_info");
+                toggleRootName = csv.GetValue(av.ActorInfoId, "Name");
+            }
+        }
+        else if (pickInfo.CurrentCell != null)
+        {
+            HexResource res = pickInfo.CurrentCell.Res;
+            if(res.GetAmount(res.ResType)>0)
+            {
+                string[] resNames = {"木材","粮食","铁矿" };
+                toggleRootName = $"{resNames[(int) res.ResType]}:{res.GetLevel(res.ResType)}";
+            }
+            else if (pickInfo.CurrentCell.IsUnderwater)
+            {
+                toggleRootName = "水";
+            }
+            else
+            {// Sand-0; Grass-1; Mud-2; Stone-3; Snow-4
+                string[] terrainNames = {"沙漠", "草原", "荒野", "山区", "雪地"};
+                toggleRootName = terrainNames[(int)pickInfo.CurrentCell.TerrainTypeIndex];
+            }
+        }
+        int countCmd = LoadCommandMenu(strCmdSet);
+        //gameObject.SetActive(countCmd > 0);
+        _toggleText.text = toggleRootName;
+        gameObject.SetActive(true);
     }
 
-    public void ClearCommands()
+    /// <summary>
+    /// 根据指令菜单集加载菜单UI
+    /// </summary>
+    /// <param name="strCmdSet"></param>
+    private int LoadCommandMenu(string strCmdSet)
     {
-        foreach (var cmdItem in _commandList)
+        if (string.IsNullOrEmpty(strCmdSet))
         {
-            Destroy(cmdItem);
+            return 0;
+        }
+        string[] strCmds = strCmdSet.Split('|');
+        for (int i = 0; i < strCmds.Length; ++i)
+        {
+            string strCmd = strCmds[i];
+            AddCommand(strCmd);
         }
 
-        _commandList.Clear();
+        return strCmds.Length;
     }
-    
-    public CommandItem AddCommand(string label, CommandItem.ClickCallBack OnClick)
+
+    private CommandItem AddCommand(string strCmd)
     {
-        CommandItem cmdItem = Instantiate(_cmdItemTemplate, _container);
-        if (cmdItem)
+        if (string.IsNullOrEmpty(strCmd))
+            return null;
+        int iCmd = int.Parse(strCmd);
+        CommandItem ci = Instantiate(_cmdItemTemplate, _container);
+        if (ci)
         {
-            cmdItem.Init(label, OnClick);
-            _commandList.Add(cmdItem);
+            if (GameRoomManager.Instance.CommandManager.Commands.ContainsKey((CommandManager.CommandID)iCmd))
+            {
+                CommandManager.CommandInfo cmd = GameRoomManager.Instance.CommandManager.Commands[(CommandManager.CommandID)iCmd];
+                ci.name = $"{cmd.Order}_{cmd.Name}";
+                ci.Init(cmd.CmdId, cmd.Name, cmd.Func);
+                return ci;
+            }
+            else
+            {
+                Debug.LogError($"PanelCommands AddCommand Error - Command Id not found!!! - CmdId:{iCmd}");                
+            }
         }
         else
         {
             Debug.LogError("PanelCommands AddCommand Error - Cannot find Command Item Template Object!!!");
         }
-
-        return cmdItem;
+        return null;
     }
+    
+    public void ClearCommands()
+    {
+        for (int i = 0; i < _container.childCount; ++i)
+        {
+            Destroy(_container.GetChild(i).gameObject);
+        }
+    }
+    
 
     public void OnToggleRoot()
     {

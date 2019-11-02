@@ -17,6 +17,7 @@ public class GameRoomManager : ClientScript
     public HexmapHelper HexmapHelper;
     public RoomLogic RoomLogic;
     public CsvDataManager CsvDataManager;
+    public CommandManager CommandManager;
 
     public long RoomId;
     public string RoomName;
@@ -48,9 +49,9 @@ public class GameRoomManager : ClientScript
         {// 单独运行本场景的时候，CliengtManager不存在
             roomData.Address = _address;
             roomData.Port = _port;
-            roomData.RoomName = "遗落の战境18";
+            roomData.RoomName = "遗落の战境3";
             roomData.IsCreatingRoom = false;
-            roomData.RoomId = 4739125571824462819;
+            roomData.RoomId = 5673468034511399841;
         }
         
         UIManager.Instance.BeginLoading();
@@ -65,9 +66,8 @@ public class GameRoomManager : ClientScript
         
         //读取数据
         CsvDataManager.LoadDataAll();
-        string test = CsvDataManager.GetTable("command_set").GetValue("10001", "Name");
-        Debug.LogError($"Read table: {test}");
-
+        CommandManager.LoadCommands();        
+            
         //载入地图(调试Only)
         if (ClientManager.Instance == null)
             StartCoroutine(LoadMap());

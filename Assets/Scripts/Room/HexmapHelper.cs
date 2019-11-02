@@ -250,6 +250,7 @@ public class HexmapHelper : MonoBehaviour
     #endregion
     
     #region 单元
+
     /// <summary>
     /// 
     /// </summary>
@@ -261,8 +262,9 @@ public class HexmapHelper : MonoBehaviour
     /// <param name="orientation"></param>
     /// <param name="unitName"></param>
     /// <param name="cellIndex">该单位在地形块HexCell中的Index，因为根据PosX,PosZ可能得不到正确的cell，只能用这个数据确保正确</param>
+    /// <param name="actorInfoId">兵种ID，在actor_info表中的id</param>
     /// <returns></returns>
-    public bool CreateUnit (long roomId, long ownerId, long actorId, int posX, int posZ, float orientation, string unitName, int cellIndex)
+    public bool CreateUnit (long roomId, long ownerId, long actorId, int posX, int posZ, float orientation, string unitName, int cellIndex, int actorInfoId)
     {
         HexCell cell = GetCell(posX, posZ);
         if (cell && !cell.Unit)
@@ -286,7 +288,20 @@ public class HexmapHelper : MonoBehaviour
                         av.Orientation = orientation;
                         av.Species = unitName;
                         av.CellIndex = cellIndex;
-                        
+                        av.ActorInfoId = actorInfoId;
+
+                        // 其他属性从【actor_info】数据表中得来
+                        CsvStreamReader csv = CsvDataManager.Instance.GetTable("actor_info");
+                        if (csv != null)
+                        {
+                            av.Name = csv.GetValue(av.ActorInfoId, "Name");
+                            av.Hp = csv.GetValueInt(av.ActorInfoId, "Hp");
+                            av.AttackPower = csv.GetValueFloat(av.ActorInfoId, "AttackPower");
+                            av.DefencePower = csv.GetValueFloat(av.ActorInfoId, "DefencePower");
+                            av.Speed = csv.GetValueFloat(av.ActorInfoId, "Speed");
+                            av.FieldOfVision = csv.GetValueFloat(av.ActorInfoId, "FieldOfVision");
+                            av.ShootingRange = csv.GetValueFloat(av.ActorInfoId, "ShootingRange");
+                        }
                     }
 
                     // 关闭预制件上没用的东西，看以后这东西能否用得上，如果没用，就完全干掉
@@ -333,7 +348,7 @@ public class HexmapHelper : MonoBehaviour
         return false;
     }
 
-    public void DoMove (long actorId, int posXFrom, int posZFrom, int posXTo, int posZTo, float speed)
+    public void DoMove (long actorId, int posXFrom, int posZFrom, int posXTo, int posZTo)
     {
         if (ActorVisualizer.AllActors.ContainsKey(actorId))
         {
@@ -353,7 +368,7 @@ public class HexmapHelper : MonoBehaviour
                             List<HexCell> listPath = hexGrid.GetPath();
                             Debug.Log($"DoMove: From<{hcFrom.coordinates.X},{hcFrom.coordinates.Z}> - To<{hcTo.coordinates.X},{hcTo.coordinates.Z}>");
                             Debug.Log($"DoMove: From<{hcFrom.Position.x},{hcFrom.Position.z}> - To<{hcTo.Position.x},{hcTo.Position.z}>");
-                            hu.Travel(listPath, speed);
+                            hu.Travel(listPath, av.Speed);
                         }
                     }
 

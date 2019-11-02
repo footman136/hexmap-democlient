@@ -74,7 +74,7 @@ public class RoomLogic : MonoBehaviour
         }
         
         GameRoomManager.Instance.HexmapHelper.CreateUnit(input.RoomId, input.OwnerId, input.ActorId,   
-            input.PosX, input.PosZ, input.Orientation, input.Species, input.CellIndex);
+            input.PosX, input.PosZ, input.Orientation, input.Species, input.CellIndex, input.ActorInfoId);
     }
 
     private void OnDestroyATroopReply(byte[] bytes)
@@ -100,7 +100,7 @@ public class RoomLogic : MonoBehaviour
             return;
         }
 
-        GameRoomManager.Instance.HexmapHelper.DoMove(input.ActorId, input.PosFromX, input.PosFromZ, input.PosToX, input.PosToZ, input.Speed);
+        GameRoomManager.Instance.HexmapHelper.DoMove(input.ActorId, input.PosFromX, input.PosFromZ, input.PosToX, input.PosToZ);
     }
 
     private void OnTroopAiStateReply(byte[] bytes)

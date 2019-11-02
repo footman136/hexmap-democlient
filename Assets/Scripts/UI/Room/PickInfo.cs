@@ -16,5 +16,11 @@ public class PickInfo
     public HexUnit CurrentUnit;
     public UrbanCity CurrentCity;
 
+    public void Clear()
+    {
+        CurrentCell = null;
+        CurrentUnit = null;
+        CurrentCity = null;
+    }
 }    
 
