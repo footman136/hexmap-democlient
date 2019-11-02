@@ -172,7 +172,12 @@ public class RoomMsgReply
             string msg = "进入房间失败：" + input.ErrMsg;
             GameRoomManager.Instance.Log("MSG: ENTER_ROOM_REPLY - " + msg);
             UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
-            ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.DISCONNECTED_ROOM);
+            if (ClientManager.Instance)
+            {
+                ClientManager.Instance.StateMachine.TriggerTransition(
+                    ConnectionFSMStateEnum.StateEnum.DISCONNECTED_ROOM);
+            }
+
             return;
         }
 
