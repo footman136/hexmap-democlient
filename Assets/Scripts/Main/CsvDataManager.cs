@@ -7,7 +7,7 @@ using GameUtils;
 public class CsvDataManager : MonoBehaviour
 {
     public CsvDataManager Instance;
-    private Dictionary<string, CsvStreamReader> _liStreamReaders; 
+    private Dictionary<string, CsvStreamReader> _liStreamReaders = new Dictionary<string, CsvStreamReader>();
     
     void Awake()
     {
@@ -17,7 +17,6 @@ public class CsvDataManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        _liStreamReaders = new Dictionary<string, CsvStreamReader>();
     }
 
     // Update is called once per frame

@@ -41,18 +41,17 @@ public class GameRoomManager : ClientScript
         if (ClientManager.Instance != null)
         {
             roomData = ClientManager.Instance.EnterRoom;
+            _address = roomData.Address;
+            _port = roomData.Port;
         }
         else
         {// 单独运行本场景的时候，CliengtManager不存在
-            roomData.Address = "192.168.20.131";
-            roomData.Port = 8888;
+            roomData.Address = _address;
+            roomData.Port = _port;
             roomData.RoomName = "遗落の战境18";
             roomData.IsCreatingRoom = false;
             roomData.RoomId = 4739125571824462819;
         }
-
-        _address = roomData.Address;
-        _port = roomData.Port;
         
         UIManager.Instance.BeginLoading();
         

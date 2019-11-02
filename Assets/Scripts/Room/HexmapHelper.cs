@@ -382,7 +382,7 @@ public class HexmapHelper : MonoBehaviour
     {
         if (!unit)
             return;
-        unit.transform.FindChild("CameraFollow").gameObject.SetActive(bEnable);
+        unit.transform.Find("CameraFollow").gameObject.SetActive(bEnable);
     }
 
     #endregion
