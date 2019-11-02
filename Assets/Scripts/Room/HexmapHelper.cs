@@ -6,6 +6,7 @@ using Animation;
 using UnityEngine;
 using UnityStandardAssets.Characters.ThirdPerson;
 using Random = UnityEngine.Random;
+using GameUtils;
 
 public class HexmapHelper : MonoBehaviour
 {

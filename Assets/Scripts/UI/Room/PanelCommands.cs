@@ -4,6 +4,7 @@ using Animation;
 using Ionic.Zlib;
 using UnityEngine;
 using UnityEngine.UI;
+using GameUtils;
 
 public class PanelCommands : MonoBehaviour
 {
