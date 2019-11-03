@@ -67,7 +67,7 @@ public class PanelCommands : MonoBehaviour
             }
             else
             {// Sand-0; Grass-1; Mud-2; Stone-3; Snow-4
-                string[] terrainNames = {"沙漠", "草原", "荒野", "山区", "雪地"};
+                string[] terrainNames = {"沙漠", "草原", "沃土", "山区", "雪地"};
                 toggleRootName = terrainNames[(int)pickInfo.CurrentCell.TerrainTypeIndex];
             }
         }
