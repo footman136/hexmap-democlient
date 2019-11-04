@@ -59,6 +59,10 @@ public class CommandManager : MonoBehaviour
 
     private void Awake()
     {
+        if (_instance)
+        {
+            Debug.LogError("CommandManager is singlon, cannot be initialized more than once!");
+        }
         _instance = this;
         _monitingSelection = true;
     }
@@ -92,6 +96,18 @@ public class CommandManager : MonoBehaviour
         return true;
     }
 
+    public bool IsCommandRunning()
+    {
+        if (_runningCommandId != COMMAND_ID_NONE)
+        {
+            if (CommandTargetSelected != null) // 这说明该条指令,需要等待目标单位被选中
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     void MonitingSelectionChange(bool moniting)
     {
         _monitingSelection = moniting;
@@ -118,6 +134,17 @@ public class CommandManager : MonoBehaviour
             
         }
     }
+    
+    #region 目标被选中
+
+    public event Action<PickInfo> CommandTargetSelected;
+
+    public void OnCommandTargetSelected(PickInfo piTarget)
+    {
+        CommandTargetSelected?.Invoke(piTarget);
+    }
+    
+    #endregion
 
     #region  全部命令
 

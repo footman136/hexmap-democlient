@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Animation;
-using Ionic.Zlib;
 using UnityEngine;
 using UnityEngine.UI;
 using GameUtils;
@@ -40,17 +39,23 @@ public class PanelCommands : MonoBehaviour
         string toggleRootName = "";
         if (pickInfo.CurrentCity != null)
         {
-            strCmdSet = CommandSet.GetValue(2001, "CommandSet");
-            toggleRootName = "城市";
+            if (pickInfo.CurrentCity.OwnerId == GameRoomManager.Instance.CurrentPlayer.TokenId) // 只有是自己的城市,才会出现[命令菜单]
+            {
+                strCmdSet = CommandSet.GetValue(2001, "CommandSet");
+                toggleRootName = "城市";
+            }
         }
         else if (pickInfo.CurrentUnit != null)
         {
             var av = pickInfo.CurrentUnit.GetComponent<ActorVisualizer>();
             if (av)
             {
-                strCmdSet = CommandSet.GetValue(av.ActorInfoId, "CommandSet");
-                CsvStreamReader csv = CsvDataManager.Instance.GetTable("actor_info");
-                toggleRootName = csv.GetValue(av.ActorInfoId, "Name");
+                if (av.OwnerId == GameRoomManager.Instance.CurrentPlayer.TokenId) // 只有是自己的部队,才会出现[命令菜单]
+                {
+                    strCmdSet = CommandSet.GetValue(av.ActorInfoId, "CommandSet");
+                    CsvStreamReader csv = CsvDataManager.Instance.GetTable("actor_info");
+                    toggleRootName = csv.GetValue(av.ActorInfoId, "Name");
+                }
             }
         }
         else if (pickInfo.CurrentCell != null)
@@ -88,34 +93,43 @@ public class PanelCommands : MonoBehaviour
             return 0;
         }
         string[] strCmds = strCmdSet.Split('|');
+        List<CommandManager.CommandInfo> cmds = new List<CommandManager.CommandInfo>();
         for (int i = 0; i < strCmds.Length; ++i)
         {
             string strCmd = strCmds[i];
-            AddCommand(strCmd);
+            if (!string.IsNullOrEmpty(strCmd))
+            {
+                int iCmd = int.Parse(strCmd);
+                if (GameRoomManager.Instance.CommandManager.Commands.ContainsKey((CommandManager.CommandID) iCmd))
+                {
+                    cmds.Add(GameRoomManager.Instance.CommandManager.Commands[(CommandManager.CommandID) iCmd]);
+                }
+                else
+                {
+                    Debug.LogError($"PanelCommands LoadCommandMenu Error - Command Id not found!!! - CmdId:{iCmd}");
+                }
+            }
         }
-
+        
+        // sort commands
+        cmds.Sort((a,b)=>b.Order - a.Order);
+        
+        foreach (var cmd in cmds)
+        {
+            AddCommand(cmd);    
+        }
+        
         return strCmds.Length;
     }
 
-    private CommandItem AddCommand(string strCmd)
+    private CommandItem AddCommand(CommandManager.CommandInfo cmd)
     {
-        if (string.IsNullOrEmpty(strCmd))
-            return null;
-        int iCmd = int.Parse(strCmd);
         CommandItem ci = Instantiate(_cmdItemTemplate, _container);
         if (ci)
         {
-            if (GameRoomManager.Instance.CommandManager.Commands.ContainsKey((CommandManager.CommandID)iCmd))
-            {
-                CommandManager.CommandInfo cmd = GameRoomManager.Instance.CommandManager.Commands[(CommandManager.CommandID)iCmd];
-                ci.name = $"{cmd.Order}_{cmd.Name}";
-                ci.Init(cmd.CmdId, cmd.Name, cmd.Func);
-                return ci;
-            }
-            else
-            {
-                Debug.LogError($"PanelCommands AddCommand Error - Command Id not found!!! - CmdId:{iCmd}");                
-            }
+            ci.name = $"{cmd.Order}_{cmd.Name}";
+            ci.Init(cmd.CmdId, cmd.Name, cmd.Func, ci.gameObject);
+            return ci;
         }
         else
         {

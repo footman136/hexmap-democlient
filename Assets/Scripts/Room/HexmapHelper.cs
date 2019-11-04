@@ -389,6 +389,7 @@ public class HexmapHelper : MonoBehaviour
                 if (hu != null)
                 {
                     hu.Stop();
+                    hexGrid.ClearPath();
                 }
             }
         }

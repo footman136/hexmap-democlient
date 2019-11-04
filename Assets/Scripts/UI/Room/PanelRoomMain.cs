@@ -34,8 +34,26 @@ public class PanelRoomMain : MonoBehaviour
     [SerializeField] private GameObject _hitGroundTemplate;
     private GameObject _hitGround;
 
-    public PickInfo _pickInfoMaster;// 发动指令的对象
-    public PickInfo _pickInfoApprentice; // 被发动指令的对象
+    public PickInfo _pickInfoMaster;// 发动指令的对象,主语
+    public PickInfo _pickInfoTarget; // 被发动指令的对象,宾语
+
+    public enum CURSOR_TYPE
+    {
+        NONE = 0,
+        FIND_PATH = 1,
+    }
+
+    private static PanelRoomMain _instance;
+    public static PanelRoomMain Instance => _instance;
+
+    void Awake()
+    {
+        if (_instance)
+        {
+            Debug.LogError("PanelRoomMain is singlon, cannot be initialized more than once!");
+        }
+        _instance = this;
+    }
     
     // Start is called before the first frame update
     void Start()
@@ -50,7 +68,7 @@ public class PanelRoomMain : MonoBehaviour
         _commands.gameObject.SetActive(false);
         
         _pickInfoMaster = new PickInfo();
-        _pickInfoApprentice = new PickInfo();
+        _pickInfoTarget = new PickInfo();
     }
 
     #region 鼠标操作
@@ -66,6 +84,16 @@ public class PanelRoomMain : MonoBehaviour
         if (Input.GetMouseButtonUp(0))
         {
             DoSelection();
+        }
+
+        if (Input.GetMouseButtonUp(1))
+        {
+            CommandManager.Instance.StopCurrentCommand();
+        }
+
+        if (CommandManager.Instance.IsCommandRunning())
+        {
+            DoPathfinding();
         }
     }
 
@@ -141,7 +169,106 @@ public class PanelRoomMain : MonoBehaviour
             }
         }
     }
+    
+    #endregion
+    
+    #region 选中
 
+    void DoSelection () {
+
+        if (!CommandManager.Instance.IsCommandRunning())
+        {
+            hexmapHelper.hexGrid.ClearPath();
+            UpdateCurrentCell();
+            _pickInfoMaster.Clear();
+            if (currentCell)
+            {
+                _pickInfoMaster.CurrentCell = currentCell;
+                if (currentCell.Unit)
+                {
+                    _pickInfoMaster.CurrentUnit = currentCell.Unit;
+                }
+                else
+                { //选择城市
+                    if (currentCell.UrbanLevel > 0)
+                    {
+                        var city = GameRoomManager.Instance.RoomLogic.UrbanManager.FindCity(currentCell);
+                        _pickInfoMaster.CurrentCity = city;
+                    }
+                }
+            }
+
+            CommandManager.Instance.CurrentExecuter = _pickInfoMaster;// 发送命令的单位
+
+            ShowSelector(null, false);
+            _commands.SetSelector(_pickInfoMaster);
+            if (_pickInfoMaster.CurrentCity != null)
+            {
+                ShowSelectorCity(_pickInfoMaster.CurrentCity, true);            
+            }
+            else if (_pickInfoMaster.CurrentUnit)
+            {
+                ShowSelector(_pickInfoMaster.CurrentUnit, true);    
+            }
+        }
+        else
+        {
+            _pickInfoTarget.Clear();
+            HexCell cell = GetCellUnderCursor();
+            if (cell)
+            {
+                _pickInfoTarget.CurrentCell = cell;
+                if (cell.Unit)
+                {
+                    _pickInfoTarget.CurrentUnit = cell.Unit;
+                }
+                else
+                {
+                    if (cell.UrbanLevel > 0)
+                    {
+                        var city = GameRoomManager.Instance.RoomLogic.UrbanManager.FindCity(cell);
+                        _pickInfoTarget.CurrentCity = city;
+                    }
+                }
+                
+                CommandManager.Instance.OnCommandTargetSelected(_pickInfoTarget); // 接受命令的单位
+            }
+        }
+        
+    }
+
+    void DoPathfinding (bool calc = false) {
+        if (UpdateCurrentCell() || calc) {
+            if (currentCell && _pickInfoMaster.CurrentUnit && _pickInfoMaster.CurrentUnit.IsValidDestination(currentCell)) {
+                hexmapHelper.hexGrid.FindPath(_pickInfoMaster.CurrentUnit.Location, currentCell, _pickInfoMaster.CurrentUnit);
+            }
+            else {
+                hexmapHelper.hexGrid.ClearPath();
+            }
+        }
+    }
+    
+    #endregion
+    
+    #region 鼠标指针
+
+    public void ShowCursor(CURSOR_TYPE type)
+    {
+        switch (type)
+        {
+            case CURSOR_TYPE.FIND_PATH:
+                Cursor.SetCursor(_curFindPath, Vector2.zero, CursorMode.Auto);
+                break;
+            case CURSOR_TYPE.NONE:
+                Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+                break;
+        }
+    }
+    
+    #endregion
+
+    #region 指令
+    
     bool AskCreateUnit(int actorInfoId, string unitName)
     {
         HexCell cell = GetCellUnderCursor();
@@ -224,50 +351,6 @@ public class PanelRoomMain : MonoBehaviour
             GameRoomManager.Instance.Log("AskBuildCity - 申请创建城市...");
         }
         return true;
-    }
-
-    void DoSelection () {
-        hexmapHelper.hexGrid.ClearPath();
-        UpdateCurrentCell();
-        _pickInfoMaster.Clear();
-        if (currentCell)
-        {
-            _pickInfoMaster.CurrentCell = currentCell;
-            if (currentCell.Unit)
-            {
-                _pickInfoMaster.CurrentUnit = currentCell.Unit;
-            }
-            else
-            { //选择城市
-                if (currentCell.UrbanLevel > 0)
-                {
-                    var city = GameRoomManager.Instance.RoomLogic.UrbanManager.FindCity(currentCell);
-                    _pickInfoMaster.CurrentCity = city;
-                }
-            }
-        }
-
-        ShowSelector(null, false);
-        _commands.SetSelector(_pickInfoMaster);
-        if (_pickInfoMaster.CurrentCity != null)
-        {
-            ShowSelectorCity(_pickInfoMaster.CurrentCity, true);            
-        }
-        else if (_pickInfoMaster.CurrentUnit)
-        {
-            ShowSelector(_pickInfoMaster.CurrentUnit, true);    
-        }
-    }
-
-    void DoPathfinding (bool calc = false) {
-        if (UpdateCurrentCell() || calc) {
-            if (currentCell && _pickInfoMaster.CurrentUnit && _pickInfoMaster.CurrentUnit.IsValidDestination(currentCell)) {
-                hexmapHelper.hexGrid.FindPath(_pickInfoMaster.CurrentUnit.Location, currentCell, _pickInfoMaster.CurrentUnit);
-            }
-            else {
-                hexmapHelper.hexGrid.ClearPath();
-            }
-        }
     }
 
     void AskMove()

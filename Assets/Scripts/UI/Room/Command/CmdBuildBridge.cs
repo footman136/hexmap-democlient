@@ -6,9 +6,9 @@ public class CmdBuildBridge : MonoBehaviour, ICommand
 {
     public GameObject Cmd{set;get;}
 
-    public bool CanRun ()
+    public int CanRun ()
     {
-        return true;
+        return 1;
     }
     public void Run()
     {

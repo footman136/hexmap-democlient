@@ -99,7 +99,7 @@ public class GameRoomManager : ClientScript
         InvokeRepeating(nameof(HeartBeat), _heartBeatInterval, _heartBeatInterval);
         
         //初始化结束
-        IsAiOn = true;
+        IsAiOn = false;
     }
 
     IEnumerator LoadMap()

@@ -128,6 +128,8 @@ public class HexMapCamera : MonoBehaviour {
 	private bool _rightMouseDown;
 	private Vector3 _lastMousePos;
 	private readonly float mouseMoveSpeed = 0.2f;
+
+	private Texture2D _oldCursorTex;
 	
 	/// <summary>
 	/// 鼠标右键控制拖动。Oct.22.2019. Liu Gang.

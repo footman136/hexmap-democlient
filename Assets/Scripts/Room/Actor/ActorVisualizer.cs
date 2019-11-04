@@ -103,6 +103,8 @@ namespace Animation
         {
             _distance = Vector3.Distance(CurrentPosition, TargetPosition);
             CurrentPosition = _hexUnit.transform.localPosition;
+            PosX = _hexUnit.Location.coordinates.X;
+            PosZ = _hexUnit.Location.coordinates.Z;
         }
 
         public void Log(string msg)
