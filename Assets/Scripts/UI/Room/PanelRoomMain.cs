@@ -42,9 +42,6 @@ public class PanelRoomMain : MonoBehaviour
     {
         // 这一行，查了两个小时。。。如果没有，打包客户端后，地表看不到任何颜色，都是灰色。
         Shader.EnableKeyword("HEX_MAP_EDIT_MODE");
-        _togShowGrid.isOn = false;
-        _togShowLabel.isOn = false;
-        _togAi.isOn = true;
 
         _selectObj = Instantiate(_selectObjTemplate);
         _selectObj.SetActive(false);

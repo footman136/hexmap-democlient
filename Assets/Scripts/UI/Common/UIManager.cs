@@ -52,7 +52,12 @@ public class UIManager : MonoBehaviour
     {
         if (_goLoading == null)
         {
-            _goLoading = CreatePanel(_root, "", "UI/Common/PanelLoading");
+            string uiPrefab = "UI/Common/PanelLoading";
+            _goLoading = CreatePanel(_root, "", uiPrefab);
+            if (!_goLoading)
+            {
+                Debug.LogError($"UIManager BeginLoading Error - UI not found:{uiPrefab}");
+            }
         }
         else
         {
@@ -217,4 +222,39 @@ public class UIManager : MonoBehaviour
     
     #endregion
 
+    #region MessageBox
+
+    private GameObject _goMessagebox;
+    /// <summary>
+    /// 对话框
+    /// </summary>
+    /// <param name="title">对话框标题</param>
+    /// <param name="content">对话框内容</param>
+    /// <param name="buttonPattern">按钮的种类,常用方法:BUTTON.YES|BUTTON.NO,或者BUTTON.OK</param>
+    /// <param name="callBack">对话框按钮被按下后的回调函数,参数是按钮的ID</param>
+    /// <param name="showBackground">是否显示背景板</param>
+    public void MessageBox(string title, string content, int buttonPattern,  
+        PanelMessageBox.MessageBoxCallBack callBack, bool showBackground = true)
+    {
+        if (_goMessagebox == null)
+        {
+            string uiPrefab = "UI/Common/PanelMessageBox";
+            _goMessagebox = CreatePanel(_root, "", uiPrefab);
+            var mb = _goMessagebox.GetComponent<PanelMessageBox>();
+            if (mb)
+            {
+                mb.Init(title, content, buttonPattern, callBack, showBackground);
+            }
+            else
+            {
+                Debug.LogError($"UIManager MessageBox Error - UI not found:{uiPrefab}");
+            }
+        }
+        else
+        {
+            ShowPanel(_goMessagebox, true);
+        }
+    }
+
+    #endregion
 }

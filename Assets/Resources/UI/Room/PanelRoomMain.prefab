@@ -1776,7 +1776,6 @@ MonoBehaviour:
   _commands: {fileID: 0}
   _selectObjTemplate: {fileID: 100006, guid: c040f7ccd795db54f898d253a9ed2e7a, type: 3}
   _hitGroundTemplate: {fileID: 100004, guid: 4794486a71fe1b542b984f399803eb07, type: 3}
-  _commandType: 0
 --- !u!1 &3189238745787245569
 GameObject:
   m_ObjectHideFlags: 0
@@ -2482,7 +2481,7 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Toggle+ToggleEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
-  m_IsOn: 1
+  m_IsOn: 0
 --- !u!1 &9135812954265443322
 GameObject:
   m_ObjectHideFlags: 0
