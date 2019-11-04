@@ -12,6 +12,11 @@ public class CmdCreateSoldier3 : MonoBehaviour, ICommand
     }
     public void Run()
     {
+        PickInfo pi = CommandManager.Instance.CurrentExecuter;
+        if (pi.CurrentCity == null)
+            return;
+        UrbanCity city = pi.CurrentCity;
+        PanelRoomMain.Instance.AskCreateUnit(city, 10012);
     }
     public void Stop()
     {

@@ -17,17 +17,23 @@ public class CmdMarch : MonoBehaviour, ICommand
     {
         PanelRoomMain.Instance.ShowCursor(PanelRoomMain.CURSOR_TYPE.FIND_PATH);
         CommandManager.Instance.CommandTargetSelected += OnCommandTargetSelected;
-        var ci = Cmd.GetComponent<CommandItem>();
-        if(ci)
-            ci.Select(true);
+        if (Cmd)
+        {
+            var ci = Cmd.GetComponent<CommandItem>();
+            if (ci)
+                ci.Select(true);
+        }
     }
     public void Stop()
     {
         PanelRoomMain.Instance.ShowCursor(PanelRoomMain.CURSOR_TYPE.NONE);
         CommandManager.Instance.CommandTargetSelected -= OnCommandTargetSelected;
-        var ci = Cmd.GetComponent<CommandItem>();
-        if(ci)
-            ci.Select(false);
+        if (Cmd)
+        {
+            var ci = Cmd?.GetComponent<CommandItem>();
+            if (ci)
+                ci.Select(false);
+        }
     }
 
     private void OnCommandTargetSelected(PickInfo piTarget)

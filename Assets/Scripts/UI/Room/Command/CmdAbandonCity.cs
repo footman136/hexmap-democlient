@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Google.Protobuf;
+using Protobuf.Room;
 using UnityEngine;
 
 public class CmdAbandonCity : MonoBehaviour, ICommand
@@ -25,7 +27,20 @@ public class CmdAbandonCity : MonoBehaviour, ICommand
         switch ((PanelMessageBox.BUTTON)button)
         {
             case PanelMessageBox.BUTTON.YES:
-                Debug.Log("Delete a City!");
+            {
+                var pi = CommandManager.Instance.CurrentExecuter;
+                if (pi != null)
+                {
+                    var city = pi.CurrentCity;
+                    CityRemove output = new CityRemove()
+                    {
+                        RoomId = city.RoomId,
+                        OwnerId = city.OwnerId,
+                        CityId = city.CityId,
+                    }; 
+                    GameRoomManager.Instance.SendMsg(ROOM.CityRemove, output.ToByteArray());
+                }
+            }
                 break;
             case PanelMessageBox.BUTTON.NO:
                 break;

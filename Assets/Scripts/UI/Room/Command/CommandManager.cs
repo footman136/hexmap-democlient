@@ -44,6 +44,7 @@ public class CommandManager : MonoBehaviour
         Guard = 5003, // 驻守
         RapidMarch = 5004, // 急行军
         Charge = 5005, // 冲锋
+        Halt = 5006, 停止
         
     }
     
@@ -116,6 +117,7 @@ public class CommandManager : MonoBehaviour
     void SetRunningCommand(CommandID cmdId)
     {
         //Only one command can exist
+        // 这些代码是参考<二战风云2>的代码而来的,写的不是很好.只能在下个指令开始的时候,结束上一个指令,没有地方提前Stop上一个指令
         if (_runningCommand != null)
             _runningCommand.Stop();
         _runningCommand = null;
@@ -282,6 +284,13 @@ public class CommandManager : MonoBehaviour
         order = csv.GetValueInt((int)cmdId, "Order");
         ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, Func = obj.AddComponent<CmdCharge>(),};
         Commands.Add(cmdId, ci);
+        
+        cmdId = CommandID.Halt;
+        cmdName = csv.GetValue((int)cmdId, "Name");
+        order = csv.GetValueInt((int)cmdId, "Order");
+        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, Func = obj.AddComponent<CmdHalt>(),};
+        Commands.Add(cmdId, ci);
+        
     }
 
     #endregion

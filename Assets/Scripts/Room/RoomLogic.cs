@@ -82,12 +82,16 @@ public class RoomLogic : MonoBehaviour
         DestroyATroopReply input = DestroyATroopReply.Parser.ParseFrom(bytes);
         if (!input.Ret)
         {
-            string msg = "销毁Actor失败！";
-            GameRoomManager.Instance.Log("MSG: DestroyATroopReply - " + msg);
-            return;
+            string msg = $"销毁Actor失败！{input.ActorId}";
+            GameRoomManager.Instance.Log("MSG: DestroyATroopReply Error - " + msg);
         }
-
-        GameRoomManager.Instance.HexmapHelper.DestroyUnit(input.ActorId);
+        else
+        {
+            GameRoomManager.Instance.HexmapHelper.DestroyUnit(input.ActorId);
+            string msg = $"成功解散部队!{input.ActorId}";
+            GameRoomManager.Instance.Log("MSG: DestroyATroopReply - OK " + msg);
+            PanelRoomMain.Instance.SetSelection(null);
+        }
     }
 
     private void OnTroopMoveReply(byte[] bytes)
@@ -191,9 +195,13 @@ public class RoomLogic : MonoBehaviour
         {
             string msg = $"删除城市失败！";
             GameRoomManager.Instance.Log("MSG: CityRemoveReply Error - " + msg);
-            return;
         }
-        UrbanManager.RemoveCity(input.CityId);
+        else
+        {
+            UrbanManager.RemoveCity(input.CityId);
+            GameRoomManager.Instance.Log($"MSG: CityRemoveReply OK - 成功删除城市:{input.CityId}");
+            PanelRoomMain.Instance.SetSelection(null);
+        }
     }
     
 

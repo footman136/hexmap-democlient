@@ -89,6 +89,7 @@ public class PanelRoomMain : MonoBehaviour
         if (Input.GetMouseButtonUp(1))
         {
             CommandManager.Instance.StopCurrentCommand();
+            hexmapHelper.hexGrid.ClearPath();
         }
 
         if (CommandManager.Instance.IsCommandRunning())
@@ -116,6 +117,10 @@ public class PanelRoomMain : MonoBehaviour
         }
         return false;
     }
+    
+    #endregion;
+    
+    #region 选中特效
 
     private void ShowHitGround(Vector3 position)
     {
@@ -169,7 +174,7 @@ public class PanelRoomMain : MonoBehaviour
             }
         }
     }
-    
+
     #endregion
     
     #region 选中
@@ -180,26 +185,35 @@ public class PanelRoomMain : MonoBehaviour
         {
             hexmapHelper.hexGrid.ClearPath();
             UpdateCurrentCell();
-            _pickInfoMaster.Clear();
-            if (currentCell)
+            SetSelection(currentCell);
+        }
+        else
+        {
+            HexCell cell = GetCellUnderCursor();
+            SetTarget(cell);
+        }
+        
+    }
+
+    public void SetSelection(HexCell cell)
+    {
+        _pickInfoMaster.Clear();
+        if (cell)
+        {
+            _pickInfoMaster.CurrentCell = cell;
+            if (cell.Unit)
             {
-                _pickInfoMaster.CurrentCell = currentCell;
-                if (currentCell.Unit)
+                _pickInfoMaster.CurrentUnit = cell.Unit;
+            }
+            else
+            {
+                if (cell.UrbanLevel > 0)
                 {
-                    _pickInfoMaster.CurrentUnit = currentCell.Unit;
-                }
-                else
-                { //选择城市
-                    if (currentCell.UrbanLevel > 0)
-                    {
-                        var city = GameRoomManager.Instance.RoomLogic.UrbanManager.FindCity(currentCell);
-                        _pickInfoMaster.CurrentCity = city;
-                    }
+                    var city = GameRoomManager.Instance.RoomLogic.UrbanManager.FindCity(currentCell);
+                    _pickInfoMaster.CurrentCity = city;
                 }
             }
-
             CommandManager.Instance.CurrentExecuter = _pickInfoMaster;// 发送命令的单位
-
             ShowSelector(null, false);
             _commands.SetSelector(_pickInfoMaster);
             if (_pickInfoMaster.CurrentCity != null)
@@ -213,30 +227,36 @@ public class PanelRoomMain : MonoBehaviour
         }
         else
         {
-            _pickInfoTarget.Clear();
-            HexCell cell = GetCellUnderCursor();
-            if (cell)
-            {
-                _pickInfoTarget.CurrentCell = cell;
-                if (cell.Unit)
-                {
-                    _pickInfoTarget.CurrentUnit = cell.Unit;
-                }
-                else
-                {
-                    if (cell.UrbanLevel > 0)
-                    {
-                        var city = GameRoomManager.Instance.RoomLogic.UrbanManager.FindCity(cell);
-                        _pickInfoTarget.CurrentCity = city;
-                    }
-                }
-                
-                CommandManager.Instance.OnCommandTargetSelected(_pickInfoTarget); // 接受命令的单位
-            }
+            hexmapHelper.hexGrid.ClearPath();
+            ShowSelector(null, false);
+            ShowSelectorCity(null, false);
+            ShowCursor(CURSOR_TYPE.NONE);
         }
-        
     }
 
+    public void SetTarget(HexCell cell)
+    {
+        _pickInfoTarget.Clear();
+        if (cell)
+        {
+            _pickInfoTarget.CurrentCell = cell;
+            if (cell.Unit)
+            {
+                _pickInfoTarget.CurrentUnit = cell.Unit;
+            }
+            else
+            {
+                if (cell.UrbanLevel > 0)
+                {
+                    var city = GameRoomManager.Instance.RoomLogic.UrbanManager.FindCity(cell);
+                    _pickInfoTarget.CurrentCity = city;
+                }
+            }
+                
+            CommandManager.Instance.OnCommandTargetSelected(_pickInfoTarget); // 接受命令的单位
+        }
+    }
+    
     void DoPathfinding (bool calc = false) {
         if (UpdateCurrentCell() || calc) {
             if (currentCell && _pickInfoMaster.CurrentUnit && _pickInfoMaster.CurrentUnit.IsValidDestination(currentCell)) {
@@ -269,28 +289,33 @@ public class PanelRoomMain : MonoBehaviour
 
     #region 指令
     
-    bool AskCreateUnit(int actorInfoId, string unitName)
+    public bool AskCreateUnit(UrbanCity city, int actorInfoId)
     {
-        HexCell cell = GetCellUnderCursor();
-        if (cell && !cell.Unit)
+        HexCell cellCenter = GameRoomManager.Instance.HexmapHelper.GetCell(city.CellIndex);// 城市中心地块
+        if (cellCenter.Unit != null)
         {
-            CreateATroop output = new CreateATroop()
-            {
-                RoomId = GameRoomManager.Instance.RoomId,
-                OwnerId = GameRoomManager.Instance.CurrentPlayer.TokenId,
-                ActorId = GameUtils.Utils.GuidToLongId(),
-                PosX = cell.coordinates.X,
-                PosZ = cell.coordinates.Z,
-                Orientation = Random.Range(0f, 360f),
-                Species = unitName, // 预制件的名字
-                CellIndex = cell.Index,
-                ActorInfoId = actorInfoId,
-            };
-            GameRoomManager.Instance.SendMsg(ROOM.CreateAtroop, output.ToByteArray());
-            return true;
+            string msg = $"当前位置有一支部队，请把该部队移走，然后再生产部队！";
+            UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Warning);
+            return false;
         }
-
-        return false;
+        
+        var actorInfoTable = CsvDataManager.Instance.GetTable("actor_info");
+        string artPrefab = actorInfoTable.GetValue(10001, "ArtPrefab");
+        
+        CreateATroop output = new CreateATroop()
+        {
+            RoomId = GameRoomManager.Instance.RoomId,
+            OwnerId = GameRoomManager.Instance.CurrentPlayer.TokenId,
+            ActorId = GameUtils.Utils.GuidToLongId(),
+            PosX = cellCenter.coordinates.X,
+            PosZ = cellCenter.coordinates.Z,
+            Orientation = Random.Range(0f, 360f),
+            Species = artPrefab, // 预制件的名字
+            CellIndex = city.CellIndex,
+            ActorInfoId = actorInfoId,
+        };
+        GameRoomManager.Instance.SendMsg(ROOM.CreateAtroop, output.ToByteArray());
+        return true;
     }
 
     bool AskDestroyUnit()
