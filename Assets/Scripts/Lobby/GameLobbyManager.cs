@@ -17,6 +17,14 @@ public class GameLobbyManager : ClientScript
     // Start is called before the first frame update
     void Start()
     {
+        // 从[server_config]表里读取服务器地址和端口
+        var csv = CsvDataManager.Instance.GetTable("server_config");
+        if (csv != null)
+        {
+            _address = csv.GetValue(1, "LobbyServerAddress");
+            _port = csv.GetValueInt(1, "LobbyServerPort");
+        }
+        
         Debug.Log("GameLobbyManager.Start()");
         base.Start();
 

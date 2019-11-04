@@ -20,6 +20,9 @@ namespace Main
         [SerializeField] private GameLobbyManager _lobbyManager;
         public GameLobbyManager LobbyManager => _lobbyManager;
 
+        [HideInInspector]
+        public CsvDataManager CsvDataManager;
+
         // 进入房间以前需要准备的数据
         public EnterRoomData EnterRoom;
     
@@ -42,6 +45,10 @@ namespace Main
             
             // 初始化全局量
             Utils.InitLogFileName();
+            
+            // 初始化数据表
+            CsvDataManager = gameObject.AddComponent<CsvDataManager>();
+            CsvDataManager.Instance.LoadDataAll();
         }
 
         // Start is called before the first frame update

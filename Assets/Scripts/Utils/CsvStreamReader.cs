@@ -630,7 +630,7 @@ namespace GameUtils
             }
 
             Debug.LogError(
-                $"CsvStreamReader GetValue Error - Data not found! TableName:{fileName} - Key:{Key} - Value:{GetColName}");
+                $"CsvStreamReader GetValueInt Error - Data not found! TableName:{fileName} - Key:{Key} - Value:{GetColName}");
 
             return 0;
         }
@@ -648,7 +648,24 @@ namespace GameUtils
             }
 
             Debug.LogError(
-                $"CsvStreamReader GetValue Error - Data not found! TableName:{fileName} - Key:{Key} - Value:{GetColName}");
+                $"CsvStreamReader GetValueFloat Error - Data not found! TableName:{fileName} - Key:{Key} - Value:{GetColName}");
+
+            return 0;
+        }
+        public long GetValueLong(int Key, string GetColName)
+        {
+            string strKey = Key.ToString();
+            if (rowMap.ContainsKey(strKey))
+            {
+                ArrayList colAL = rowMap[strKey];
+                if (colTitleMap.ContainsKey(GetColName))
+                {
+                    return long.Parse(colAL[colTitleMap[GetColName]].ToString());
+                }
+            }
+
+            Debug.LogError(
+                $"CsvStreamReader GetValueLong Error - Data not found! TableName:{fileName} - Key:{Key} - Value:{GetColName}");
 
             return 0;
         }

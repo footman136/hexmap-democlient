@@ -7,6 +7,7 @@ using Protobuf.Room;
 using System;
 using System.IO;
 using GameUtils;
+using UnityEditor.PackageManager;
 
 public class GameRoomManager : ClientScript
 {
@@ -16,6 +17,7 @@ public class GameRoomManager : ClientScript
     
     public HexmapHelper HexmapHelper;
     public RoomLogic RoomLogic;
+    [HideInInspector]
     public CsvDataManager CsvDataManager;
     public CommandManager CommandManager;
 
@@ -32,6 +34,18 @@ public class GameRoomManager : ClientScript
         if(Instance != null)
             Debug.LogError("GameRoomManager is Singleton! Cannot be created again!");
         Instance = this;
+        
+        //读取数据
+        // CsvDataManager这个实例可能在游戏一开始已经被ClientManager初始化过
+        if (ClientManager.Instance != null)
+        {
+            CsvDataManager = ClientManager.Instance.CsvDataManager;
+        }
+        else
+        {
+            CsvDataManager = gameObject.AddComponent<CsvDataManager>();
+            CsvDataManager.LoadDataAll();
+        }
     }
 
     private EnterRoomData roomData;
@@ -47,11 +61,22 @@ public class GameRoomManager : ClientScript
         }
         else
         {// 单独运行本场景的时候，CliengtManager不存在
+
+            long defaultRoomId = 0;
+            // 从[server_config]表里读取服务器地址和端口
+            var csv = CsvDataManager.Instance.GetTable("server_config");
+            if (csv != null)
+            {
+                _address = csv.GetValue(1, "RoomServerAddress");
+                _port = csv.GetValueInt(1, "RoomServerPort");
+                defaultRoomId = csv.GetValueLong(1, "DefaultRoomId");
+            }
+            
             roomData.Address = _address;
             roomData.Port = _port;
             roomData.RoomName = "遗落の战境3";
             roomData.IsCreatingRoom = false;
-            roomData.RoomId = 5673468034511399841;
+            roomData.RoomId = defaultRoomId;
         }
         
         UIManager.Instance.BeginLoading();
@@ -64,8 +89,6 @@ public class GameRoomManager : ClientScript
         RoomLogic.Init();
         Log($"GameRoomManager.Start()! 开始链接RoomServer - {_address}:{_port}");
         
-        //读取数据
-        CsvDataManager.LoadDataAll();
         CommandManager.LoadCommands();        
             
         //载入地图(调试Only)
