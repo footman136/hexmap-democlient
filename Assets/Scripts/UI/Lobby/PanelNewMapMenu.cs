@@ -21,7 +21,7 @@ public class PanelNewMapMenu : MonoBehaviour {
 
 	bool wrapping = true;
 	
-	const int mapFileVersion = 5;
+	const int mapFileVersion = 7;
 
 	private string _originalRoomName;
 

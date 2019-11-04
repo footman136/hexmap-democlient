@@ -77,12 +77,14 @@ public class StateMachineActor : FiniteStateMachine<FSMStateActor.StateEnum>
                 OwnerId = ab.OwnerId,
                 ActorId = ab.ActorId,
                 State = (int)newState,
-                PosFromX = ab.PosX,
-                PosFromZ = ab.PosZ,
-                PosToX = ab.TargetPosX,
-                PosToZ = ab.TargetPosZ,
+                PosXFrom = ab.PosX,
+                PosZFrom = ab.PosZ,
+                PosXTo = ab.TargetPosX,
+                PosZTo = ab.TargetPosZ,
+                CellIndexFrom = ab.CellIndex,
+                CellIndexTo = ab.TargetCellIndex,
                 Orientation = ab.Orientation,
-                Speed = 0.5f,
+                Speed = ab.Speed,
             };
             GameRoomManager.Instance.SendMsg(ROOM.TroopAiState,output.ToByteArray());
 

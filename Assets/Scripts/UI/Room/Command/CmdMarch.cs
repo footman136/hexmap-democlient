@@ -45,24 +45,44 @@ public class CmdMarch : MonoBehaviour, ICommand
         if (!cellTarget)
             return;
         {
-            GameRoomManager.Instance.HexmapHelper.hexGrid.FindPath(whoMove.Location, cellTarget, whoMove);
-            if (!GameRoomManager.Instance.HexmapHelper.hexGrid.HasPath)
+            var currentCell = whoMove.Location;
+            GameRoomManager.Instance.HexmapHelper.hexGrid.FindPath(currentCell, cellTarget, whoMove);
+            var hexmapHelper = GameRoomManager.Instance.HexmapHelper;
+            if (!hexmapHelper.hexGrid.HasPath)
                 return;
             var av = whoMove.GetComponent<ActorVisualizer>();
             if (av == null)
                 return;
 
-            TroopMove output = new TroopMove()
+//            TroopMove output = new TroopMove()
+//            {
+//                RoomId = GameRoomManager.Instance.RoomId,
+//                OwnerId = GameRoomManager.Instance.CurrentPlayer.TokenId,
+//                ActorId = av.ActorId,
+//                PosFromX = av.PosX,
+//                PosFromZ = av.PosZ,
+//                PosToX = cellTarget.coordinates.X,
+//                PosToZ = cellTarget.coordinates.Z,
+//            };
+//            GameRoomManager.Instance.SendMsg(ROOM.TroopMove, output.ToByteArray());
+            
+            var ab = GameRoomManager.Instance.RoomLogic.ActorManager.GetPlayer(av.ActorId);
+            if (ab == null)
+                return;
+            HexCell newCell = hexmapHelper.hexGrid.GetCell(currentCell.coordinates.X, currentCell.coordinates.Z);
+            HexCell newCell2 = hexmapHelper.hexGrid.GetCell(currentCell.Position);
+            if (newCell.Position != currentCell.Position)
             {
-                RoomId = GameRoomManager.Instance.RoomId,
-                OwnerId = GameRoomManager.Instance.CurrentPlayer.TokenId,
-                ActorId = av.ActorId,
-                PosFromX = av.PosX,
-                PosFromZ = av.PosZ,
-                PosToX = cellTarget.coordinates.X,
-                PosToZ = cellTarget.coordinates.Z,
-            };
-            GameRoomManager.Instance.SendMsg(ROOM.TroopMove, output.ToByteArray());
+                Debug.LogError($"Fuck Hexmap!!! - Orgin<{currentCell.coordinates.X},{currentCell.coordinates.Z}> - New<{newCell.coordinates.X},{newCell.coordinates.Z}>");
+            }
+            if (newCell2.Position != currentCell.Position)
+            {
+                Debug.LogError($"Fuck Hexmap 2!!! - Orgin<{currentCell.coordinates.X},{currentCell.coordinates.Z}> - New2<{newCell2.coordinates.X},{newCell2.coordinates.Z}>");
+            }
+            ab.SetTarget(cellTarget.Position);
+        
+            Debug.Log($"MY BY MYSELF - Dest<{cellTarget.coordinates.X},{cellTarget.coordinates.Z}> - Dest Pos<{ab.TargetPosition.x},{ab.TargetPosition.z}>");
+            ab.StateMachine.TriggerTransition(FSMStateActor.StateEnum.WALK); 
         }
         Stop();
     }

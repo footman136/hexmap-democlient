@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using AI;
 using Animation;
 using UnityEngine;
 using UnityStandardAssets.Characters.ThirdPerson;
@@ -15,7 +16,7 @@ public class HexmapHelper : MonoBehaviour
     
     public Material terrainMaterial;
     
-    const int mapFileVersion = 6;
+    const int mapFileVersion = 7;
 
     #region 初始化
     
@@ -264,65 +265,111 @@ public class HexmapHelper : MonoBehaviour
     /// <param name="unitName"></param>
     /// <param name="cellIndex">该单位在地形块HexCell中的Index，因为根据PosX,PosZ可能得不到正确的cell，只能用这个数据确保正确</param>
     /// <param name="actorInfoId">兵种ID，在actor_info表中的id</param>
+    /// <param name="name"></param>
+    /// <param name="hp"></param>
+    /// <param name="attackPower"></param>
+    /// <param name="defencePower"></param>
+    /// <param name="speed"></param>
+    /// <param name="filedOfVision"></param>
+    /// <param name="shootingRange"></param>
     /// <returns></returns>
-    public bool CreateUnit (long roomId, long ownerId, long actorId, int posX, int posZ, float orientation, string unitName, int cellIndex, int actorInfoId)
+    public bool CreateUnit (long roomId, long ownerId, long actorId, int posX, int posZ, float orientation, string unitName, int cellIndex, int actorInfoId,
+        string name, int hp, float attackPower, float defencePower, float speed, float filedOfVision, float shootingRange)
     {
         HexCell cell = GetCell(posX, posZ);
-        if (cell && !cell.Unit)
+        if (!cell)
         {
-            string unitPathName = $"Arts/BeffioPrefabs/Soldiers/{unitName}";
-            var go = Resources.Load<HexUnit>(unitPathName);
-            if (go != null)
+            GameRoomManager.Instance.Log($"HexmapHelper CreateUnit ：创建Actor失败！格子越界 - <{posX},{posZ}> - {unitName}");
+            return false;
+        }
+
+        if (cell.Unit)
+        {
+            HexCell newCell = null;
+            for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
             {
-                HexUnit hu = Instantiate(go);
-                if (hu != null)
+                HexCell neighbor = cell.GetNeighbor(d);
+                if (!neighbor.Unit)
                 {
-                    hexGrid.AddUnit(hu, cell, orientation);
-                    var av = hu.GetComponent<ActorVisualizer>();
-                    if (av != null)
-                    {
-                        av.RoomId = roomId;
-                        av.OwnerId = ownerId;
-                        av.ActorId = actorId;
-                        av.PosX = posX;
-                        av.PosZ = posZ;
-                        av.Orientation = orientation;
-                        av.Species = unitName;
-                        av.CellIndex = cellIndex;
-                        av.ActorInfoId = actorInfoId;
-
-                        // 其他属性从【actor_info】数据表中得来
-                        CsvStreamReader csv = CsvDataManager.Instance.GetTable("actor_info");
-                        if (csv != null)
-                        {
-                            av.Name = csv.GetValue(av.ActorInfoId, "Name");
-                            av.Hp = csv.GetValueInt(av.ActorInfoId, "Hp");
-                            av.AttackPower = csv.GetValueFloat(av.ActorInfoId, "AttackPower");
-                            av.DefencePower = csv.GetValueFloat(av.ActorInfoId, "DefencePower");
-                            av.Speed = csv.GetValueFloat(av.ActorInfoId, "Speed");
-                            av.FieldOfVision = csv.GetValueFloat(av.ActorInfoId, "FieldOfVision");
-                            av.ShootingRange = csv.GetValueFloat(av.ActorInfoId, "ShootingRange");
-                        }
-                    }
-
-                    // 关闭预制件上没用的东西，看以后这东西能否用得上，如果没用，就完全干掉
-                    hu.GetComponentInChildren<ThirdPersonUserControl>().enabled = false;
-                    hu.GetComponentInChildren<ThirdPersonCharacter>().enabled = false;
-                    hu.GetComponentInChildren<CapsuleCollider>().enabled = false;
-                    EnableFollowCamera(hu, false);
-
-                    if (!GameRoomManager.Instance.RoomLogic.ActorManager.AllActors.ContainsKey(actorId))
-                    {
-                        GameRoomManager.Instance.RoomLogic.ActorManager.AddActor(roomId, ownerId, actorId, posX, posZ, orientation, unitName, hu, cellIndex);
-                    }
-                    GameRoomManager.Instance.Log($"MSG: CreateATroopReply - 创建了一个Actor - {unitName}");
-                    return true;
+                    newCell = neighbor;
+                    break;
                 }
             }
+
+            if (newCell)
+            {
+                GameRoomManager.Instance.Log($"HexmapHelper ：创建Actor失败！物体位置重合了,重新放置! - 原坐标:<{posX},{posZ}> - 新坐标:<{newCell.coordinates.X},{newCell.coordinates.Z}> - {unitName}");
+                cell = newCell;
+            }
+            else
+            {
+                GameRoomManager.Instance.Log($"HexmapHelper ：创建Actor失败！原来这个格子没有物体，现在有了物体, 附近也没有空地! - <{posX},{posZ}> - {unitName}");
+                return false;
+            }
         }
-        else
+        string unitPathName = $"Arts/BeffioPrefabs/Soldiers/{unitName}";
+        var go = Resources.Load<HexUnit>(unitPathName);
+        if (go != null)
         {
-            GameRoomManager.Instance.Log($"HexmapHelper ：创建Actor失败！原来这个格子没有物体，现在有了物体 - <{posX},{posZ}> - {unitName}");
+            HexUnit hu = Instantiate(go);
+            if (hu != null)
+            {
+                hexGrid.AddUnit(hu, cell, orientation);
+                var av = hu.GetComponent<ActorVisualizer>();
+                if (av != null)
+                {
+                    av.RoomId = roomId;
+                    av.OwnerId = ownerId;
+                    av.ActorId = actorId;
+                    av.PosX = posX;
+                    av.PosZ = posZ;
+                    av.Orientation = orientation;
+                    av.Species = unitName;
+                    av.CellIndex = cellIndex;
+                    av.ActorInfoId = actorInfoId;
+                    
+                    av.Name = name;
+                    av.Hp = hp;
+                    av.AttackPower = attackPower;
+                    av.DefencePower = defencePower;
+                    av.Speed = speed;
+                    av.FieldOfVision = filedOfVision;
+                    av.ShootingRange = shootingRange;
+                }
+
+                // 关闭预制件上没用的东西，看以后这东西能否用得上，如果没用，就完全干掉
+                hu.GetComponentInChildren<ThirdPersonUserControl>().enabled = false;
+                hu.GetComponentInChildren<ThirdPersonCharacter>().enabled = false;
+                hu.GetComponentInChildren<CapsuleCollider>().enabled = false;
+                EnableFollowCamera(hu, false);
+
+                if (!GameRoomManager.Instance.RoomLogic.ActorManager.AllActors.ContainsKey(actorId))
+                {
+                    ActorBehaviour ab = new ActorBehaviour()
+                    {
+                        RoomId = roomId,
+                        OwnerId = ownerId,
+                        ActorId = actorId,
+                        PosX = posX,
+                        PosZ = posZ,
+                        Orientation = orientation,
+                        Species = unitName,
+                        CellIndex = cellIndex,
+                        ActorInfoId = actorInfoId,
+                    
+                        Name = name,
+                        Hp = hp,
+                        AttackPower = attackPower,
+                        DefencePower = defencePower,
+                        Speed = speed,
+                        FieldOfVision = filedOfVision,
+                        ShootingRange = shootingRange,
+                    };
+                    GameRoomManager.Instance.RoomLogic.ActorManager.AddActor(ab, hu);
+                }
+                GameRoomManager.Instance.Log($"MSG: CreateATroopReply - 创建了一个Actor - {unitName}");
+                return true;
+            }
         }
 
         return false;
@@ -372,7 +419,6 @@ public class HexmapHelper : MonoBehaviour
                             hu.Travel(listPath, av.Speed);
                         }
                     }
-
                 }
             }
         }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using AI;
+using Animation;
 using GameUtils;
 using Google.Protobuf;
 using Protobuf.Room;
@@ -43,7 +44,6 @@ public class RoomLogic : MonoBehaviour
         MsgDispatcher.RegisterMsg((int)ROOM_REPLY.CreateAtroopReply, OnCreateATroopReply);
         MsgDispatcher.RegisterMsg((int)ROOM_REPLY.DestroyAtroopReply, OnDestroyATroopReply);
         MsgDispatcher.RegisterMsg((int)ROOM_REPLY.TroopMoveReply, OnTroopMoveReply);
-        MsgDispatcher.RegisterMsg((int)ROOM_REPLY.TroopAiStateReply, OnTroopAiStateReply);
         MsgDispatcher.RegisterMsg((int)ROOM_REPLY.AskForCitiesReply, OnAskForCitiesReply);
         MsgDispatcher.RegisterMsg((int)ROOM_REPLY.CityAddReply, OnCityAddReply);
         MsgDispatcher.RegisterMsg((int)ROOM_REPLY.CityRemoveReply, OnCityRemoveReply);
@@ -74,7 +74,8 @@ public class RoomLogic : MonoBehaviour
         }
         
         GameRoomManager.Instance.HexmapHelper.CreateUnit(input.RoomId, input.OwnerId, input.ActorId,   
-            input.PosX, input.PosZ, input.Orientation, input.Species, input.CellIndex, input.ActorInfoId);
+            input.PosX, input.PosZ, input.Orientation, input.Species, input.CellIndex, input.ActorInfoId, 
+            input.Name, input.Hp, input.AttackPower, input.DefencePower, input.Speed, input.FieldOfVision, input.ShootingRange);
     }
 
     private void OnDestroyATroopReply(byte[] bytes)
@@ -105,12 +106,6 @@ public class RoomLogic : MonoBehaviour
         }
 
         GameRoomManager.Instance.HexmapHelper.DoMove(input.ActorId, input.PosFromX, input.PosFromZ, input.PosToX, input.PosToZ);
-    }
-
-    private void OnTroopAiStateReply(byte[] bytes)
-    {
-        TroopAiStateReply input = TroopAiStateReply.Parser.ParseFrom(bytes);
-        
     }
 
     private void OnAskForCitiesReply(byte[] bytes)

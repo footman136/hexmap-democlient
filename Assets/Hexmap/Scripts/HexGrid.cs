@@ -291,10 +291,11 @@ public class HexGrid : MonoBehaviour {
 			cells[i].Save(writer);
 		}
 
-		writer.Write(units.Count);
-		for (int i = 0; i < units.Count; i++) {
-			units[i].Save(writer);
-		}
+		// header version 7, Unit数据现在该为其他地方保存了(参考RoomServer里的ActorManager.SaveBuffer())
+//		writer.Write(units.Count);
+//		for (int i = 0; i < units.Count; i++) {
+//			units[i].Save(writer);
+//		}
 
 		// header version 6，保存资源数据
 		int resCount = 0;
@@ -342,7 +343,8 @@ public class HexGrid : MonoBehaviour {
 			chunks[i].Refresh();
 		}
 
-		if (header >= 2) {
+		// Unit数据现在该为其他地方读取了(参考RoomServer里的ActorManager.LoadBuffer())
+		if (header >= 2 && header <=6 ) {
 			int unitCount = reader.ReadInt32();
 			for (int i = 0; i < unitCount; i++) {
 				HexUnit.Load(reader, this);

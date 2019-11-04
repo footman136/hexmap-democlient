@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections;
 using UnityEngine;
 
 namespace AI
@@ -12,12 +13,10 @@ namespace AI
         private Dictionary<long, ActorBehaviour> _allActors = new Dictionary<long, ActorBehaviour>();
         public Dictionary<long, ActorBehaviour> AllActors => _allActors;
 
-        public void AddActor(long roomId, long ownerId, long actorId, int posX, int posZ, float orientation, string species, HexUnit hu, int cellIndex)
+        public void AddActor(ActorBehaviour ab, HexUnit hu)
         {
-            ActorBehaviour ab = new ActorBehaviour();
-            ab.Init(roomId, ownerId, actorId, posX, posZ, orientation, species, hu, cellIndex);
-            
-            _allActors.Add(actorId, ab);
+            ab.Init(hu);
+            _allActors.Add(ab.ActorId, ab);
         }
 
         public void RemoveActor(long actorId)

@@ -123,7 +123,7 @@ namespace Animation
                 return;
             if (input.ActorId != ActorId)
                 return; // 不是自己，略过
-            HexCell targetCell = GameRoomManager.Instance.HexmapHelper.GetCell(input.PosToX, input.PosToZ);
+            HexCell targetCell = GameRoomManager.Instance.HexmapHelper.GetCell(input.CellIndexFrom);
             Vector3 newPosition = targetCell.Position;
             FSMStateActor.StateEnum newAiState = (FSMStateActor.StateEnum)input.State;
             if (newAiState == CurrentAiState && newPosition == TargetPosition)
@@ -148,8 +148,8 @@ namespace Animation
                     aniState = idleStates;
                     break;
                 case FSMStateActor.StateEnum.WALK:
-                    GameRoomManager.Instance.HexmapHelper.DoMove(input.ActorId, input.PosFromX, input.PosFromZ, input.PosToX, input.PosToZ);
-                    Debug.Log($"MSG: TroopAiState - {CurrentAiState} - From<{input.PosFromX},{input.PosFromZ}> - To<{input.PosToX},{input.PosToZ}>");
+                    GameRoomManager.Instance.HexmapHelper.DoMove(input.ActorId, input.PosXFrom, input.PosZFrom, input.PosXTo, input.PosZTo);
+                    Debug.Log($"MSG: TroopAiState - {CurrentAiState} - From<{input.PosXFrom},{input.PosZFrom}> - To<{input.PosXTo},{input.PosZTo}>");
                     aniState = movementStates;
                     break;
                 case FSMStateActor.StateEnum.FIGHT:

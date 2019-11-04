@@ -26,7 +26,17 @@ namespace AI
         public int PosZ;
         public float Orientation;
         public string Species = "N/A";
-        public long CellIndex; // 根据PosX，PosZ有时候会获取到错误的cell（当PosX,PosZ有一个为负数的时候），所以保存Index是不会出错的
+        public int CellIndex; // 根据PosX，PosZ有时候会获取到错误的cell（当PosX,PosZ有一个为负数的时候），所以保存Index是不会出错的
+        public int ActorInfoId;
+        
+        // 这些数据一开始从表格读取
+        public string Name;
+        public int Hp;
+        public float AttackPower;
+        public float DefencePower;
+        public float Speed;
+        public float FieldOfVision;
+        public float ShootingRange;
 
         //This specific animal stats asset, create a new one from the asset menu under (LowPolyAnimals/NewAnimalStats)
         private ActorStats ScriptableActorStats;
@@ -36,6 +46,7 @@ namespace AI
         public Vector3 CurrentPosition; // 3D精确坐标，等同于transform.localPosition
         public int TargetPosX;
         public int TargetPosZ;
+        public int TargetCellIndex;
         public HexUnit HexUnit;
         private float _distance;
         private float TIME_DELAY;
@@ -47,23 +58,13 @@ namespace AI
         
         #region 初始化
 
-        public void Init(long roomId, long ownerId, long actorId, int posX, int posZ, float orientation, string species, HexUnit hu, int cellIndex)
+        public void Init(HexUnit hu)
         {
-            Species = species;
-            TIME_DELAY = 1f;
-            RoomId = roomId;
-            OwnerId = ownerId;
-            ActorId = actorId;
-            PosX = posX;
-            PosZ = posZ;
-            Orientation = orientation;
-            Species = species;
             StateMachine = new StateMachineActor(this);
             HexUnit = hu;
-            CellIndex = cellIndex;
-            
             CurrentPosition = HexUnit.transform.localPosition;
             TargetPosition = HexUnit.transform.localPosition;
+            
         }
         public void Fini()
         {
@@ -115,6 +116,7 @@ namespace AI
             HexCell hc = HexUnit.Grid.GetCell(targetPosition);
             TargetPosX = hc.coordinates.X;
             TargetPosZ = hc.coordinates.Z;
+            TargetCellIndex = hc.Index;
         }
         #endregion
         
