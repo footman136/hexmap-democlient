@@ -88,10 +88,10 @@ public class RoomLogic : MonoBehaviour
         }
         else
         {
+            PanelRoomMain.Instance.RemoveSelection(input.ActorId); // 如果该单位被选中,要取消选中
             GameRoomManager.Instance.HexmapHelper.DestroyUnit(input.ActorId);
             string msg = $"成功解散部队!{input.ActorId}";
             GameRoomManager.Instance.Log("MSG: DestroyATroopReply - OK " + msg);
-            PanelRoomMain.Instance.SetSelection(null);
         }
     }
 

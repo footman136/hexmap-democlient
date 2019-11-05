@@ -12,6 +12,12 @@ public class CmdHalt : MonoBehaviour, ICommand
     }
     public void Run()
     {
+        var whoMove = CommandManager.Instance.CurrentExecuter.CurrentActor;
+        if (!whoMove)
+            return;
+        var av = whoMove;
+        var ab = GameRoomManager.Instance.RoomLogic.ActorManager.GetActor(av.ActorId);
+        ab?.StateMachine.TriggerTransition(FSMStateActor.StateEnum.IDLE); 
     }
     public void Stop()
     {

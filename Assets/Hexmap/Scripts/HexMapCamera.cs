@@ -123,7 +123,6 @@ public class HexMapCamera : MonoBehaviour {
 	}
 	
 	// 鼠标右键控制拖动。Oct.22.2019. Liu Gang.
-	[SerializeField] private Texture2D _cursorTex;
 	private bool _leftMouseDown;
 	private bool _rightMouseDown;
 	private Vector3 _lastMousePos;
@@ -142,9 +141,9 @@ public class HexMapCamera : MonoBehaviour {
 			if (!_leftMouseDown)
 			{
 				//鼠标图标换成自定义小手
-				if (_cursorTex != null)
+				if (CursorManager.Instance != null)
 				{
-					Cursor.SetCursor(_cursorTex, Vector2.zero, CursorMode.Auto);
+					CursorManager.Instance.ShowCursor(CursorManager.CURSOR_TYPE.CAMERA_MOVE);
 				}
 				_lastMousePos = mousePos;
 				_leftMouseDown = true;
@@ -160,7 +159,7 @@ public class HexMapCamera : MonoBehaviour {
 			if (_leftMouseDown)
 			{
 				//鼠标恢复默认图标，置null即可
-				Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+				CursorManager.Instance.RestoreCursor();
 				_leftMouseDown = false;
 			}
 		}

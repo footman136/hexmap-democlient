@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Animation;
 using Google.Protobuf;
 using Protobuf.Room;
 using UnityEngine;
@@ -15,28 +16,34 @@ public class CmdBuildCity : MonoBehaviour, ICommand
     public void Run()
     {
         var pi = CommandManager.Instance.CurrentExecuter;
-        if (pi == null || !pi.CurrentUnit)
+        if (pi == null || !pi.CurrentActor)
         {
             string msg = $"没有选中任何部队!";
             UIManager.Instance.SystemTips(msg,PanelSystemTips.MessageType.Error);
-            GameRoomManager.Instance.Log("CmdBuildCity - " + msg);
+            GameRoomManager.Instance.Log("CmdBuildCity Error - " + msg);
             return;
         }
 
-        HexCell cell = pi.CurrentCell;
-        if (cell && cell.Unit)
+        long creatorId = 0;
+        var av = pi.CurrentActor;
+        if (av != null)
         {
-            string msg = $"这里有部队存在,不能创建城市!";
-            UIManager.Instance.SystemTips(msg,PanelSystemTips.MessageType.Error);
-            GameRoomManager.Instance.Log("CmdBuildCity - " + msg);
+            creatorId = av.ActorId;
+        }
+        else
+        {
+            string msg = "没有找到开拓者,无法创建城市!";
+            UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
+            GameRoomManager.Instance.Log("CmdBuildCity Error - " + msg);
             return;
         }
-        UrbanCity city = GameRoomManager.Instance.RoomLogic.UrbanManager.CreateCityHere(cell);
+
+        UrbanCity city = GameRoomManager.Instance.RoomLogic.UrbanManager.CreateCityHere(av.HexUnit.Location);
         if (city == null)
         {
             string msg = "这个位置无法创建城市!";
             UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
-            GameRoomManager.Instance.Log("CmdBuildCity - " + msg);
+            GameRoomManager.Instance.Log("CmdBuildCity Error - " + msg);
             return;
         }
         else
@@ -51,6 +58,7 @@ public class CmdBuildCity : MonoBehaviour, ICommand
                 CellIndex= city.CellIndex,
                 CityName = city.CityName,
                 CitySize = city.CitySize,
+                CreatorId = creatorId,
             };
             GameRoomManager.Instance.SendMsg(ROOM.CityAdd, output.ToByteArray());
             GameRoomManager.Instance.Log("AskBuildCity - 申请创建城市...");

@@ -3,10 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net.Sockets;
 using GameUtils;
+using Google.Protobuf;
 using JetBrains.Annotations;
 using Protobuf.Lobby;
 using Protobuf.Room;
 using UnityEngine;
+using UnityEngine.Experimental.PlayerLoop;
 using Random = UnityEngine.Random;
 
 namespace AI
@@ -79,12 +81,15 @@ namespace AI
             CurrentPosition = HexUnit.transform.localPosition;
             int posXOld = PosX;
             int posZOld = PosZ;
-            PosX = HexUnit.Grid.GetCell(CurrentPosition).coordinates.X;
-            PosZ = HexUnit.Grid.GetCell(CurrentPosition).coordinates.Z;
-//            if (posXOld != PosX || posZOld != PosZ)
-//            {
-//                Debug.Log($"MOVE : From<{posXOld},{posZOld}> - To<{PosX},{PosZ}>");
-//            }
+            var curentCell = HexUnit.Grid.GetCell(CurrentPosition);
+            PosX = curentCell.coordinates.X;
+            PosZ = curentCell.coordinates.Z;
+            CellIndex = curentCell.Index;
+            Orientation = HexUnit.Orientation;
+            if (posXOld != PosX || posZOld != PosZ)
+            { // 发送最新坐标给服务器
+                UpdatePos();
+            }
             
             StateMachine.Tick();
             
@@ -118,6 +123,26 @@ namespace AI
             TargetPosZ = hc.coordinates.Z;
             TargetCellIndex = hc.Index;
         }
+        
+        #endregion
+        
+        #region 消息
+
+        private void UpdatePos()
+        {
+            UpdatePos output = new UpdatePos()
+            {
+                RoomId = RoomId,
+                OwnerId = OwnerId,
+                ActorId = ActorId,
+                PosX = PosX,
+                PosZ = PosZ,
+                CellIndex = CellIndex,
+                Orientation = Orientation,
+            };
+            GameRoomManager.Instance.SendMsg(ROOM.UpdatePos, output.ToByteArray());
+        }
+        
         #endregion
         
         #region AI - 第一层

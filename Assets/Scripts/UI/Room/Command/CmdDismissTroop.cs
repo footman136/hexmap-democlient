@@ -32,7 +32,7 @@ public class CmdDismissTroop : MonoBehaviour, ICommand
                 var pi = CommandManager.Instance.CurrentExecuter;
                 if (pi != null)
                 {
-                    var av = pi.CurrentUnit.GetComponent<ActorVisualizer>();
+                    var av = pi.CurrentActor;
                     if (av)
                     {
                         DestroyATroop output = new DestroyATroop()

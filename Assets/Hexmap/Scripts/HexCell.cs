@@ -455,6 +455,11 @@ public class HexCell : MonoBehaviour {
 			elevation >= neighbor.elevation || waterLevel == neighbor.elevation
 		);
 	}
+	
+	public bool IsValidDestination () {
+		return IsExplored && !IsUnderwater && !Unit;
+	}
+	
 
 	void ValidateRivers () {
 		if (

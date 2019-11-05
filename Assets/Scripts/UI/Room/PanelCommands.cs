@@ -45,17 +45,14 @@ public class PanelCommands : MonoBehaviour
                 toggleRootName = "城市";
             }
         }
-        else if (pickInfo.CurrentUnit != null)
+        else if (pickInfo.CurrentActor != null)
         {
-            var av = pickInfo.CurrentUnit.GetComponent<ActorVisualizer>();
-            if (av)
+            var av = pickInfo.CurrentActor;
+            if (av.OwnerId == GameRoomManager.Instance.CurrentPlayer.TokenId) // 只有是自己的部队,才会出现[命令菜单]
             {
-                if (av.OwnerId == GameRoomManager.Instance.CurrentPlayer.TokenId) // 只有是自己的部队,才会出现[命令菜单]
-                {
-                    strCmdSet = CommandSet.GetValue(av.ActorInfoId, "CommandSet");
-                    CsvStreamReader csv = CsvDataManager.Instance.GetTable("actor_info");
-                    toggleRootName = csv.GetValue(av.ActorInfoId, "Name");
-                }
+                strCmdSet = CommandSet.GetValue(av.ActorInfoId, "CommandSet");
+                CsvStreamReader csv = CsvDataManager.Instance.GetTable("actor_info");
+                toggleRootName = csv.GetValue(av.ActorInfoId, "Name");
             }
         }
         else if (pickInfo.CurrentCell != null)

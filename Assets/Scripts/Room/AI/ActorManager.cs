@@ -29,7 +29,7 @@ namespace AI
             }
         }
 
-        public ActorBehaviour GetPlayer(long actorId)
+        public ActorBehaviour GetActor(long actorId)
         {
             if (_allActors.ContainsKey(actorId))
             {

@@ -15,7 +15,7 @@ public class CmdMarch : MonoBehaviour, ICommand
     }
     public void Run()
     {
-        PanelRoomMain.Instance.ShowCursor(PanelRoomMain.CURSOR_TYPE.FIND_PATH);
+        CursorManager.Instance.ShowCursor(CursorManager.CURSOR_TYPE.FIND_PATH);
         CommandManager.Instance.CommandTargetSelected += OnCommandTargetSelected;
         if (Cmd)
         {
@@ -26,7 +26,7 @@ public class CmdMarch : MonoBehaviour, ICommand
     }
     public void Stop()
     {
-        PanelRoomMain.Instance.ShowCursor(PanelRoomMain.CURSOR_TYPE.NONE);
+        CursorManager.Instance.ShowCursor(CursorManager.CURSOR_TYPE.NONE);
         CommandManager.Instance.CommandTargetSelected -= OnCommandTargetSelected;
         if (Cmd)
         {
@@ -38,21 +38,19 @@ public class CmdMarch : MonoBehaviour, ICommand
 
     private void OnCommandTargetSelected(PickInfo piTarget)
     {
-        HexUnit whoMove = CommandManager.Instance.CurrentExecuter.CurrentUnit;
+        var whoMove = CommandManager.Instance.CurrentExecuter.CurrentActor;
         if (!whoMove)
             return;
         HexCell cellTarget = piTarget.CurrentCell;
         if (!cellTarget)
             return;
         {
-            var currentCell = whoMove.Location;
-            GameRoomManager.Instance.HexmapHelper.hexGrid.FindPath(currentCell, cellTarget, whoMove);
+            var currentCell = whoMove.HexUnit.Location;
+            GameRoomManager.Instance.HexmapHelper.hexGrid.FindPath(currentCell, cellTarget, whoMove.HexUnit);
             var hexmapHelper = GameRoomManager.Instance.HexmapHelper;
             if (!hexmapHelper.hexGrid.HasPath)
                 return;
-            var av = whoMove.GetComponent<ActorVisualizer>();
-            if (av == null)
-                return;
+            var av = whoMove;
 
 //            TroopMove output = new TroopMove()
 //            {
@@ -66,18 +64,18 @@ public class CmdMarch : MonoBehaviour, ICommand
 //            };
 //            GameRoomManager.Instance.SendMsg(ROOM.TroopMove, output.ToByteArray());
             
-            var ab = GameRoomManager.Instance.RoomLogic.ActorManager.GetPlayer(av.ActorId);
+            var ab = GameRoomManager.Instance.RoomLogic.ActorManager.GetActor(av.ActorId);
             if (ab == null)
                 return;
             HexCell newCell = hexmapHelper.hexGrid.GetCell(currentCell.coordinates.X, currentCell.coordinates.Z);
             HexCell newCell2 = hexmapHelper.hexGrid.GetCell(currentCell.Position);
             if (newCell.Position != currentCell.Position)
             {
-                Debug.LogError($"Fuck Hexmap!!! - Orgin<{currentCell.coordinates.X},{currentCell.coordinates.Z}> - New<{newCell.coordinates.X},{newCell.coordinates.Z}>");
+                Debug.LogError($"OhNo Hexmap!!! - Orgin<{currentCell.coordinates.X},{currentCell.coordinates.Z}> - New<{newCell.coordinates.X},{newCell.coordinates.Z}>");
             }
             if (newCell2.Position != currentCell.Position)
             {
-                Debug.LogError($"Fuck Hexmap 2!!! - Orgin<{currentCell.coordinates.X},{currentCell.coordinates.Z}> - New2<{newCell2.coordinates.X},{newCell2.coordinates.Z}>");
+                Debug.LogError($"OhNo Hexmap 2!!! - Orgin<{currentCell.coordinates.X},{currentCell.coordinates.Z}> - New2<{newCell2.coordinates.X},{newCell2.coordinates.Z}>");
             }
             ab.SetTarget(cellTarget.Position);
         

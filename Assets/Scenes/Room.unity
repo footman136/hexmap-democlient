@@ -899,6 +899,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2100098651}
   - component: {fileID: 2100098650}
+  - component: {fileID: 2100098652}
   m_Layer: 0
   m_Name: Hex Map Camera
   m_TagString: Untagged
@@ -926,7 +927,6 @@ MonoBehaviour:
   moveSpeedMaxZoom: 100
   rotationSpeed: 180
   grid: {fileID: 1461312361}
-  _cursorTex: {fileID: 0}
 --- !u!4 &2100098651
 Transform:
   m_ObjectHideFlags: 0
@@ -942,6 +942,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2100098652
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2100098649}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d87e35a00c750d4291b45a4a2805151, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _curCameraMove: {fileID: 2800000, guid: 5b4f351c27a2053468be1c09d8a1d4d1, type: 3}
+  _curFindPath: {fileID: 2800000, guid: 51bdafafaea6a794fb6faedac1c71054, type: 3}
 --- !u!224 &112280865955098829 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 112280865955098829, guid: 4bd3e768311906c4992e954f81febaa4,

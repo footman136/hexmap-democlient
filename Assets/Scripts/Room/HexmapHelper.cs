@@ -341,7 +341,7 @@ public class HexmapHelper : MonoBehaviour
                 hu.GetComponentInChildren<ThirdPersonUserControl>().enabled = false;
                 hu.GetComponentInChildren<ThirdPersonCharacter>().enabled = false;
                 hu.GetComponentInChildren<CapsuleCollider>().enabled = false;
-                EnableFollowCamera(hu, false);
+                EnableFollowCamera(av, false);
 
                 if (!GameRoomManager.Instance.RoomLogic.ActorManager.AllActors.ContainsKey(actorId))
                 {
@@ -441,11 +441,11 @@ public class HexmapHelper : MonoBehaviour
         }
     }
 
-    public void EnableFollowCamera(HexUnit unit, bool bEnable)
+    public void EnableFollowCamera(ActorVisualizer av, bool bEnable)
     {
-        if (!unit)
+        if (av == null)
             return;
-        unit.transform.Find("CameraFollow").gameObject.SetActive(bEnable);
+        av.transform.Find("CameraFollow").gameObject.SetActive(bEnable);
     }
 
     #endregion

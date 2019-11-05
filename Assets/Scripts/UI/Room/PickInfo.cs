@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Animation;
 using UnityEngine;
 
 public class PickInfo
@@ -13,14 +14,16 @@ public class PickInfo
     }
 
     public HexCell CurrentCell;
-    public HexUnit CurrentUnit;
+    //public HexUnit CurrentUnit;
     public UrbanCity CurrentCity;
+    public ActorVisualizer CurrentActor;
 
     public void Clear()
     {
         CurrentCell = null;
-        CurrentUnit = null;
+        //CurrentUnit = null;
         CurrentCity = null;
+        CurrentActor = null;
     }
 }    
 

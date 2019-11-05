@@ -13,10 +13,6 @@ using Toggle = UnityEngine.UI.Toggle;
 public class PanelRoomMain : MonoBehaviour
 {
     [SerializeField] private HexmapHelper hexmapHelper;
-    [SerializeField] private Texture2D _curCreateActor;
-    [SerializeField] private Texture2D _curDestroyActor;
-    [SerializeField] private Texture2D _curFindPath;
-    [SerializeField] private Texture2D _curBuildCity;
     
     [SerializeField] private Toggle _togShowGrid;
     [SerializeField] private Toggle _togShowLabel;
@@ -36,12 +32,6 @@ public class PanelRoomMain : MonoBehaviour
 
     public PickInfo _pickInfoMaster;// 发动指令的对象,主语
     public PickInfo _pickInfoTarget; // 被发动指令的对象,宾语
-
-    public enum CURSOR_TYPE
-    {
-        NONE = 0,
-        FIND_PATH = 1,
-    }
 
     private static PanelRoomMain _instance;
     public static PanelRoomMain Instance => _instance;
@@ -84,12 +74,6 @@ public class PanelRoomMain : MonoBehaviour
         if (Input.GetMouseButtonUp(0))
         {
             DoSelection();
-        }
-
-        if (Input.GetMouseButtonUp(1))
-        {
-            CommandManager.Instance.StopCurrentCommand();
-            hexmapHelper.hexGrid.ClearPath();
         }
 
         if (CommandManager.Instance.IsCommandRunning())
@@ -136,21 +120,35 @@ public class PanelRoomMain : MonoBehaviour
         }
     }
 
-    private void ShowSelector( HexUnit unit, bool bShow)
+    private void ShowSelector( ActorVisualizer av, bool bShow)
     {
         _selectObj.SetActive(bShow);
-        if(unit)
+        if(av)
         {
             bShow = bShow & _isFollowCamera;
-            _selectObj.transform.parent = unit.transform;
+            _selectObj.transform.parent = av.transform;
             _selectObj.transform.localPosition = Vector3.up * 0.2f;
-            hexmapHelper.EnableFollowCamera(unit, bShow);
+            hexmapHelper.EnableFollowCamera(av, bShow);
             SelectCircle sc = _selectObj.GetComponent<SelectCircle>();
             if (sc)
             {
                 sc.SetSize(2);
             }
         }
+        else
+        {
+            _selectObj.transform.parent = null;
+        }
+    }
+
+    public bool IsShowingSelector(ActorVisualizer av)
+    {
+        if (_selectObj.transform.parent == av.transform)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     private void ShowSelectorCity( UrbanCity city, bool bShow)
@@ -203,7 +201,12 @@ public class PanelRoomMain : MonoBehaviour
             _pickInfoMaster.CurrentCell = cell;
             if (cell.Unit)
             {
-                _pickInfoMaster.CurrentUnit = cell.Unit;
+                //_pickInfoMaster.CurrentUnit = cell.Unit;
+                var av = cell.Unit.GetComponent<ActorVisualizer>();
+                if (av != null)
+                {
+                    _pickInfoMaster.CurrentActor = av;
+                }
             }
             else
             {
@@ -220,9 +223,9 @@ public class PanelRoomMain : MonoBehaviour
             {
                 ShowSelectorCity(_pickInfoMaster.CurrentCity, true);            
             }
-            else if (_pickInfoMaster.CurrentUnit)
+            else if (_pickInfoMaster.CurrentActor)
             {
-                ShowSelector(_pickInfoMaster.CurrentUnit, true);    
+                ShowSelector(_pickInfoMaster.CurrentActor, true);    
             }
         }
         else
@@ -230,7 +233,7 @@ public class PanelRoomMain : MonoBehaviour
             hexmapHelper.hexGrid.ClearPath();
             ShowSelector(null, false);
             ShowSelectorCity(null, false);
-            ShowCursor(CURSOR_TYPE.NONE);
+            CursorManager.Instance.ShowCursor(CursorManager.CURSOR_TYPE.NONE);
         }
     }
 
@@ -242,7 +245,12 @@ public class PanelRoomMain : MonoBehaviour
             _pickInfoTarget.CurrentCell = cell;
             if (cell.Unit)
             {
-                _pickInfoTarget.CurrentUnit = cell.Unit;
+                //_pickInfoTarget.CurrentUnit = cell.Unit;
+                var av = cell.Unit.GetComponent<ActorVisualizer>();
+                if (av != null)
+                {
+                    _pickInfoMaster.CurrentActor = av;
+                }
             }
             else
             {
@@ -256,11 +264,29 @@ public class PanelRoomMain : MonoBehaviour
             CommandManager.Instance.OnCommandTargetSelected(_pickInfoTarget); // 接受命令的单位
         }
     }
+
+    public void RemoveSelection(long actorId)
+    {
+        // 这里有点复杂哈,ActorVisualizer是挂接在HexUnit上的,而ActorBehaviour是被ActorManager管理的
+        // 所以,如果只知道ActorId的话,只能先找到ActorBehaviour,然后通过HexUnit找到ActorVisualizer
+        var ab = GameRoomManager.Instance.RoomLogic.ActorManager.GetActor(actorId);
+        if (ab != null)
+        {
+            var av = ab.HexUnit.GetComponent<ActorVisualizer>();
+            if (av != null)
+            {
+                if (IsShowingSelector(av))
+                {
+                    SetSelection(null);
+                }
+            }
+        }
+    }
     
     void DoPathfinding (bool calc = false) {
         if (UpdateCurrentCell() || calc) {
-            if (currentCell && _pickInfoMaster.CurrentUnit && _pickInfoMaster.CurrentUnit.IsValidDestination(currentCell)) {
-                hexmapHelper.hexGrid.FindPath(_pickInfoMaster.CurrentUnit.Location, currentCell, _pickInfoMaster.CurrentUnit);
+            if (currentCell && _pickInfoMaster.CurrentActor && currentCell.IsValidDestination()) {
+                hexmapHelper.hexGrid.FindPath(_pickInfoMaster.CurrentActor.HexUnit.Location, currentCell, _pickInfoMaster.CurrentActor.HexUnit);
             }
             else {
                 hexmapHelper.hexGrid.ClearPath();
@@ -270,23 +296,6 @@ public class PanelRoomMain : MonoBehaviour
     
     #endregion
     
-    #region 鼠标指针
-
-    public void ShowCursor(CURSOR_TYPE type)
-    {
-        switch (type)
-        {
-            case CURSOR_TYPE.FIND_PATH:
-                Cursor.SetCursor(_curFindPath, Vector2.zero, CursorMode.Auto);
-                break;
-            case CURSOR_TYPE.NONE:
-                Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
-                break;
-        }
-    }
-    
-    #endregion
-
     #region 指令
     
     public bool AskCreateUnit(UrbanCity city, int actorInfoId)
@@ -378,58 +387,58 @@ public class PanelRoomMain : MonoBehaviour
         return true;
     }
 
-    void AskMove()
-    {
-        if (!hexmapHelper.hexGrid.HasPath)
-            return;
-        if (currentCell == null || _pickInfoMaster.CurrentUnit == null)
-            return;
-        var av = _pickInfoMaster.CurrentUnit.GetComponent<ActorVisualizer>();
-        if (av == null)
-            return;
-
-        TroopMove output = new TroopMove()
-        {
-            RoomId = GameRoomManager.Instance.RoomId,
-            OwnerId = GameRoomManager.Instance.CurrentPlayer.TokenId,
-            ActorId = av.ActorId,
-            PosFromX = av.PosX,
-            PosFromZ = av.PosZ,
-            PosToX = currentCell.coordinates.X,
-            PosToZ = currentCell.coordinates.Z,
-        };
-        GameRoomManager.Instance.SendMsg(ROOM.TroopMove, output.ToByteArray());
-    }
-
-    private void MoveByMyself()
-    {
-        DoPathfinding(true);
-        
-        if (!hexmapHelper.hexGrid.HasPath)
-            return;
-        if (currentCell == null || _pickInfoMaster.CurrentUnit == null)
-            return;
-        var av = _pickInfoMaster.CurrentUnit.GetComponent<ActorVisualizer>();
-        if (av == null)
-            return;
-        var ab = GameRoomManager.Instance.RoomLogic.ActorManager.GetPlayer(av.ActorId);
-        if (ab == null)
-            return;
-        HexCell newCell = hexmapHelper.hexGrid.GetCell(currentCell.coordinates.X, currentCell.coordinates.Z);
-        HexCell newCell2 = hexmapHelper.hexGrid.GetCell(currentCell.Position);
-        if (newCell.Position != currentCell.Position)
-        {
-            Debug.LogError($"Fuck Hexmap!!! - Orgin<{currentCell.coordinates.X},{currentCell.coordinates.Z}> - New<{newCell.coordinates.X},{newCell.coordinates.Z}>");
-        }
-        if (newCell2.Position != currentCell.Position)
-        {
-            Debug.LogError($"Fuck Hexmap 2!!! - Orgin<{currentCell.coordinates.X},{currentCell.coordinates.Z}> - New2<{newCell2.coordinates.X},{newCell2.coordinates.Z}>");
-        }
-        ab.SetTarget(currentCell.Position);
-        
-        Debug.Log($"MY BY MYSELF - Dest<{currentCell.coordinates.X},{currentCell.coordinates.Z}> - Dest Pos<{ab.TargetPosition.x},{ab.TargetPosition.z}>");
-        ab.StateMachine.TriggerTransition(FSMStateActor.StateEnum.WALK); 
-    }
+//    void AskMove()
+//    {
+//        if (!hexmapHelper.hexGrid.HasPath)
+//            return;
+//        if (currentCell == null || _pickInfoMaster.CurrentUnit == null)
+//            return;
+//        var av = _pickInfoMaster.CurrentUnit.GetComponent<ActorVisualizer>();
+//        if (av == null)
+//            return;
+//
+//        TroopMove output = new TroopMove()
+//        {
+//            RoomId = GameRoomManager.Instance.RoomId,
+//            OwnerId = GameRoomManager.Instance.CurrentPlayer.TokenId,
+//            ActorId = av.ActorId,
+//            PosFromX = av.PosX,
+//            PosFromZ = av.PosZ,
+//            PosToX = currentCell.coordinates.X,
+//            PosToZ = currentCell.coordinates.Z,
+//        };
+//        GameRoomManager.Instance.SendMsg(ROOM.TroopMove, output.ToByteArray());
+//    }
+//
+//    private void MoveByMyself()
+//    {
+//        DoPathfinding(true);
+//        
+//        if (!hexmapHelper.hexGrid.HasPath)
+//            return;
+//        if (currentCell == null || _pickInfoMaster.CurrentUnit == null)
+//            return;
+//        var av = _pickInfoMaster.CurrentUnit.GetComponent<ActorVisualizer>();
+//        if (av == null)
+//            return;
+//        var ab = GameRoomManager.Instance.RoomLogic.ActorManager.GetPlayer(av.ActorId);
+//        if (ab == null)
+//            return;
+//        HexCell newCell = hexmapHelper.hexGrid.GetCell(currentCell.coordinates.X, currentCell.coordinates.Z);
+//        HexCell newCell2 = hexmapHelper.hexGrid.GetCell(currentCell.Position);
+//        if (newCell.Position != currentCell.Position)
+//        {
+//            Debug.LogError($"Fuck Hexmap!!! - Orgin<{currentCell.coordinates.X},{currentCell.coordinates.Z}> - New<{newCell.coordinates.X},{newCell.coordinates.Z}>");
+//        }
+//        if (newCell2.Position != currentCell.Position)
+//        {
+//            Debug.LogError($"Fuck Hexmap 2!!! - Orgin<{currentCell.coordinates.X},{currentCell.coordinates.Z}> - New2<{newCell2.coordinates.X},{newCell2.coordinates.Z}>");
+//        }
+//        ab.SetTarget(currentCell.Position);
+//        
+//        Debug.Log($"MY BY MYSELF - Dest<{currentCell.coordinates.X},{currentCell.coordinates.Z}> - Dest Pos<{ab.TargetPosition.x},{ab.TargetPosition.z}>");
+//        ab.StateMachine.TriggerTransition(FSMStateActor.StateEnum.WALK); 
+//    }
     #endregion
 
     #region 事件处理
@@ -477,9 +486,9 @@ public class PanelRoomMain : MonoBehaviour
     public void ToggleFollowCamera()
     {
         bool bFollow = _togFollowCamera.isOn;
-        if (_pickInfoMaster.CurrentUnit)
+        if (_pickInfoMaster.CurrentActor)
         {
-            hexmapHelper.EnableFollowCamera(_pickInfoMaster.CurrentUnit, bFollow);
+            hexmapHelper.EnableFollowCamera(_pickInfoMaster.CurrentActor, bFollow);
         }
 
         _isFollowCamera = bFollow;
