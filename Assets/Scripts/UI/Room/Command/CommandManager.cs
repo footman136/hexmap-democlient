@@ -74,9 +74,9 @@ public class CommandManager : MonoBehaviour
     }
 
     // Update is called once per frame
+    // 新增的内容,指令在执行的过程中也可以有函数来处理了 
     void Update()
     {
-        
     }
     public void InvokeCmd(CommandID cmdId)
     {

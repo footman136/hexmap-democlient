@@ -8,6 +8,8 @@ public class CommandItem : MonoBehaviour
     [SerializeField] private Text _label;
     [SerializeField] private GameObject _goSelect;
     private ICommand _iCommand;
+
+    public CommandManager.CommandID CmdId => _cmdId;
     
     // Start is called before the first frame update
     void Start()
@@ -65,5 +67,15 @@ public class CommandItem : MonoBehaviour
     {
         if(_goSelect)
             _goSelect.SetActive(bSelect);
+    }
+
+    public void Enable(bool enable)
+    {
+        var button = GetComponent<Button>();
+        if (button)
+        { // Disable本按钮
+            button.enabled = enable;
+            button.interactable = enable;
+        }
     }
 }

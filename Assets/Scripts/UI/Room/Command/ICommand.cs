@@ -9,5 +9,6 @@ public interface ICommand
     /// <returns>1:正常;0:Disalbe;-1:隐藏本按钮</returns>
     int CanRun();
     void Run();
+    void Tick();
     void Stop();
 }

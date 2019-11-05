@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Xml.Serialization;
 using Animation;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,6 +12,8 @@ public class PanelCommands : MonoBehaviour
     [SerializeField] private Transform _container;
     [SerializeField] private Toggle _toggleRoot;
     [SerializeField] private Text _toggleText;
+
+    public Transform Container => _container;
     
     private bool _isExpand;
     // Start is called before the first frame update
@@ -20,9 +23,29 @@ public class PanelCommands : MonoBehaviour
     }
 
     // Update is called once per frame
+    private const float TIME_DELAY = 0.03f; // 刷新间隔0.3秒(每秒30帧)  
+    private float timeDelay = 0;
     void Update()
     {
+        if (timeDelay < TIME_DELAY)
+        {
+            timeDelay += Time.deltaTime;
+        }
+
+        timeDelay = 0;
         
+        for (int i = 0; i < _container.childCount; ++i)
+        {
+            var child = _container.GetChild(i);
+            var ci = child.GetComponent<CommandItem>();
+            if (ci)
+            {
+                if (CommandManager.Instance.Commands.ContainsKey(ci.CmdId))
+                {
+                    CommandManager.Instance.Commands[ci.CmdId].Func.Tick();
+                }
+            }
+        }
     }
 
     public void SetSelector(PickInfo pickInfo)

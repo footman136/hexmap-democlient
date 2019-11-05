@@ -18,6 +18,9 @@ public class CmdAbandonCity : MonoBehaviour, ICommand
         string content = "你要废弃这座城市吗?"; 
         UIManager.Instance.MessageBox(title, content, (int)PanelMessageBox.BUTTON.YES|(int)PanelMessageBox.BUTTON.NO, OnConfirm);
     }
+    public void Tick()
+    {
+    }
     public void Stop()
     {
     }

@@ -24,6 +24,36 @@ public class CmdMarch : MonoBehaviour, ICommand
                 ci.Select(true);
         }
     }
+    public void Tick()
+    {
+        if (!CommandManager.Instance)
+            return;
+        var whoMove = CommandManager.Instance.CurrentExecuter.CurrentActor;
+        if (!whoMove)
+            return;
+        if (whoMove.CurrentAiState != FSMStateActor.StateEnum.IDLE)
+        {
+            for (int i = 0; i < PanelRoomMain.Instance.CommandContainer.childCount; ++i)
+            {
+                var ci = PanelRoomMain.Instance.CommandContainer.GetChild(i).GetComponent<CommandItem>();
+                if (ci && ci.CmdId < CommandManager.CommandID.March)
+                {
+                    ci.Enable(false);
+                }
+            }
+        }
+        else
+        {
+            for (int i = 0; i < PanelRoomMain.Instance.CommandContainer.childCount; ++i)
+            {
+                var ci = PanelRoomMain.Instance.CommandContainer.GetChild(i).GetComponent<CommandItem>();
+                if (ci && ci.CmdId < CommandManager.CommandID.March)
+                {
+                    ci.Enable(true);
+                }
+            }
+        }
+    }
     public void Stop()
     {
         CursorManager.Instance.ShowCursor(CursorManager.CURSOR_TYPE.NONE);
@@ -80,7 +110,7 @@ public class CmdMarch : MonoBehaviour, ICommand
             ab.SetTarget(cellTarget.Position);
         
             Debug.Log($"MY BY MYSELF - Dest<{cellTarget.coordinates.X},{cellTarget.coordinates.Z}> - Dest Pos<{ab.TargetPosition.x},{ab.TargetPosition.z}>");
-            ab.StateMachine.TriggerTransition(FSMStateActor.StateEnum.WALK); 
+            ab.StateMachine.TriggerTransition(FSMStateActor.StateEnum.WALK);
         }
         Stop();
     }

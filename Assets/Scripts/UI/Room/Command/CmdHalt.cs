@@ -19,6 +19,9 @@ public class CmdHalt : MonoBehaviour, ICommand
         var ab = GameRoomManager.Instance.RoomLogic.ActorManager.GetActor(av.ActorId);
         ab?.StateMachine.TriggerTransition(FSMStateActor.StateEnum.IDLE); 
     }
+    public void Tick()
+    {
+    }
     public void Stop()
     {
     }

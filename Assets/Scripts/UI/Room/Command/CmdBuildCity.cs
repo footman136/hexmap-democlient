@@ -64,6 +64,9 @@ public class CmdBuildCity : MonoBehaviour, ICommand
             GameRoomManager.Instance.Log("AskBuildCity - 申请创建城市...");
         }
     }
+    public void Tick()
+    {
+    }
     public void Stop()
     {
     }

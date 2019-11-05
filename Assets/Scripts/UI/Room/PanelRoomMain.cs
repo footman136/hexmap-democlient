@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Animation;
 using AI;
 using Google.Protobuf;
+using PlayFab.MultiplayerModels;
 using Protobuf.Room;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -22,6 +23,8 @@ public class PanelRoomMain : MonoBehaviour
     [SerializeField] private Material terrainMaterial;
     [SerializeField] private PanelCommands _commands;
     
+    public Transform CommandContainer => _commands.Container;
+    
     private HexCell currentCell;
 
     private bool _isFollowCamera;
@@ -32,7 +35,7 @@ public class PanelRoomMain : MonoBehaviour
 
     public PickInfo _pickInfoMaster;// 发动指令的对象,主语
     public PickInfo _pickInfoTarget; // 被发动指令的对象,宾语
-
+    
     private static PanelRoomMain _instance;
     public static PanelRoomMain Instance => _instance;
 

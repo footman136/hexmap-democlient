@@ -13,6 +13,9 @@ public class CmdBuildRoad : MonoBehaviour, ICommand
     public void Run()
     {
     }
+    public void Tick()
+    {
+    }
     public void Stop()
     {
     }

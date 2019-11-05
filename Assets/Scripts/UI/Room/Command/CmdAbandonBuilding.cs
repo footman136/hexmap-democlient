@@ -13,6 +13,9 @@ public class CmdAbandonBuilding : MonoBehaviour, ICommand
     public void Run()
     {
     }
+    public void Tick()
+    {
+    }
     public void Stop()
     {
     }

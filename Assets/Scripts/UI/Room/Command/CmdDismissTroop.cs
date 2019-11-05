@@ -19,6 +19,9 @@ public class CmdDismissTroop : MonoBehaviour, ICommand
         string content = "你要解散这支部队吗?"; 
         UIManager.Instance.MessageBox(title, content, (int)PanelMessageBox.BUTTON.YES|(int)PanelMessageBox.BUTTON.NO, OnConfirm);
     }
+    public void Tick()
+    {
+    }
     public void Stop()
     {
     }

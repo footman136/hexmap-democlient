@@ -22,6 +22,9 @@ public class CmdCreateFarmer : MonoBehaviour, ICommand
 
         Stop();
     }
+    public void Tick()
+    {
+    }
     public void Stop()
     {
     }

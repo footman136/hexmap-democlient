@@ -18,6 +18,9 @@ public class CmdCreateSoldier3 : MonoBehaviour, ICommand
         UrbanCity city = pi.CurrentCity;
         PanelRoomMain.Instance.AskCreateUnit(city, 10012);
     }
+    public void Tick()
+    {
+    }
     public void Stop()
     {
     }
