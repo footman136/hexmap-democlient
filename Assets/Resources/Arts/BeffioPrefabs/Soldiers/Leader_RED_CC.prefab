@@ -187,9 +187,16 @@ MonoBehaviour:
   PosX: 0
   PosZ: 0
   Orientation: 0
-  Speed: 0
   Species: N/A
   CellIndex: 0
+  ActorInfoId: 0
+  Name: 
+  Hp: 0
+  AttackPower: 0
+  DefencePower: 0
+  Speed: 0
+  FieldOfVision: 0
+  ShootingRange: 0
   idleStates:
   - stateName: Idle
     animationBool: isIdling
@@ -211,12 +218,16 @@ MonoBehaviour:
   attackingStates:
   - stateName: Attack
     animationBool: isAttacking
+  harvestStates:
+  - stateName: Idle
+    animationBool: isIdling
   deathStates:
   - stateName: Die
     animationBool: isDying
   TargetPosition: {x: 0, y: 0, z: 0}
   CurrentPosition: {x: 0, y: 0, z: 0}
   CurrentAiState: 0
+  HexUnit: {fileID: 0}
   _distance: 0
   _logChanges: 0
 --- !u!1 &110486

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using GameUtils;
 using JetBrains.Annotations;
 using Protobuf.Room;
@@ -46,6 +47,8 @@ namespace Animation
         [SerializeField]
         private AnimationState[] attackingStates;
         [SerializeField]
+        private AnimationState[] harvestStates;
+        [SerializeField]
         private AnimationState[] deathStates;
 
         [Space(), Header("AI"), Space(5)] 
@@ -58,7 +61,9 @@ namespace Animation
         [SerializeField] private float _distance;
         private ActorStats ScriptableActorStats;
         private Coroutine lookAtCoroutine;
-        
+
+        [Space(), Header("显示"), Space(5)] 
+        private GameObject _goHarvest;
 
         [Space(), Header("Debug"), Space(5)]
         [SerializeField, Tooltip("If true, AI changes to this animal will be logged in the console.")]
@@ -92,11 +97,15 @@ namespace Animation
         void OnEnable()
         {
             MsgDispatcher.RegisterMsg((int)ROOM_REPLY.TroopAiStateReply, OnAiStateChanged);
+            MsgDispatcher.RegisterMsg((int)ROOM_REPLY.HarvestStartReply, OnHarvestStart);
+            MsgDispatcher.RegisterMsg((int)ROOM_REPLY.HarvestStopReply, OnHarvestStop);
         }
 
         void OnDisable()
         {
             MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.TroopAiStateReply, OnAiStateChanged);
+            MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.HarvestStartReply, OnHarvestStart);
+            MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.HarvestStopReply, OnHarvestStop);
         }
 
         // Update is called once per frame
@@ -117,89 +126,14 @@ namespace Animation
         
         #endregion
         
-        #region 消息处理
-        private void OnAiStateChanged(byte[] bytes)
-        {
-            TroopAiStateReply input = TroopAiStateReply.Parser.ParseFrom(bytes);
-            if (!input.Ret)
-                return;
-            if (input.ActorId != ActorId)
-                return; // 不是自己，略过
-            HexCell targetCell = GameRoomManager.Instance.HexmapHelper.GetCell(input.CellIndexFrom);
-            Vector3 newPosition = targetCell.Position;
-            FSMStateActor.StateEnum newAiState = (FSMStateActor.StateEnum)input.State;
-            if (newAiState == CurrentAiState && newPosition == TargetPosition)
-            {
-                Debug.LogWarning("DinoVisualizer - duplicate AI state : " + newAiState);
-                return;
-            }
-            
-            if (lookAtCoroutine != null && newAiState != CurrentAiState)
-            { // 状态不同的时候才需要停止携程，防止同一个状态下，动画发生抖动（不停地进行【转向】/【停止转向】）
-                StopCoroutine(lookAtCoroutine);
-            }
-            CurrentAiState = newAiState;
-            TargetPosition = newPosition;
-
-            AnimationState[] aniState = null;
-            switch (CurrentAiState)
-            {
-                case FSMStateActor.StateEnum.IDLE:
-                    TargetPosition = CurrentPosition;
-                    GameRoomManager.Instance.HexmapHelper.Stop(input.ActorId);
-                    aniState = idleStates;
-                    break;
-                case FSMStateActor.StateEnum.WALK:
-                    GameRoomManager.Instance.HexmapHelper.DoMove(input.ActorId, input.PosXFrom, input.PosZFrom, input.PosXTo, input.PosZTo);
-                    Debug.Log($"MSG: TroopAiState - {CurrentAiState} - From<{input.PosXFrom},{input.PosZFrom}> - To<{input.PosXTo},{input.PosZTo}>");
-                    aniState = movementStates;
-                    break;
-                case FSMStateActor.StateEnum.FIGHT:
-                    aniState = attackingStates;
-                    break;
-                case FSMStateActor.StateEnum.DIE:
-                    aniState = deathStates;
-                    break;
-                case FSMStateActor.StateEnum.NONE:
-                    aniState = idleStates;
-                    break;
-            }
-            PlayAnimation(aniState);
-
-            if (CurrentAiState == FSMStateActor.StateEnum.VANISH)
-            {
-                StartCoroutine(Vanishing());
-            }
-        }
-        #endregion
-        
         #region 播放动画
 
         private void StopAllAnimations()
         {
-//            foreach (var state in idleStates)
-//            {
-//                animator.SetBool(state.animationBool, false);
-//            }
-//            foreach (var state in movementStates)
-//            {
-//                animator.SetBool(state.animationBool, false);
-//            }
-//            foreach (var state in attackingStates)
-//            {
-//                animator.SetBool(state.animationBool, false);
-//            }
-//            foreach (var state in deathStates)
-//            {
-//                animator.SetBool(state.animationBool, false);
-//            }
-//            foreach (var state in runningStates)
-//            {
-//                animator.SetBool(state.animationBool, false);
-//            }
             animator.SetBool(idleStates[0].animationBool, false);
             animator.SetBool(movementStates[0].animationBool, false);
             animator.SetBool(attackingStates[0].animationBool, false);
+            animator.SetBool(harvestStates[0].animationBool, false);
             animator.SetBool(deathStates[0].animationBool, false);
             animator.SetBool(runningStates[0].animationBool, false);
         }
@@ -237,6 +171,120 @@ namespace Animation
         }
         
         #endregion
+        
+        
+        #region 消息处理
+        
+        private void OnAiStateChanged(byte[] bytes)
+        {
+            TroopAiStateReply input = TroopAiStateReply.Parser.ParseFrom(bytes);
+            if (!input.Ret)
+                return;
+            if (input.ActorId != ActorId)
+                return; // 不是自己，略过
+            HexCell targetCell = GameRoomManager.Instance.HexmapHelper.GetCell(input.CellIndexFrom);
+            Vector3 newPosition = targetCell.Position;
+            FSMStateActor.StateEnum newAiState = (FSMStateActor.StateEnum)input.State;
+            if (newAiState == CurrentAiState && newPosition == TargetPosition)
+            {
+                Debug.LogWarning("DinoVisualizer - duplicate AI state : " + newAiState);
+                return;
+            }
+            
+            if (lookAtCoroutine != null && newAiState != CurrentAiState)
+            { // 状态不同的时候才需要停止携程，防止同一个状态下，动画发生抖动（不停地进行【转向】/【停止转向】）
+                StopCoroutine(lookAtCoroutine);
+            }
+            CurrentAiState = newAiState;
+            TargetPosition = newPosition;
+
+            AnimationState[] aniState = null;
+            switch (CurrentAiState)
+            {
+                case FSMStateActor.StateEnum.IDLE:
+                    TargetPosition = CurrentPosition;
+                    GameRoomManager.Instance.HexmapHelper.Stop(input.ActorId);
+                    aniState = idleStates;
+                    break;
+                case FSMStateActor.StateEnum.WALK:
+                    GameRoomManager.Instance.HexmapHelper.DoMove(input.ActorId, input.PosXFrom, input.PosZFrom, input.PosXTo, input.PosZTo);
+                    Debug.Log($"MSG: TroopAiState - {CurrentAiState} - From<{input.PosXFrom},{input.PosZFrom}> - To<{input.PosXTo},{input.PosZTo}>");
+                    //aniState = movementStates;
+                    aniState = runningStates;
+                    break;
+                case FSMStateActor.StateEnum.HARVEST:
+                    aniState = harvestStates;
+                    break;
+                case FSMStateActor.StateEnum.FIGHT:
+                    aniState = attackingStates;
+                    break;
+                case FSMStateActor.StateEnum.DIE:
+                    aniState = deathStates;
+                    break;
+                case FSMStateActor.StateEnum.NONE:
+                    aniState = idleStates;
+                    break;
+            }
+            PlayAnimation(aniState);
+
+            if (CurrentAiState == FSMStateActor.StateEnum.VANISH)
+            {
+                StartCoroutine(Vanishing());
+            }
+        }
+
+        private void OnHarvestStart(byte[] bytes)
+        {
+            HarvestStartReply input = HarvestStartReply.Parser.ParseFrom(bytes);
+            if (!input.Ret)
+                return;
+            if (input.ActorId != ActorId)
+                return; // 不是自己，略过
+
+            var go = UIManager.Instance.CreatePanel(UIManager.Instance.Root, "", "UI/Room/PanelSliderHarvest");
+            if (go)
+            {
+                _goHarvest = go;
+                var slider = go.GetComponent<PanelSliderHarvest>();
+                if (slider)
+                {
+                    slider.Init(this, input.DurationTime);
+                }
+            }
+        }
+        
+        private void OnHarvestStop(byte[] bytes)
+        {
+            HarvestStopReply input = HarvestStopReply.Parser.ParseFrom(bytes);
+            if (!input.Ret)
+                return;
+            if (input.ActorId != ActorId)
+                return; // 不是自己，略过
+
+            HexResource.RESOURCE_TYPE resType = (HexResource.RESOURCE_TYPE) input.ResType;
+            HexCell currentCell = HexUnit.Location;
+            HexResource res = currentCell.Res;
+            int level = res.GetLevel(resType);
+            res.SetAmount(resType, input.ResRemain);
+            int levelNew = res.GetLevel(resType);
+            if (level != levelNew)
+            {
+                res.Refresh(currentCell);
+            }
+
+            if (_goHarvest)
+            {
+                UIManager.Instance.DestroyPanel(ref _goHarvest);
+            }
+
+            string [] resTypes = {"木材","粮食","铁矿"};
+            string msg = $"获取了 {input.ResHarvest} 的 {resTypes[input.ResType]} 资源";
+            UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Success);
+            GameRoomManager.Instance.Log("MSG: HarvestStop OK - " + msg + $" - 剩余资源{input.ResRemain}");
+        }
+        
+        #endregion
+        
     }
 
 }

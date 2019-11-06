@@ -49,6 +49,8 @@ namespace AI
         public int TargetPosX;
         public int TargetPosZ;
         public int TargetCellIndex;
+        public float DurationTime; // 状态的持续时间
+        
         public HexUnit HexUnit;
         private float _distance;
         private float TIME_DELAY;

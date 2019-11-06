@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
 
@@ -11,6 +12,8 @@ public class HexCell : MonoBehaviour {
 	public HexGridChunk chunk;
 
 	public HexResource Res;
+
+	public List<GameObject> FeaturePrefabs = new List<GameObject>();
 
 	public static int showLabel;
 
@@ -127,6 +130,8 @@ public class HexCell : MonoBehaviour {
 		}
 	}
 
+	public bool HasBridge { get; set; }
+
 	public Vector3 Position {
 		get {
 			return transform.localPosition;
@@ -205,7 +210,7 @@ public class HexCell : MonoBehaviour {
 			}
 		}
 	}
-
+	
 	public int SpecialIndex {
 		get {
 			return specialIndex;
@@ -657,7 +662,7 @@ public class HexCell : MonoBehaviour {
 	public void UpdateFeatureLevelFromRes()
 	{
 		int level = Res.GetLevel(Res.ResType);
-		if (level > 0)
+		if (level >= 0)
 		{
 			switch (Res.ResType)
 			{

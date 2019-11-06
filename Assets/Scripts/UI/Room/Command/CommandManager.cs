@@ -78,6 +78,7 @@ public class CommandManager : MonoBehaviour
     void Update()
     {
     }
+    
     public void InvokeCmd(CommandID cmdId)
     {
         SetRunningCommand(cmdId);

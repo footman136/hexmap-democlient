@@ -146,7 +146,11 @@ public class RoomLogic : MonoBehaviour
                 GameRoomManager.Instance.Log("MSG: AskForCitiesReply OK - 申请创建城市...");
             }
         }
-        
+
+        {
+            string msg = $"查询城市信息成功！";
+            GameRoomManager.Instance.Log("MSG: AskForCitiesReply OK - " + msg + $"City Count:{input.MyCityCount}");
+        }
         // 进入房间整体流程完成
         UIManager.Instance.EndLoading();
     }

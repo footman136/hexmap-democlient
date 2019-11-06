@@ -10,6 +10,7 @@ using Main;
 using Protobuf.Room;
 using System.IO;
 using GameUtils;
+using Google.Protobuf.Collections;
 
 public class RoomMsgReply
 {
@@ -45,6 +46,9 @@ public class RoomMsgReply
             case ROOM_REPLY.LeaveRoomReply:
                 LEAVE_ROOM_REPLY(recvData);
                 break;
+            case ROOM_REPLY.DownloadResReply:
+                DOWNLOAD_RES_REPLY(recvData);
+                break;
             default:
                 // 通用消息处理器，别的地方要想响应找个消息，应该调用MsgDispatcher.RegisterMsg()来注册消息处理事件
                 MsgDispatcher.ProcessMsg(bytes, size);
@@ -61,13 +65,17 @@ public class RoomMsgReply
             {
                 ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.CONNECTED_ROOM);
             }
+
+            string msg = "玩家成功加入房间服务器!";
+            UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Success);
+            GameRoomManager.Instance.Log($"MSG: PLAYER_ENTER_REPLY OK - " + msg);
         }
         else
         {
             ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.LOBBY);
-            string msg = "玩家进入房间失败！！！";
+            string msg = "玩家进入房间服务器失败！！！";
             UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
-            GameRoomManager.Instance.Log(msg);
+            GameRoomManager.Instance.Log($"MSG: PLAYER_ENTER_REPLY Error - " + msg);
             ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.START);
         }
     }
@@ -79,20 +87,20 @@ public class RoomMsgReply
         {
             string msg = "上传地图失败！";
             UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
-            GameRoomManager.Instance.Log("MSG: " + msg);
+            GameRoomManager.Instance.Log("MSG: UPLOAD_MAP_REPLY Error - " + msg);
             return;
         }
 
         if (input.IsLastPackage)
         {
-            GameRoomManager.Instance.Log($"MSG: 上传地图成功！RoomID:{input.RoomId}");
+            GameRoomManager.Instance.Log($"MSG: UPLOAD_MAP_REPLY OK - 上传地图成功！RoomID:{input.RoomId}");
             // 发出EnterRoom消息，进入房间
             EnterRoom output = new EnterRoom()
             {
                 RoomId = input.RoomId,
             };
             GameRoomManager.Instance.SendMsg(ROOM.EnterRoom, output.ToByteArray());
-            GameRoomManager.Instance.Log($"MSG: UPLOAD_MAP_REPLY - 申请进入房间：{input.RoomName}");
+            GameRoomManager.Instance.Log($"MSG: UPLOAD_MAP_REPLY OK - 申请进入房间：{input.RoomName}");
         }
     }
 
@@ -104,7 +112,7 @@ public class RoomMsgReply
         {
             string msg = "下载地图失败！";
             UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
-            GameRoomManager.Instance.Log("MSG: " + msg);
+            GameRoomManager.Instance.Log("MSG: DOWNLOAD_MAP_REPLY Error - " + msg);
             return;
         }
 
@@ -150,7 +158,7 @@ public class RoomMsgReply
             GameRoomManager.Instance.RoomId = input.RoomId;
             GameRoomManager.Instance.RoomName = input.RoomName;
             string msg = $"进入房间 - {input.RoomName}";
-            GameRoomManager.Instance.Log("MSG: DOWNLOAD_MAP_REPLY - " + msg);
+            GameRoomManager.Instance.Log("MSG: DOWNLOAD_MAP_REPLY OK - " + msg);
             UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Success);
             
             // 补充内容，获取城市信息
@@ -170,8 +178,8 @@ public class RoomMsgReply
         if (!input.Ret)
         {
             string msg = "进入房间失败：" + input.ErrMsg;
-            GameRoomManager.Instance.Log("MSG: ENTER_ROOM_REPLY - " + msg);
             UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
+            GameRoomManager.Instance.Log("MSG: ENTER_ROOM_REPLY - " + msg);
             if (ClientManager.Instance)
             {
                 ClientManager.Instance.StateMachine.TriggerTransition(
@@ -181,16 +189,72 @@ public class RoomMsgReply
             return;
         }
 
+        // 请求地图数据
         DownloadMap output = new DownloadMap()
         {
             RoomId = input.RoomId,
         };
         GameRoomManager.Instance.SendMsg(ROOM.DownloadMap, output.ToByteArray());
+        
+        // 请求地图上的资源变化数据
+        DownloadRes output2 = new DownloadRes()
+        {
+            RoomId = input.RoomId,
+        };
+        GameRoomManager.Instance.SendMsg(ROOM.DownloadRes, output2.ToByteArray());
+        {
+            string msg = "成功进入房间!";
+            GameRoomManager.Instance.Log($"MSG: ENTER_ROOM_REPLY OK - " + msg);
+        }
     }
 
     private static void LEAVE_ROOM_REPLY(byte[] bytes)
     {
         LeaveRoomReply input = LeaveRoomReply.Parser.ParseFrom(bytes);
         ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.RESULT);
+        GameRoomManager.Instance.Log($"MSG: DOWNLOAD_RES_REPLY OK - ");
+    }
+
+    static int resCount = 0;
+    private static void DOWNLOAD_RES_REPLY(byte[] bytes)
+    {
+        DownloadResReply input = DownloadResReply.Parser.ParseFrom(bytes);
+        if (!input.Ret)
+        {
+            string msg = "下载资源数据失败! - " + input.ErrMsg;
+            GameRoomManager.Instance.Log($"MSG: DOWNLOAD_RES_REPLY OK - " + msg);
+            return;
+        }
+        List<HexGridChunk> chunkList = new List<HexGridChunk>(); 
+        for (int i = 0; i < input.InfoCount; ++i)
+        {
+            HexCell cell = GameRoomManager.Instance.HexmapHelper.GetCell(input.ResInfo[i].CellIndex);
+            HexResource hr = cell.Res;
+            hr.ResType = (HexResource.RESOURCE_TYPE) input.ResInfo[i].ResType;
+            hr.SetAmount(hr.ResType, input.ResInfo[i].ResAmount);
+            cell.UpdateFeatureLevelFromRes();
+            if (!chunkList.Contains(cell.chunk))
+            {
+                chunkList.Add(cell.chunk);
+            }
+        }
+        // 刷新模型
+        foreach (var chunk in chunkList)
+        {
+            chunk.Refresh();
+        }
+
+        if (input.PackageIndex == 0 && input.PackageIndex < input.PackageCount - 1)
+        {
+            resCount = input.InfoCount;
+            string msg = "开始下载资源数据...";
+            GameRoomManager.Instance.Log($"MSG: DOWNLOAD_RES_REPLY - " + msg + $"PackageCount:{input.PackageCount}");
+        }
+        else if(input.PackageIndex == input.PackageCount - 1)
+        {
+            resCount += input.InfoCount;
+            string msg = "下载资源数据成功!";
+            GameRoomManager.Instance.Log($"MSG: DOWNLOAD_RES_REPLY OK - " + msg + $"PackageCount:{input.PackageCount} - Res Count:{resCount}");
+        }
     }
 }

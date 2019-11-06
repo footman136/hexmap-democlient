@@ -61,7 +61,9 @@ public class HexGridChunk : MonoBehaviour {
 		features.Apply();
 	}
 
-	void Triangulate (HexCell cell) {
+	void Triangulate (HexCell cell)
+	{
+		cell.HasBridge = false;
 		for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++) {
 			Triangulate(d, cell);
 		}
@@ -420,6 +422,7 @@ public class HexGridChunk : MonoBehaviour {
 				cell.HasRoadThroughEdge(direction.Opposite())
 			)) {
 				features.AddBridge(roadCenter, center - corner * 0.5f);
+				cell.HasBridge = true;
 			}
 			center += corner * 0.25f;
 		}
@@ -466,6 +469,7 @@ public class HexGridChunk : MonoBehaviour {
 					roadCenter,
 					center - offset * (HexMetrics.innerToOuter * 0.7f)
 				);
+				cell.HasBridge = true;
 			}
 		}
 

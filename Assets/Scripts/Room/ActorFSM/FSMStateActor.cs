@@ -13,6 +13,7 @@ public struct FSMStateActor
         FIGHT = 2,
         DIE = 3,
         VANISH = 4,
+        HARVEST = 5,
         NONE = 10,
     }
     

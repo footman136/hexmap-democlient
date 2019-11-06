@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using PlayFab.DataModels;
 using UnityEngine;
 
 /// <summary>
@@ -39,6 +40,7 @@ public class HexResource
 
     public void SetAmount(RESOURCE_TYPE type, int value)
     {
+        ResType = type;
         ResAmount[(int)type] = value;
     }
 
@@ -58,5 +60,28 @@ public class HexResource
         }
 
         return 3;
+    }
+
+    /// <summary>
+    /// 从资源层[Res]的数据更新到farm Level,plantLevel,mineLevel
+    /// </summary>
+    public void Refresh(HexCell cell)
+    {
+        int level = GetLevel(ResType);
+        if (level >= 0)
+        {
+            switch (ResType)
+            {
+                case RESOURCE_TYPE.WOOD:
+                    cell.PlantLevel = level;
+                    break;
+                case RESOURCE_TYPE.FOOD:
+                    cell.FarmLevel = level;
+                    break;
+                case RESOURCE_TYPE.IRON:
+                    cell.MineLevel = level;
+                    break;
+            }
+        }
     }
 }

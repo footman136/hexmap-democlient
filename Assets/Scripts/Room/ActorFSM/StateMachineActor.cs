@@ -21,6 +21,7 @@ public class StateMachineActor : FiniteStateMachine<FSMStateActor.StateEnum>
         var fightState = new ActorFightState(this, _actorBehaviour);
         var dieState = new ActorDieState(this, _actorBehaviour);
         var vanishState = new ActorDieState(this, _actorBehaviour);
+        var harvestState = new ActorHarvestState(this, _actorBehaviour);
         
         var stateList = new Dictionary<FSMStateActor.StateEnum, IFsmState>
         {
@@ -29,6 +30,7 @@ public class StateMachineActor : FiniteStateMachine<FSMStateActor.StateEnum>
             { FSMStateActor.StateEnum.FIGHT, fightState },
             { FSMStateActor.StateEnum.DIE, dieState },
             { FSMStateActor.StateEnum.VANISH, vanishState },
+            { FSMStateActor.StateEnum.HARVEST, harvestState },
         };
 
         SetStates(stateList);
@@ -37,9 +39,11 @@ public class StateMachineActor : FiniteStateMachine<FSMStateActor.StateEnum>
 
         allowedTransitions.Add(FSMStateActor.StateEnum.IDLE, new List<FSMStateActor.StateEnum>
         {
+            FSMStateActor.StateEnum.IDLE,
             FSMStateActor.StateEnum.WALK,
             FSMStateActor.StateEnum.FIGHT,
             FSMStateActor.StateEnum.DIE,
+            FSMStateActor.StateEnum.HARVEST,
         });
         allowedTransitions.Add(FSMStateActor.StateEnum.WALK, new List<FSMStateActor.StateEnum>
         {
@@ -53,6 +57,11 @@ public class StateMachineActor : FiniteStateMachine<FSMStateActor.StateEnum>
             FSMStateActor.StateEnum.IDLE,
             FSMStateActor.StateEnum.WALK,
             FSMStateActor.StateEnum.FIGHT,
+            FSMStateActor.StateEnum.DIE,
+        });
+        allowedTransitions.Add(FSMStateActor.StateEnum.HARVEST, new List<FSMStateActor.StateEnum>
+        {
+            FSMStateActor.StateEnum.IDLE,
             FSMStateActor.StateEnum.DIE,
         });
         allowedTransitions.Add(FSMStateActor.StateEnum.DIE, new List<FSMStateActor.StateEnum>

@@ -339,9 +339,6 @@ public class HexGrid : MonoBehaviour {
 		for (int i = 0; i < cells.Length; i++) {
 			cells[i].Load(reader, header);
 		}
-		for (int i = 0; i < chunks.Length; i++) {
-			chunks[i].Refresh();
-		}
 
 		// Unit数据现在该为其他地方读取了(参考RoomServer里的ActorManager.LoadBuffer())
 		if (header >= 2 && header <=6 ) {
@@ -370,7 +367,8 @@ public class HexGrid : MonoBehaviour {
 			for(int i = 0; i < resCount; i++)
 			{
 				int index = reader.ReadInt32();
-				resLayer[index].Load(reader, header);
+				var res = resLayer[index];
+				res.Load(reader, header);
 				resList.Add(index);
 				cells[index].UpdateFeatureLevelFromRes();
 
@@ -386,6 +384,11 @@ public class HexGrid : MonoBehaviour {
 			Debug.Log(format);
 		}
 
+		// 把所有数据都变成模型
+		for (int i = 0; i < chunks.Length; i++) {
+			chunks[i].Refresh();
+		}
+		
 		cellShaderData.ImmediateMode = originalImmediateMode;
 	}
 
