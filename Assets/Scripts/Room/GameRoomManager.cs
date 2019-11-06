@@ -6,8 +6,6 @@ using Google.Protobuf;
 using Protobuf.Room;
 using System;
 using System.IO;
-using GameUtils;
-using UnityEditor.PackageManager;
 
 public class GameRoomManager : ClientScript
 {

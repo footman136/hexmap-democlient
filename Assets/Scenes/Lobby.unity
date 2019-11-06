@@ -578,7 +578,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 53ef9190fbb4bf7439cf07a256f5ca91, type: 3}
+  m_Sprite: {fileID: 21300000, guid: ca40b5e5a86698f418407d167edc3e18, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -916,10 +916,50 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 2876796150610089539, guid: 0de2b8889ca35084a810473241f9dacd,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2876796150610089539, guid: 0de2b8889ca35084a810473241f9dacd,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2876796150610089539, guid: 0de2b8889ca35084a810473241f9dacd,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2876796150610089539, guid: 0de2b8889ca35084a810473241f9dacd,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2876796149383009437, guid: 0de2b8889ca35084a810473241f9dacd,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2876796149383009437, guid: 0de2b8889ca35084a810473241f9dacd,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2876796149994030185, guid: 0de2b8889ca35084a810473241f9dacd,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2876796149994030185, guid: 0de2b8889ca35084a810473241f9dacd,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2876796149597995463, guid: 0de2b8889ca35084a810473241f9dacd,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 7.297984
+      value: 0.00009532316
       objectReference: {fileID: 0}
     - target: {fileID: 2876796150142869385, guid: 0de2b8889ca35084a810473241f9dacd,
         type: 3}
@@ -953,46 +993,6 @@ PrefabInstance:
     - target: {fileID: 2876796150960408558, guid: 0de2b8889ca35084a810473241f9dacd,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2876796150610089539, guid: 0de2b8889ca35084a810473241f9dacd,
-        type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2876796150610089539, guid: 0de2b8889ca35084a810473241f9dacd,
-        type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2876796150610089539, guid: 0de2b8889ca35084a810473241f9dacd,
-        type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2876796150610089539, guid: 0de2b8889ca35084a810473241f9dacd,
-        type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2876796149383009437, guid: 0de2b8889ca35084a810473241f9dacd,
-        type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2876796149383009437, guid: 0de2b8889ca35084a810473241f9dacd,
-        type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2876796149994030185, guid: 0de2b8889ca35084a810473241f9dacd,
-        type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2876796149994030185, guid: 0de2b8889ca35084a810473241f9dacd,
-        type: 3}
-      propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
