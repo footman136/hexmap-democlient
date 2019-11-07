@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using AI;
 using Animation;
 using UnityEngine;
@@ -199,6 +200,56 @@ public class HexmapHelper : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    /// <summary>
+    /// 递归得到距离自己一定范围内的所有Cell
+    /// </summary>
+    /// <param name="current">当前点，以该点为中心</param>
+    /// <param name="range">距离，格子数——间隔几个格子</param>
+    /// <returns></returns>
+    public List<HexCell> GetCellsInRange(HexCell current, int range)
+    {
+        List<CellWithDist> cwdList = getCellsInRange(current, current, range);
+        cwdList.Sort((a,b) => (int)(a._distance-b._distance));
+        List<HexCell> cellList = new List<HexCell>();
+        foreach (CellWithDist cwd in cwdList)
+        {
+            if(!cellList.Contains(cwd._cell))
+                cellList.Add(cwd._cell);
+        }
+
+        return cellList;
+    }
+
+    private class CellWithDist
+    {
+        public HexCell _cell;
+        public float _distance;
+    }
+
+    private List<CellWithDist> getCellsInRange(HexCell center, HexCell current, int range)
+    {
+        List<CellWithDist> findCells = new List<CellWithDist>();
+        if (range == 0)
+        {
+            CellWithDist cwd = new CellWithDist()
+            {
+                _cell = current,
+                _distance = Vector3.Distance(center.Position,current.Position),
+            };
+            findCells.Add(cwd);
+            return findCells;
+        }
+
+        for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
+        {
+            HexCell neighbor = current.GetNeighbor(d);
+            if (!neighbor) continue;
+            findCells = findCells.Union(getCellsInRange(center, neighbor, range - 1)).ToList();
+        }
+
+        return findCells;
     }
     #endregion
 

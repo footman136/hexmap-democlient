@@ -1,9 +1,11 @@
-﻿using Animation;
+﻿using System.Collections.Generic;
+using Animation;
 using GameUtils;
 using Google.Protobuf;
 using Protobuf.Room;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SocialPlatforms;
 using UnityEngine.UI;
 
 public class PanelRoomMain : MonoBehaviour
@@ -16,6 +18,7 @@ public class PanelRoomMain : MonoBehaviour
     [SerializeField] private Toggle _togFollowCamera;
     [SerializeField] private Toggle _togShowRes;
     [SerializeField] private GameObject _btnCreateActor;
+    [SerializeField] private GameObject _btnDestroyActor;
     [SerializeField] private Text _txtPlayerName;
     [SerializeField] private Text _txtWood;
     [SerializeField] private Text _txtFood;
@@ -68,6 +71,7 @@ public class PanelRoomMain : MonoBehaviour
         _pickInfoTarget = new PickInfo();
 
         _btnCreateActor.transform.FindChild("Select").gameObject.SetActive(false);
+        _btnDestroyActor.transform.FindChild("Select").gameObject.SetActive(false);
         AddListener();
     }
 
@@ -108,6 +112,13 @@ public class PanelRoomMain : MonoBehaviour
                 _isCreatingActor = false;
                 CursorManager.Instance.RestoreCursor();
                 _btnCreateActor.transform.FindChild("Select").gameObject.SetActive(false);
+            }
+            else if (_isRangeTesting)
+            {
+                RangeTest();
+                _isRangeTesting = false;
+                CursorManager.Instance.RestoreCursor();
+                _btnDestroyActor.transform.FindChild("Select").gameObject.SetActive(false);
             }
             else
             {
@@ -509,6 +520,27 @@ public class PanelRoomMain : MonoBehaviour
         _isCreatingActor = true;
         CursorManager.Instance.ShowCursor(CursorManager.CURSOR_TYPE.CRAETE_ACTOR);
         _btnCreateActor.transform.FindChild("Select").gameObject.SetActive(true);
+    }
+
+    private bool _isRangeTesting = false;
+    public void OnClickRangeTest()
+    {
+        SetSelection(null);
+        _isRangeTesting = true;
+        CursorManager.Instance.ShowCursor(CursorManager.CURSOR_TYPE.CRAETE_ACTOR);
+        _btnDestroyActor.transform.FindChild("Select").gameObject.SetActive(true);
+    }
+
+    private void RangeTest()
+    {
+        var current = GetCellUnderCursor();
+        List<HexCell> findCells = hexmapHelper.GetCellsInRange(current, 3);
+        int index = 0;
+        foreach (var cell in findCells)
+        {
+            cell.SetLabel($"<color=#FF0000FF>{index.ToString()}</color>");
+            index++;
+        }
     }
 
     #endregion
