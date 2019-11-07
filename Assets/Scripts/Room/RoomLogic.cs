@@ -41,20 +41,20 @@ public class RoomLogic : MonoBehaviour
 
     private void AddListener()
     {
-        MsgDispatcher.RegisterMsg((int)ROOM_REPLY.CreateAtroopReply, OnCreateATroopReply);
-        MsgDispatcher.RegisterMsg((int)ROOM_REPLY.DestroyAtroopReply, OnDestroyATroopReply);
+        MsgDispatcher.RegisterMsg((int)ROOM_REPLY.ActorAddReply, OnActorAddReply);
+        MsgDispatcher.RegisterMsg((int)ROOM_REPLY.ActorRemoveReply, OnActorRemoveReply);
         MsgDispatcher.RegisterMsg((int)ROOM_REPLY.TroopMoveReply, OnTroopMoveReply);
-        MsgDispatcher.RegisterMsg((int)ROOM_REPLY.AskForCitiesReply, OnAskForCitiesReply);
+        MsgDispatcher.RegisterMsg((int)ROOM_REPLY.DownloadCitiesReply, OnDownloadCitiesReply);
         MsgDispatcher.RegisterMsg((int)ROOM_REPLY.CityAddReply, OnCityAddReply);
         MsgDispatcher.RegisterMsg((int)ROOM_REPLY.CityRemoveReply, OnCityRemoveReply);
     }
 
     private void RemoveListener()
     {
-        MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.CreateAtroopReply, OnCreateATroopReply);
-        MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.DestroyAtroopReply, OnDestroyATroopReply);
+        MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.ActorAddReply, OnActorAddReply);
+        MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.ActorRemoveReply, OnActorRemoveReply);
         MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.TroopMoveReply, OnTroopMoveReply);
-        MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.AskForCitiesReply, OnAskForCitiesReply);
+        MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.DownloadCitiesReply, OnDownloadCitiesReply);
         MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.CityAddReply, OnCityAddReply);
         MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.CityRemoveReply, OnCityRemoveReply);
     }
@@ -63,9 +63,9 @@ public class RoomLogic : MonoBehaviour
     
     #region 消息处理
 
-    private void OnCreateATroopReply(byte[] bytes)
+    private void OnActorAddReply(byte[] bytes)
     {
-        CreateATroopReply input = CreateATroopReply.Parser.ParseFrom(bytes);
+        ActorAddReply input = ActorAddReply.Parser.ParseFrom(bytes);
         if (!input.Ret)
         {
             string msg = "创建Actor失败！";
@@ -78,9 +78,9 @@ public class RoomLogic : MonoBehaviour
             input.Name, input.Hp, input.AttackPower, input.DefencePower, input.Speed, input.FieldOfVision, input.ShootingRange);
     }
 
-    private void OnDestroyATroopReply(byte[] bytes)
+    private void OnActorRemoveReply(byte[] bytes)
     {
-        DestroyATroopReply input = DestroyATroopReply.Parser.ParseFrom(bytes);
+        ActorRemoveReply input = ActorRemoveReply.Parser.ParseFrom(bytes);
         if (!input.Ret)
         {
             string msg = $"销毁Actor失败！{input.ActorId}";
@@ -108,19 +108,19 @@ public class RoomLogic : MonoBehaviour
         GameRoomManager.Instance.HexmapHelper.DoMove(input.ActorId, input.PosFromX, input.PosFromZ, input.PosToX, input.PosToZ);
     }
 
-    private void OnAskForCitiesReply(byte[] bytes)
+    private void OnDownloadCitiesReply(byte[] bytes)
     {
-        AskForCitiesReply input = AskForCitiesReply.Parser.ParseFrom(bytes);
+        DownloadCitiesReply input = DownloadCitiesReply.Parser.ParseFrom(bytes);
         if (!input.Ret)
         {
             string msg = $"查询城市信息失败！";
             GameRoomManager.Instance.Log("MSG: AskForCitiesReply Error - " + msg);
             return;
         }
-        GameRoomManager.Instance.Log($"MSG: AskForCitiesReply OK - 城市个数:{input.MyCityCount}/{input.TotalCityCount}");
+        GameRoomManager.Instance.Log($"MSG: AskForCitiesReply OK - 城市个数:{input.MyCount}/{input.TotalCount}");
 
         // 如果我一个城市都没有，则主动创建一个城市
-        if (input.MyCityCount == 0)
+        if (input.MyCount == 0)
         {
             UrbanCity city = GameRoomManager.Instance.RoomLogic.UrbanManager.CreateRandomCity();
             if (city == null)
@@ -149,7 +149,7 @@ public class RoomLogic : MonoBehaviour
 
         {
             string msg = $"查询城市信息成功！";
-            GameRoomManager.Instance.Log("MSG: AskForCitiesReply OK - " + msg + $"City Count:{input.MyCityCount}");
+            GameRoomManager.Instance.Log("MSG: AskForCitiesReply OK - " + msg + $"City Count:{input.MyCount}");
         }
         // 进入房间整体流程完成
         UIManager.Instance.EndLoading();

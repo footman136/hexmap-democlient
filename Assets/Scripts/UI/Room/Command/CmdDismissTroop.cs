@@ -38,13 +38,13 @@ public class CmdDismissTroop : MonoBehaviour, ICommand
                     var av = pi.CurrentActor;
                     if (av)
                     {
-                        DestroyATroop output = new DestroyATroop()
+                        ActorRemove output = new ActorRemove()
                         {
                             RoomId = av.RoomId,
                             OwnerId = av.OwnerId,
                             ActorId = av.ActorId,
                         };
-                        GameRoomManager.Instance.SendMsg(ROOM.DestroyAtroop, output.ToByteArray());
+                        GameRoomManager.Instance.SendMsg(ROOM.ActorRemove, output.ToByteArray());
                     }
                 }
             }

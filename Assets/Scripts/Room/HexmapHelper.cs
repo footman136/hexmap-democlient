@@ -213,10 +213,13 @@ public class HexmapHelper : MonoBehaviour
                 for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
                 {
                     HexCell neighbor = current.GetNeighbor(d);
-                    neighbor.Walled = true;
-                    neighbor.UrbanLevel = Random.Range(2,3);
-                    neighbor.ClearRes();
-                    neighbor.IncreaseVisibility();
+                    if (neighbor)
+                    {
+                        neighbor.Walled = true;
+                        neighbor.UrbanLevel = Random.Range(2, 3);
+                        neighbor.ClearRes();
+                        neighbor.IncreaseVisibility();
+                    }
                 }
             }
         }

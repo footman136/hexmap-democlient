@@ -160,11 +160,11 @@ public class CmdMarch : MonoBehaviour, ICommand
             HexCell newCell2 = hexmapHelper.hexGrid.GetCell(currentCell.Position);
             if (newCell.Position != currentCell.Position)
             {
-                Debug.LogError($"OhNo Hexmap!!! - Orgin<{currentCell.coordinates.X},{currentCell.coordinates.Z}> - New<{newCell.coordinates.X},{newCell.coordinates.Z}>");
+                Debug.LogWarning($"OhNo Hexmap!!! - Orgin<{currentCell.coordinates.X},{currentCell.coordinates.Z}> - New<{newCell.coordinates.X},{newCell.coordinates.Z}>");
             }
             if (newCell2.Position != currentCell.Position)
             {
-                Debug.LogError($"OhNo Hexmap 2!!! - Orgin<{currentCell.coordinates.X},{currentCell.coordinates.Z}> - New2<{newCell2.coordinates.X},{newCell2.coordinates.Z}>");
+                Debug.LogWarning($"OhNo Hexmap 2!!! - Orgin<{currentCell.coordinates.X},{currentCell.coordinates.Z}> - New2<{newCell2.coordinates.X},{newCell2.coordinates.Z}>");
             }
             ab.SetTarget(cellTarget.Position);
         

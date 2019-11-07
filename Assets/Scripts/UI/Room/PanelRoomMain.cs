@@ -314,7 +314,7 @@ public class PanelRoomMain : MonoBehaviour
         var actorInfoTable = CsvDataManager.Instance.GetTable("actor_info");
         string artPrefab = actorInfoTable.GetValue(10001, "ArtPrefab");
         
-        CreateATroop output = new CreateATroop()
+        ActorAdd output = new ActorAdd()
         {
             RoomId = GameRoomManager.Instance.RoomId,
             OwnerId = GameRoomManager.Instance.CurrentPlayer.TokenId,
@@ -326,7 +326,7 @@ public class PanelRoomMain : MonoBehaviour
             CellIndex = city.CellIndex,
             ActorInfoId = actorInfoId,
         };
-        GameRoomManager.Instance.SendMsg(ROOM.CreateAtroop, output.ToByteArray());
+        GameRoomManager.Instance.SendMsg(ROOM.ActorAdd, output.ToByteArray());
         return true;
     }
 
@@ -339,13 +339,13 @@ public class PanelRoomMain : MonoBehaviour
             var av = hu.gameObject.GetComponent<ActorVisualizer>();
             if (av != null)
             {
-                DestroyATroop output = new DestroyATroop()
+                ActorRemove output = new ActorRemove()
                 {
                     RoomId = GameRoomManager.Instance.RoomId,
                     OwnerId = GameRoomManager.Instance.CurrentPlayer.TokenId,
                     ActorId = av.ActorId,
                 };
-                GameRoomManager.Instance.SendMsg(ROOM.DestroyAtroop, output.ToByteArray());
+                GameRoomManager.Instance.SendMsg(ROOM.ActorRemove, output.ToByteArray());
                 return true;
             }
         }

@@ -161,14 +161,19 @@ public class RoomMsgReply
             GameRoomManager.Instance.Log("MSG: DOWNLOAD_MAP_REPLY OK - " + msg);
             UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Success);
             
-            // 补充内容，获取城市信息
-            AskForCities output = new AskForCities()
+            // 2-补充内容，获取城市信息
+            DownloadCities output = new DownloadCities()
             {
                 RoomId = input.RoomId,
-                OwnerId = GameRoomManager.Instance.CurrentPlayer.TokenId,
             };
-            GameRoomManager.Instance.SendMsg(ROOM.AskForCities, output.ToByteArray());
+            GameRoomManager.Instance.SendMsg(ROOM.DownloadCities, output.ToByteArray());
             
+            // 3-补充内容，获取单位信息
+            DownloadActors output2 = new DownloadActors()
+            {
+                RoomId = input.RoomId,
+            };
+            GameRoomManager.Instance.SendMsg(ROOM.DownloadActors, output2.ToByteArray());
         }
     }
 
