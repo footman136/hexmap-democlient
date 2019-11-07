@@ -24,7 +24,7 @@ public class CmdMining : MonoBehaviour, ICommand
         var currentCell = av.HexUnit.Location;
         var resType = currentCell.Res.ResType;
         int resAmount = currentCell.Res.GetAmount(resType);
-        ab.DurationTime = resAmount * 0.1f;
+        var durationTime = resAmount * 0.1f;
         if (resAmount > 0)
         {
             HarvestStart output = new HarvestStart()
@@ -35,11 +35,11 @@ public class CmdMining : MonoBehaviour, ICommand
                 CellIndex = av.CellIndex,
                 ResType = (int)resType,
                 ResRemain = resAmount,
-                DurationTime = ab.DurationTime,
+                DurationTime = durationTime,
             };
             GameRoomManager.Instance.SendMsg(ROOM.HarvestStart, output.ToByteArray());
 
-            ab.StateMachine.TriggerTransition(FSMStateActor.StateEnum.HARVEST);
+            ab.StateMachine.TriggerTransition(FSMStateActor.StateEnum.HARVEST, null, durationTime);
         }
         else
         {

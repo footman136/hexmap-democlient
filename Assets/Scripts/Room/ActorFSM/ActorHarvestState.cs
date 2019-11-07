@@ -9,7 +9,6 @@ namespace AI
     public class ActorHarvestState : FsmBaseState<StateMachineActor, FSMStateActor.StateEnum>
     {
         private readonly ActorBehaviour _actorBehaviour;
-        private float timeRemain;
 
         public ActorHarvestState(StateMachineActor owner, ActorBehaviour ab) : base(owner)
         {
@@ -22,8 +21,7 @@ namespace AI
 
         public override void Tick()
         {
-            timeRemain = Time.time - Owner._startTime;
-            if (timeRemain >= _actorBehaviour.DurationTime)
+            if (Owner.TimeIsUp())
             {
                 Owner.TriggerTransition(FSMStateActor.StateEnum.IDLE);
             }
@@ -39,17 +37,17 @@ namespace AI
                 int resAmount = currentCell.Res.GetAmount(resType);
                 int resHarvest = 0;
 
-                if (timeRemain >= _actorBehaviour.DurationTime)
+                if (Owner.TimeIsUp())
                 {
                     resHarvest = resAmount;
                     resAmount = 0;
                 }
                 else
                 {
-                    resHarvest = Mathf.RoundToInt(resAmount * timeRemain / _actorBehaviour.DurationTime);
+                    resHarvest = Mathf.RoundToInt(resAmount * Owner.GetLastedTime() / Owner.DurationTime);
                     resAmount = resAmount - resHarvest;
                 }
-                
+
                 HarvestStop output = new HarvestStop()
                 {
                     RoomId = av.RoomId,

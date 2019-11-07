@@ -976,6 +976,7 @@ MonoBehaviour:
   _curCameraMove: {fileID: 2800000, guid: 5b4f351c27a2053468be1c09d8a1d4d1, type: 3}
   _curFindPath: {fileID: 2800000, guid: 51bdafafaea6a794fb6faedac1c71054, type: 3}
   _curCreateActor: {fileID: 2800000, guid: c7ee32a4718e5664dbd2b7660379f2e2, type: 3}
+  _curAttack: {fileID: 2800000, guid: 7dab7bb10ee7bab4599f5660780e4855, type: 3}
 --- !u!224 &112280865955098829 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 112280865955098829, guid: 4bd3e768311906c4992e954f81febaa4,

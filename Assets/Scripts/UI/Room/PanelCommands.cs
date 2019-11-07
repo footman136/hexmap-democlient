@@ -34,18 +34,21 @@ public class PanelCommands : MonoBehaviour
 
         timeDelay = 0;
         
-        for (int i = 0; i < _container.childCount; ++i)
-        {
-            var child = _container.GetChild(i);
-            var ci = child.GetComponent<CommandItem>();
-            if (ci)
-            {
-                if (CommandManager.Instance.Commands.ContainsKey(ci.CmdId))
-                {
-                    CommandManager.Instance.Commands[ci.CmdId].Func.Tick();
-                }
-            }
-        }
+        TickFunc();
+
+//        for(int i = 0; i < _container.childCount; ++i)
+//        {
+//            var child = _container.GetChild(i);
+//            var ci = child.GetComponent<CommandItem>();
+//            if (ci != null)
+//            {
+//                var cmdId = ci.CmdId;
+//                if (CommandManager.Instance.Commands.ContainsKey(cmdId))
+//                {
+//                    CommandManager.Instance.Commands[cmdId].Func.Tick();
+//                }
+//            }
+//        }
     }
 
     public void SetSelector(PickInfo pickInfo)
@@ -172,4 +175,98 @@ public class PanelCommands : MonoBehaviour
         _isExpand = _toggleRoot.isOn;
         _container.gameObject.SetActive(_isExpand);
     }
+    
+    public static void TickFunc()
+    {
+        if (!CommandManager.Instance)
+            return;
+        var whoMove = CommandManager.Instance.CurrentExecuter.CurrentActor;
+        if (!whoMove)
+            return;
+        if (whoMove.CurrentAiState == FSMStateActor.StateEnum.WALK
+            || whoMove.CurrentAiState == FSMStateActor.StateEnum.FIGHT)
+        {
+            for (int i = 0; i < PanelRoomMain.Instance.CommandContainer.childCount; ++i)
+            {
+                var ci = PanelRoomMain.Instance.CommandContainer.GetChild(i).GetComponent<CommandItem>();
+                if (ci && ci.CmdId < CommandManager.CommandID.March)
+                {
+                    ci.Enable(false);
+                }
+            }
+        }
+        else if (whoMove.CurrentAiState == FSMStateActor.StateEnum.HARVEST)
+        {
+            for (int i = 0; i < PanelRoomMain.Instance.CommandContainer.childCount; ++i)
+            {
+                var ci = PanelRoomMain.Instance.CommandContainer.GetChild(i).GetComponent<CommandItem>();
+                if (ci && ci.CmdId != CommandManager.CommandID.Halt)
+                {
+                    ci.Enable(false);
+                }
+            }
+        }
+        else
+        {
+            for (int i = 0; i < PanelRoomMain.Instance.CommandContainer.childCount; ++i)
+            {
+                var ci = PanelRoomMain.Instance.CommandContainer.GetChild(i).GetComponent<CommandItem>();
+                if (!ci) continue;
+                if (ci.CmdId == CommandManager.CommandID.Lumberjack)
+                {
+                    var cell = whoMove.HexUnit.Location;
+                    if (cell && cell.Res.GetAmount(HexResource.RESOURCE_TYPE.WOOD) > 0)
+                    {
+                        ci.Enable(true);
+                    }
+                    else
+                    {
+                        ci.Enable(false);    
+                    }
+                }
+                else if (ci.CmdId == CommandManager.CommandID.Harvest)
+                {
+                    var cell = whoMove.HexUnit.Location;
+                    if (cell && cell.Res.GetAmount(HexResource.RESOURCE_TYPE.FOOD) > 0)
+                    {
+                        ci.Enable(true);
+                    }
+                    else
+                    {
+                        ci.Enable(false);    
+                    }
+                }
+                else if (ci.CmdId == CommandManager.CommandID.Mining)
+                {
+                        
+                    var cell = whoMove.HexUnit.Location;
+                    if (cell && cell.Res.GetAmount(HexResource.RESOURCE_TYPE.IRON) > 0)
+                    {
+                        ci.Enable(true);
+                    }
+                    else
+                    {
+                        ci.Enable(false);    
+                    }
+                }
+                else if (ci.CmdId == CommandManager.CommandID.BuildBridge)
+                {
+                    var cell = whoMove.HexUnit.Location;
+                    if (cell && cell.HasRiver && !cell.HasBridge)
+                    {
+                        ci.Enable(true);
+                    }
+                    else
+                    {
+                        ci.Enable(false);
+                    }
+                }
+                else
+                {
+                    ci.Enable(true);
+                }
+            }
+        }
+    }
+    
 }

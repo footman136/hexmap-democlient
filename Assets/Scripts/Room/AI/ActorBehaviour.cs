@@ -44,12 +44,17 @@ namespace AI
         private ActorStats ScriptableActorStats;
 
         public StateMachineActor StateMachine;
-        public Vector3 TargetPosition; // 3D精确坐标，等同于transform.localPosition
         public Vector3 CurrentPosition; // 3D精确坐标，等同于transform.localPosition
-        public int TargetPosX;
-        public int TargetPosZ;
-        public int TargetCellIndex;
-        public float DurationTime; // 状态的持续时间
+
+        // 当移动到目的地以后,需要执行的指令
+        public enum COMMAND_ARRIVED
+        {
+            NONE = 0,
+            FIGHT = 1,
+            GUARD = 2,
+        }
+
+        public COMMAND_ARRIVED CommandArrived;
         
         public HexUnit HexUnit;
         private float _distance;
@@ -67,7 +72,6 @@ namespace AI
             StateMachine = new StateMachineActor(this);
             HexUnit = hu;
             CurrentPosition = HexUnit.transform.localPosition;
-            TargetPosition = HexUnit.transform.localPosition;
             
         }
         public void Fini()
@@ -79,7 +83,7 @@ namespace AI
         private float timeNow = 0;
         public void Tick()
         {
-            _distance = Vector3.Distance(CurrentPosition, TargetPosition);
+            _distance = Vector3.Distance(CurrentPosition, StateMachine.TargetPosition);
             CurrentPosition = HexUnit.transform.localPosition;
             int posXOld = PosX;
             int posZOld = PosZ;
@@ -117,15 +121,6 @@ namespace AI
         
         #region 外部接口
 
-        public void SetTarget(Vector3 targetPosition)
-        {
-            TargetPosition = targetPosition;
-            HexCell hc = HexUnit.Grid.GetCell(targetPosition);
-            TargetPosX = hc.coordinates.X;
-            TargetPosZ = hc.coordinates.Z;
-            TargetCellIndex = hc.Index;
-        }
-        
         #endregion
         
         #region 消息
@@ -186,22 +181,22 @@ namespace AI
                 bFirst = false;
             }
 
-            float range = 100f;
-            if (StateMachine.CurrentAiState == FSMStateActor.StateEnum.IDLE)
-            {
-                float offsetX = Random.Range(-range, range);
-                float offsetZ = Random.Range(-range, range);
-                Vector3 newTargetPosition = new Vector3(CurrentPosition.x + offsetX, CurrentPosition.y, CurrentPosition.z + offsetZ);
-                HexCell newCell = HexUnit.Grid.GetCell(newTargetPosition);
-                if (newCell != null)
-                {
-                    if (HexUnit.IsValidDestination(newCell))
-                    {
-                        SetTarget(newCell.Position);
-                        StateMachine.TriggerTransition(FSMStateActor.StateEnum.WALK);
-                    }
-                }
-            }
+//            float range = 100f;
+//            if (StateMachine.CurrentAiState == FSMStateActor.StateEnum.IDLE)
+//            {
+//                float offsetX = Random.Range(-range, range);
+//                float offsetZ = Random.Range(-range, range);
+//                Vector3 newTargetPosition = new Vector3(CurrentPosition.x + offsetX, CurrentPosition.y, CurrentPosition.z + offsetZ);
+//                HexCell newCell = HexUnit.Grid.GetCell(newTargetPosition);
+//                if (newCell != null)
+//                {
+//                    if (HexUnit.IsValidDestination(newCell))
+//                    {
+//                        SetTarget(newCell.Position);
+//                        StateMachine.TriggerTransition(FSMStateActor.StateEnum.WALK);
+//                    }
+//                }
+//            }
         }
 
         #endregion

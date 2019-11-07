@@ -185,11 +185,11 @@ namespace Animation
             HexCell targetCell = GameRoomManager.Instance.HexmapHelper.GetCell(input.CellIndexFrom);
             Vector3 newPosition = targetCell.Position;
             FSMStateActor.StateEnum newAiState = (FSMStateActor.StateEnum)input.State;
-            if (newAiState == CurrentAiState && newPosition == TargetPosition)
-            {
-                Debug.LogWarning("DinoVisualizer - duplicate AI state : " + newAiState);
-                return;
-            }
+//            if (newAiState == CurrentAiState && newPosition == TargetPosition)
+//            {
+//                Debug.LogWarning("DinoVisualizer - duplicate AI state : " + newAiState);
+//                return;
+//            }
             
             if (lookAtCoroutine != null && newAiState != CurrentAiState)
             { // 状态不同的时候才需要停止携程，防止同一个状态下，动画发生抖动（不停地进行【转向】/【停止转向】）
@@ -212,11 +212,14 @@ namespace Animation
                     //aniState = movementStates;
                     aniState = runningStates;
                     break;
-                case FSMStateActor.StateEnum.HARVEST:
-                    aniState = harvestStates;
-                    break;
                 case FSMStateActor.StateEnum.FIGHT:
                     aniState = attackingStates;
+                    break;
+                case FSMStateActor.StateEnum.GUARD:
+                    aniState = idleStates;
+                    break;
+                case FSMStateActor.StateEnum.HARVEST:
+                    aniState = harvestStates;
                     break;
                 case FSMStateActor.StateEnum.DIE:
                     aniState = deathStates;

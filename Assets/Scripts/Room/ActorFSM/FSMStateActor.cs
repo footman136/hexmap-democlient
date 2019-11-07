@@ -14,6 +14,7 @@ public struct FSMStateActor
         DIE = 3,
         VANISH = 4,
         HARVEST = 5,
+        GUARD = 6,
         NONE = 10,
     }
     

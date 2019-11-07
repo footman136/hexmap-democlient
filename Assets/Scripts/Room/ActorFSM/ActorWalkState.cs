@@ -13,35 +13,48 @@ namespace AI
             _actorBehaviour = ab;
         }
 
-        private float TIME_DELAY = 1f;
-        private float timeSpan = 0;
-        private float timeLast = 0;
-        private Vector3 vecLast;
         public override void Enter()
         {
-            float timeNow = Time.time;
-            timeLast = timeNow;
         }
 
+        private float timeSpan = 0;
+        private float TIME_DELAY = 1f;
+        private Vector3 vecLast;
         public override void Tick()
         {
-            float timeNow = Time.time;
-            timeSpan += timeNow - timeLast;
-            timeLast = timeNow;
-            if (timeSpan > TIME_DELAY)
+            if (timeSpan < TIME_DELAY)
             {
-                if(_actorBehaviour.CurrentPosition == vecLast)
-                {
-                    Owner.TriggerTransition(FSMStateActor.StateEnum.IDLE);
-                }
-
-                vecLast = _actorBehaviour.CurrentPosition;
-                timeSpan = 0;
+                timeSpan += Time.deltaTime;
+                return;
             }
+            timeSpan = 0;
+            
+            if(_actorBehaviour.CurrentPosition == vecLast && _actorBehaviour.CellIndex == Owner.TargetCellIndex)
+            {   
+                OnArrived();
+            }
+
+            vecLast = _actorBehaviour.CurrentPosition;
         }
 
         public override void Exit(bool disabled)
         {
+        }
+
+        public void OnArrived()
+        {
+            switch (_actorBehaviour.CommandArrived)
+            {
+                case ActorBehaviour.COMMAND_ARRIVED.FIGHT:
+                    Owner.TriggerTransition(FSMStateActor.StateEnum.FIGHT, null, Owner.DurationTime);
+                    break;
+                case ActorBehaviour.COMMAND_ARRIVED.GUARD:
+                    Owner.TriggerTransition(FSMStateActor.StateEnum.GUARD);
+                    break;
+                case ActorBehaviour.COMMAND_ARRIVED.NONE:
+                    Owner.TriggerTransition(FSMStateActor.StateEnum.IDLE);
+                    break;
+            }
         }
     }
 }
