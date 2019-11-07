@@ -182,6 +182,10 @@ public class HexmapHelper : MonoBehaviour
 
     public HexCell GetCell(int cellIndex)
     {
+        if (cellIndex < 0 || cellIndex >= hexGrid.cellCountX * hexGrid.cellCountZ)
+        {
+            Debug.LogError($"HexmapHelper GetCell Error - index is out of range : {cellIndex} - should less than {hexGrid.cellCountX * hexGrid.cellCountZ}");
+        }
         return hexGrid.GetCell(cellIndex);
     }
 

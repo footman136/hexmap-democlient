@@ -6,12 +6,14 @@ public class CursorManager : MonoBehaviour
 {
     [SerializeField] private Texture2D _curCameraMove;
     [SerializeField] private Texture2D _curFindPath;
+    [SerializeField] private Texture2D _curCreateActor;
     
     public enum CURSOR_TYPE
     {
         NONE = 0,
         CAMERA_MOVE = 1,
         FIND_PATH = 2,
+        CRAETE_ACTOR = 3,
     }
 
     private CURSOR_TYPE _cursorType;
@@ -39,6 +41,9 @@ public class CursorManager : MonoBehaviour
                 break;
             case CURSOR_TYPE.FIND_PATH:
                 Cursor.SetCursor(_curFindPath, Vector2.zero, CursorMode.Auto);
+                break;
+            case CURSOR_TYPE.CRAETE_ACTOR:
+                Cursor.SetCursor(_curCreateActor, Vector2.zero, CursorMode.Auto);
                 break;
             case CURSOR_TYPE.NONE:
                 Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);

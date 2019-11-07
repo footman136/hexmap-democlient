@@ -1,15 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Animation;
-using AI;
+﻿using Animation;
 using Google.Protobuf;
-using PlayFab.MultiplayerModels;
 using Protobuf.Room;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using static PanelCommands;
-using Cursor = UnityEngine.Cursor;
-using Toggle = UnityEngine.UI.Toggle;
+using UnityEngine.UI;
 
 public class PanelRoomMain : MonoBehaviour
 {
@@ -20,6 +14,12 @@ public class PanelRoomMain : MonoBehaviour
     [SerializeField] private Toggle _togAi;
     [SerializeField] private Toggle _togFollowCamera;
     [SerializeField] private Toggle _togShowRes;
+    [SerializeField] private GameObject _btnCreateActor;
+    [SerializeField] private Text _txtWood;
+    [SerializeField] private Text _txtFood;
+    [SerializeField] private Text _txtIron;
+    
+    
     [SerializeField] private Material terrainMaterial;
     [SerializeField] private PanelCommands _commands;
     
@@ -62,6 +62,8 @@ public class PanelRoomMain : MonoBehaviour
         
         _pickInfoMaster = new PickInfo();
         _pickInfoTarget = new PickInfo();
+
+        _btnCreateActor.transform.FindChild("Select").gameObject.SetActive(false);
     }
 
     #region 鼠标操作
@@ -76,7 +78,17 @@ public class PanelRoomMain : MonoBehaviour
 
         if (Input.GetMouseButtonUp(0))
         {
-            DoSelection();
+            if (_isCreatingActor)
+            {
+                AskCreateUnit(GetCellUnderCursor(), 10010);
+                _isCreatingActor = false;
+                CursorManager.Instance.RestoreCursor();
+                _btnCreateActor.transform.FindChild("Select").gameObject.SetActive(false);
+            }
+            else
+            {
+                DoSelection();
+            }
         }
 
         if (CommandManager.Instance.IsCommandRunning())
@@ -304,7 +316,18 @@ public class PanelRoomMain : MonoBehaviour
     public bool AskCreateUnit(UrbanCity city, int actorInfoId)
     {
         HexCell cellCenter = GameRoomManager.Instance.HexmapHelper.GetCell(city.CellIndex);// 城市中心地块
-        if (cellCenter.Unit != null)
+        return AskCreateUnit(cellCenter, actorInfoId);
+    }
+
+    /// <summary>
+    /// 请求创建一只部队
+    /// </summary>
+    /// <param name="cell"></param>
+    /// <param name="actorInfoId"></param>
+    /// <returns></returns>
+    public bool AskCreateUnit(HexCell cell, int actorInfoId)
+    {
+        if (cell.Unit != null)
         {
             string msg = $"当前位置有一支部队，请把该部队移走，然后再生产部队！";
             UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Warning);
@@ -319,11 +342,11 @@ public class PanelRoomMain : MonoBehaviour
             RoomId = GameRoomManager.Instance.RoomId,
             OwnerId = GameRoomManager.Instance.CurrentPlayer.TokenId,
             ActorId = GameUtils.Utils.GuidToLongId(),
-            PosX = cellCenter.coordinates.X,
-            PosZ = cellCenter.coordinates.Z,
+            PosX = cell.coordinates.X,
+            PosZ = cell.coordinates.Z,
             Orientation = Random.Range(0f, 360f),
             Species = artPrefab, // 预制件的名字
-            CellIndex = city.CellIndex,
+            CellIndex = cell.Index,
             ActorInfoId = actorInfoId,
         };
         GameRoomManager.Instance.SendMsg(ROOM.ActorAdd, output.ToByteArray());
@@ -390,58 +413,6 @@ public class PanelRoomMain : MonoBehaviour
         return true;
     }
 
-//    void AskMove()
-//    {
-//        if (!hexmapHelper.hexGrid.HasPath)
-//            return;
-//        if (currentCell == null || _pickInfoMaster.CurrentUnit == null)
-//            return;
-//        var av = _pickInfoMaster.CurrentUnit.GetComponent<ActorVisualizer>();
-//        if (av == null)
-//            return;
-//
-//        TroopMove output = new TroopMove()
-//        {
-//            RoomId = GameRoomManager.Instance.RoomId,
-//            OwnerId = GameRoomManager.Instance.CurrentPlayer.TokenId,
-//            ActorId = av.ActorId,
-//            PosFromX = av.PosX,
-//            PosFromZ = av.PosZ,
-//            PosToX = currentCell.coordinates.X,
-//            PosToZ = currentCell.coordinates.Z,
-//        };
-//        GameRoomManager.Instance.SendMsg(ROOM.TroopMove, output.ToByteArray());
-//    }
-//
-//    private void MoveByMyself()
-//    {
-//        DoPathfinding(true);
-//        
-//        if (!hexmapHelper.hexGrid.HasPath)
-//            return;
-//        if (currentCell == null || _pickInfoMaster.CurrentUnit == null)
-//            return;
-//        var av = _pickInfoMaster.CurrentUnit.GetComponent<ActorVisualizer>();
-//        if (av == null)
-//            return;
-//        var ab = GameRoomManager.Instance.RoomLogic.ActorManager.GetPlayer(av.ActorId);
-//        if (ab == null)
-//            return;
-//        HexCell newCell = hexmapHelper.hexGrid.GetCell(currentCell.coordinates.X, currentCell.coordinates.Z);
-//        HexCell newCell2 = hexmapHelper.hexGrid.GetCell(currentCell.Position);
-//        if (newCell.Position != currentCell.Position)
-//        {
-//            Debug.LogError($"Fuck Hexmap!!! - Orgin<{currentCell.coordinates.X},{currentCell.coordinates.Z}> - New<{newCell.coordinates.X},{newCell.coordinates.Z}>");
-//        }
-//        if (newCell2.Position != currentCell.Position)
-//        {
-//            Debug.LogError($"Fuck Hexmap 2!!! - Orgin<{currentCell.coordinates.X},{currentCell.coordinates.Z}> - New2<{newCell2.coordinates.X},{newCell2.coordinates.Z}>");
-//        }
-//        ab.SetTarget(currentCell.Position);
-//        
-//        Debug.Log($"MY BY MYSELF - Dest<{currentCell.coordinates.X},{currentCell.coordinates.Z}> - Dest Pos<{ab.TargetPosition.x},{ab.TargetPosition.z}>");
-//        ab.StateMachine.TriggerTransition(FSMStateActor.StateEnum.WALK); 
-//    }
     #endregion
 
     #region 事件处理
@@ -502,6 +473,15 @@ public class PanelRoomMain : MonoBehaviour
         bool visible = _togShowRes.isOn;
         hexmapHelper.hexGrid.showLabel = visible?2:0;
         hexmapHelper.hexGrid.OnShowLabels(visible?2:0);
+    }
+
+    private bool _isCreatingActor = false; 
+    public void OnClickCreateActor()
+    {
+        SetSelection(null);
+        _isCreatingActor = true;
+        CursorManager.Instance.ShowCursor(CursorManager.CURSOR_TYPE.CRAETE_ACTOR);
+        _btnCreateActor.transform.FindChild("Select").gameObject.SetActive(true);
     }
 
     #endregion

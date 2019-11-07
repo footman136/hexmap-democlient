@@ -65,8 +65,8 @@ public class PanelCommands : MonoBehaviour
             if (pickInfo.CurrentCity.OwnerId == GameRoomManager.Instance.CurrentPlayer.TokenId) // 只有是自己的城市,才会出现[命令菜单]
             {
                 strCmdSet = CommandSet.GetValue(2001, "CommandSet");
-                toggleRootName = "城市";
             }
+            toggleRootName = "城市";
         }
         else if (pickInfo.CurrentActor != null)
         {
@@ -74,9 +74,9 @@ public class PanelCommands : MonoBehaviour
             if (av.OwnerId == GameRoomManager.Instance.CurrentPlayer.TokenId) // 只有是自己的部队,才会出现[命令菜单]
             {
                 strCmdSet = CommandSet.GetValue(av.ActorInfoId, "CommandSet");
-                CsvStreamReader csv = CsvDataManager.Instance.GetTable("actor_info");
-                toggleRootName = csv.GetValue(av.ActorInfoId, "Name");
             }
+            CsvStreamReader csv = CsvDataManager.Instance.GetTable("actor_info");
+            toggleRootName = csv.GetValue(av.ActorInfoId, "Name");
         }
         else if (pickInfo.CurrentCell != null)
         {

@@ -44,9 +44,9 @@ public class RoomLogic : MonoBehaviour
         MsgDispatcher.RegisterMsg((int)ROOM_REPLY.ActorAddReply, OnActorAddReply);
         MsgDispatcher.RegisterMsg((int)ROOM_REPLY.ActorRemoveReply, OnActorRemoveReply);
         MsgDispatcher.RegisterMsg((int)ROOM_REPLY.TroopMoveReply, OnTroopMoveReply);
-        MsgDispatcher.RegisterMsg((int)ROOM_REPLY.DownloadCitiesReply, OnDownloadCitiesReply);
         MsgDispatcher.RegisterMsg((int)ROOM_REPLY.CityAddReply, OnCityAddReply);
         MsgDispatcher.RegisterMsg((int)ROOM_REPLY.CityRemoveReply, OnCityRemoveReply);
+        MsgDispatcher.RegisterMsg((int)ROOM_REPLY.UpdateResReply, OnUpdateResReply);
     }
 
     private void RemoveListener()
@@ -54,9 +54,9 @@ public class RoomLogic : MonoBehaviour
         MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.ActorAddReply, OnActorAddReply);
         MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.ActorRemoveReply, OnActorRemoveReply);
         MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.TroopMoveReply, OnTroopMoveReply);
-        MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.DownloadCitiesReply, OnDownloadCitiesReply);
         MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.CityAddReply, OnCityAddReply);
         MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.CityRemoveReply, OnCityRemoveReply);
+        MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.UpdateResReply, OnUpdateResReply);
     }
     
     #endregion
@@ -69,7 +69,7 @@ public class RoomLogic : MonoBehaviour
         if (!input.Ret)
         {
             string msg = "创建Actor失败！";
-            GameRoomManager.Instance.Log("MSG: CreateATroopReply - " + msg);
+            GameRoomManager.Instance.Log("MSG: OnActorAddReply - " + msg);
             return;
         }
         
@@ -84,14 +84,14 @@ public class RoomLogic : MonoBehaviour
         if (!input.Ret)
         {
             string msg = $"销毁Actor失败！{input.ActorId}";
-            GameRoomManager.Instance.Log("MSG: DestroyATroopReply Error - " + msg);
+            GameRoomManager.Instance.Log("MSG: OnActorRemoveReply Error - " + msg);
         }
         else
         {
             PanelRoomMain.Instance.RemoveSelection(input.ActorId); // 如果该单位被选中,要取消选中
             GameRoomManager.Instance.HexmapHelper.DestroyUnit(input.ActorId);
             string msg = $"成功解散部队!{input.ActorId}";
-            GameRoomManager.Instance.Log("MSG: DestroyATroopReply - OK " + msg);
+            GameRoomManager.Instance.Log("MSG: OnActorRemoveReply - OK " + msg);
         }
     }
 
@@ -101,58 +101,11 @@ public class RoomLogic : MonoBehaviour
         if (!input.Ret)
         {
             string msg = "移动Actor失败！";
-            GameRoomManager.Instance.Log("MSG: TroopMoveReply - " + msg);
+            GameRoomManager.Instance.Log("MSG: OnTroopMoveReply - " + msg);
             return;
         }
 
         GameRoomManager.Instance.HexmapHelper.DoMove(input.ActorId, input.PosFromX, input.PosFromZ, input.PosToX, input.PosToZ);
-    }
-
-    private void OnDownloadCitiesReply(byte[] bytes)
-    {
-        DownloadCitiesReply input = DownloadCitiesReply.Parser.ParseFrom(bytes);
-        if (!input.Ret)
-        {
-            string msg = $"查询城市信息失败！";
-            GameRoomManager.Instance.Log("MSG: AskForCitiesReply Error - " + msg);
-            return;
-        }
-        GameRoomManager.Instance.Log($"MSG: AskForCitiesReply OK - 城市个数:{input.MyCount}/{input.TotalCount}");
-
-        // 如果我一个城市都没有，则主动创建一个城市
-        if (input.MyCount == 0)
-        {
-            UrbanCity city = GameRoomManager.Instance.RoomLogic.UrbanManager.CreateRandomCity();
-            if (city == null)
-            {
-                string msg = "自动创建城市失败！";
-                UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
-                GameRoomManager.Instance.Log("MSG: AskForCitiesReply - " + msg);
-            }
-            else
-            {
-                CityAdd output = new CityAdd()
-                {
-                    RoomId = city.RoomId,
-                    OwnerId = city.OwnerId,
-                    CityId = city.CityId,
-                    PosX = city.PosX,
-                    PosZ = city.PosZ,
-                    CellIndex= city.CellIndex,
-                    CityName = city.CityName,
-                    CitySize = city.CitySize,
-                };
-                GameRoomManager.Instance.SendMsg(ROOM.CityAdd, output.ToByteArray());
-                GameRoomManager.Instance.Log("MSG: AskForCitiesReply OK - 申请创建城市...");
-            }
-        }
-
-        {
-            string msg = $"查询城市信息成功！";
-            GameRoomManager.Instance.Log("MSG: AskForCitiesReply OK - " + msg + $"City Count:{input.MyCount}");
-        }
-        // 进入房间整体流程完成
-        UIManager.Instance.EndLoading();
     }
 
     private void OnCityAddReply(byte[] bytes)
@@ -184,7 +137,7 @@ public class RoomLogic : MonoBehaviour
         {
             GameRoomManager.Instance.HexmapHelper.SetCameraPosition(input.CellIndex);
         }
-        GameRoomManager.Instance.Log($"MSG: CityAddReply OK - 创建城市，坐标:{city.PosX}, {city.PosZ} - Index:{city.CellIndex} - CitySize:{city.CitySize} - IsCapital:{city.IsCapital}");
+        GameRoomManager.Instance.Log($"MSG: OnCityAddReply OK - 创建城市，坐标:{city.PosX}, {city.PosZ} - Index:{city.CellIndex} - CitySize:{city.CitySize} - IsCapital:{city.IsCapital}");
     }
 
     private void OnCityRemoveReply(byte[] bytes)
@@ -193,16 +146,27 @@ public class RoomLogic : MonoBehaviour
         if (!input.Ret)
         {
             string msg = $"删除城市失败！";
-            GameRoomManager.Instance.Log("MSG: CityRemoveReply Error - " + msg);
+            GameRoomManager.Instance.Log("MSG: OnCityRemoveReply Error - " + msg);
         }
         else
         {
             UrbanManager.RemoveCity(input.CityId);
-            GameRoomManager.Instance.Log($"MSG: CityRemoveReply OK - 成功删除城市:{input.CityId}");
+            GameRoomManager.Instance.Log($"MSG: OnCityRemoveReply OK - 成功删除城市:{input.CityId}");
             PanelRoomMain.Instance.SetSelection(null);
         }
     }
-    
+
+    private void OnUpdateResReply(byte[] bytes)
+    {
+        UpdateResReply input = UpdateResReply.Parser.ParseFrom(bytes);
+        if (!input.Ret)
+        {
+            string msg = $"获取资源信息失败！";
+            GameRoomManager.Instance.Log("MSG: OnUpdateResReply Error - " + msg);
+            return;
+        }
+
+    }
 
     #endregion
 }
