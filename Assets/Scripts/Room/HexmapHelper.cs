@@ -202,6 +202,12 @@ public class HexmapHelper : MonoBehaviour
         return false;
     }
 
+    private class CellWithDist
+    {
+        public int _cellIndex;
+        public float _distance;
+    }
+
     /// <summary>
     /// 递归得到距离自己一定范围内的所有Cell
     /// </summary>
@@ -210,22 +216,21 @@ public class HexmapHelper : MonoBehaviour
     /// <returns></returns>
     public List<HexCell> GetCellsInRange(HexCell current, int range)
     {
+        // Union无法做到去掉重复项，原因不明
+//        List<CellWithDist> list1 = new List<CellWithDist>() {new CellWithDist() {_cellIndex = 1111, _distance = 17.12345f}};
+//        List<CellWithDist> list2 = new List<CellWithDist>() {new CellWithDist() {_cellIndex = 1111, _distance = 17.12345f}};
+//        List<CellWithDist> list3 = list1.Union(list2).ToList();
+        
         List<CellWithDist> cwdList = getCellsInRange(current, current, range);
         cwdList.Sort((a,b) => (int)(a._distance-b._distance));
         List<HexCell> cellList = new List<HexCell>();
         foreach (CellWithDist cwd in cwdList)
         {
-            if(!cellList.Contains(cwd._cell))
-                cellList.Add(cwd._cell);
+            if(!cellList.Contains(GetCell(cwd._cellIndex)))
+                cellList.Add(GetCell(cwd._cellIndex));
         }
 
         return cellList;
-    }
-
-    private class CellWithDist
-    {
-        public HexCell _cell;
-        public float _distance;
     }
 
     private List<CellWithDist> getCellsInRange(HexCell center, HexCell current, int range)
@@ -235,7 +240,7 @@ public class HexmapHelper : MonoBehaviour
         {
             CellWithDist cwd = new CellWithDist()
             {
-                _cell = current,
+                _cellIndex = current.Index,
                 _distance = Vector3.Distance(center.Position,current.Position),
             };
             findCells.Add(cwd);
@@ -246,7 +251,8 @@ public class HexmapHelper : MonoBehaviour
         {
             HexCell neighbor = current.GetNeighbor(d);
             if (!neighbor) continue;
-            findCells = findCells.Union(getCellsInRange(center, neighbor, range - 1)).ToList();
+            var findCells2 = getCellsInRange(center, neighbor, range - 1);
+            findCells = findCells.Union(findCells2).ToList();
         }
 
         return findCells;

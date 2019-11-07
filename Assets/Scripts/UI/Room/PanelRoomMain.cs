@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Animation;
 using GameUtils;
 using Google.Protobuf;
@@ -534,7 +535,7 @@ public class PanelRoomMain : MonoBehaviour
     private void RangeTest()
     {
         var current = GetCellUnderCursor();
-        List<HexCell> findCells = hexmapHelper.GetCellsInRange(current, 3);
+        List<HexCell> findCells = hexmapHelper.GetCellsInRange(current, 2);
         int index = 0;
         foreach (var cell in findCells)
         {
