@@ -314,7 +314,22 @@ public class HexmapHelper : MonoBehaviour
                 return false;
             }
         }
-        string unitPathName = $"Arts/BeffioPrefabs/Soldiers/{unitName}";
+        
+        // 区分颜色
+        string newUnitName = unitName;
+        if (ownerId != GameRoomManager.Instance.CurrentPlayer.TokenId)
+        { // 如果不是自己，蓝色就换成红色（绿色换成黄色）
+            if (unitName.IndexOf("BLUE") > 0)
+            {
+                newUnitName = unitName.Replace("BLUE", "RED");
+            }
+            else if (unitName.IndexOf("GREEN") > 0)
+            {
+                newUnitName = unitName.Replace("GREEN", "YELLOW");
+            }
+        }
+
+        string unitPathName = $"Arts/BeffioPrefabs/Soldiers/{newUnitName}";
         var go = Resources.Load<HexUnit>(unitPathName);
         if (go != null)
         {

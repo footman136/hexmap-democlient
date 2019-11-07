@@ -55,7 +55,7 @@ public class CmdAttack : MonoBehaviour, ICommand
         if (!hexmapHelper.hexGrid.HasPath)
             return;
 
-        Debug.Log($"CmdAttack - Dest<{cellTarget.coordinates.X},{cellTarget.coordinates.Z}> - Dest Pos<{cellTarget.coordinates.X},{cellTarget.coordinates.Z}>");
+        Debug.Log($"CmdAttack - From<{av.PosX},{av.PosZ}> - Dest Pos<{cellTarget.coordinates.X},{cellTarget.coordinates.Z}>");
         ab.CommandArrived = ActorBehaviour.COMMAND_ARRIVED.FIGHT; // 移动结束后,进入战斗状态
         ab.StateMachine.TriggerTransition(FSMStateActor.StateEnum.WALK, cellTarget, 30f);
         

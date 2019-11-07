@@ -16,6 +16,7 @@ public class PanelRoomMain : MonoBehaviour
     [SerializeField] private Toggle _togFollowCamera;
     [SerializeField] private Toggle _togShowRes;
     [SerializeField] private GameObject _btnCreateActor;
+    [SerializeField] private Text _txtPlayerName;
     [SerializeField] private Text _txtWood;
     [SerializeField] private Text _txtFood;
     [SerializeField] private Text _txtIron;
@@ -225,6 +226,7 @@ public class PanelRoomMain : MonoBehaviour
         }
         else
         {
+            ShowHitGround(Input.mousePosition);
             HexCell cell = GetCellUnderCursor();
             SetTarget(cell);
         }
@@ -265,6 +267,7 @@ public class PanelRoomMain : MonoBehaviour
             {
                 ShowSelector(_pickInfoMaster.CurrentActor, true);    
             }
+            Debug.Log($"Selector : <{cell.coordinates.X},{cell.coordinates.Z}>");
         }
         else
         {
@@ -287,7 +290,7 @@ public class PanelRoomMain : MonoBehaviour
                 var av = cell.Unit.GetComponent<ActorVisualizer>();
                 if (av != null)
                 {
-                    _pickInfoMaster.CurrentActor = av;
+                    _pickInfoTarget.CurrentActor = av;
                 }
             }
             else
@@ -300,6 +303,7 @@ public class PanelRoomMain : MonoBehaviour
             }
                 
             CommandManager.Instance.OnCommandTargetSelected(_pickInfoTarget); // 接受命令的单位
+            Debug.Log($"Selector Targt : <{cell.coordinates.X},{cell.coordinates.Z}>");
         }
     }
 
@@ -516,6 +520,7 @@ public class PanelRoomMain : MonoBehaviour
         UpdateResReply input = UpdateResReply.Parser.ParseFrom(bytes);
         if (!input.Ret)
             return;
+        _txtPlayerName.text = GameRoomManager.Instance.CurrentPlayer.Account;
         _txtWood.text = input.Wood.ToString();
         _txtFood.text = input.Food.ToString();
         _txtIron.text = input.Iron.ToString();

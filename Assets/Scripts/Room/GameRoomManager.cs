@@ -175,8 +175,8 @@ public class GameRoomManager : ClientScript
                 }
                 else
                 {
-                    enter.Account = "Footman";
-                    enter.TokenId = 1234562;
+                    enter.Account = "Footman3";
+                    enter.TokenId = 1234563;
                 }
                 CurrentPlayer.Init(enter.Account, enter.TokenId);
                 SendMsg(ROOM.PlayerEnter, enter.ToByteArray());
