@@ -1855,6 +1855,9 @@ MonoBehaviour:
   _togFollowCamera: {fileID: 325669699}
   _togShowRes: {fileID: 2048948419}
   _btnCreateActor: {fileID: 385620304}
+  _txtWood: {fileID: 6178650081984962498}
+  _txtFood: {fileID: 4320193792207175369}
+  _txtIron: {fileID: 9213990253804027983}
   terrainMaterial: {fileID: 2100000, guid: 6a3f5c7892e4b478e9e745026e6fe9f7, type: 2}
   _commands: {fileID: 0}
   _selectObjTemplate: {fileID: 100006, guid: c040f7ccd795db54f898d253a9ed2e7a, type: 3}
@@ -1937,7 +1940,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u7CAE\u98DF:\n"
+  m_Text: "\u94C1\u77FF:"
 --- !u!1 &3189238745787245569
 GameObject:
   m_ObjectHideFlags: 0

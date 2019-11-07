@@ -15,6 +15,8 @@ public class GameRoomManager : ClientScript
     
     public HexmapHelper HexmapHelper;
     public RoomLogic RoomLogic;
+    public RoomPlayerInfo CurrentPlayer;
+    
     [HideInInspector]
     public CsvDataManager CsvDataManager;
     public CommandManager CommandManager;
@@ -22,7 +24,6 @@ public class GameRoomManager : ClientScript
     public long RoomId;
     public string RoomName;
 
-    public PlayerEnter CurrentPlayer;
 
     public bool IsAiOn;
     
@@ -166,20 +167,19 @@ public class GameRoomManager : ClientScript
             {
                 UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Success);
                 // 登录到RoomServer
-                PlayerEnter data = new PlayerEnter();
+                PlayerEnter enter = new PlayerEnter();
                 if (ClientManager.Instance != null)
                 {
-                    data.Account = ClientManager.Instance.Player.Account;
-                    data.TokenId = ClientManager.Instance.Player.TokenId;
+                    enter.Account = ClientManager.Instance.Player.Account;
+                    enter.TokenId = ClientManager.Instance.Player.TokenId;
                 }
                 else
                 {
-                    data.Account = "Footman";
-                    data.TokenId = 123452;
+                    enter.Account = "Footman";
+                    enter.TokenId = 1234562;
                 }
-
-                CurrentPlayer = data; // 保存当前玩家的信息在本类，这样以后不用大老远去找ClientManager
-                SendMsg(ROOM.PlayerEnter, data.ToByteArray());
+                CurrentPlayer.Init(enter.Account, enter.TokenId);
+                SendMsg(ROOM.PlayerEnter, enter.ToByteArray());
                 StartHeartBeat(); // 开始心跳
             }
                 break;

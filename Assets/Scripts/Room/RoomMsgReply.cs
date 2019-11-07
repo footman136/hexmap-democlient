@@ -179,6 +179,14 @@ public class RoomMsgReply
                 RoomId = input.RoomId,
             };
             GameRoomManager.Instance.SendMsg(ROOM.DownloadActors, output2.ToByteArray());
+            
+            // 4-刷新玩家身上的资源
+            UpdateRes output3 = new UpdateRes()
+            {
+                RoomId = input.RoomId,
+                OwnerId = GameRoomManager.Instance.CurrentPlayer.TokenId,
+            };
+            GameRoomManager.Instance.SendMsg(ROOM.UpdateRes, output3.ToByteArray());
         }
     }
 

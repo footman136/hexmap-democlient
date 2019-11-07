@@ -165,7 +165,7 @@ public class RoomLogic : MonoBehaviour
             GameRoomManager.Instance.Log("MSG: OnUpdateResReply Error - " + msg);
             return;
         }
-
+        GameRoomManager.Instance.CurrentPlayer.SetRes(input.Wood, input.Food, input.Iron);        
     }
 
     #endregion

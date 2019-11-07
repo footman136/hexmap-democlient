@@ -1,4 +1,5 @@
 ﻿using Animation;
+using GameUtils;
 using Google.Protobuf;
 using Protobuf.Room;
 using UnityEngine;
@@ -38,6 +39,8 @@ public class PanelRoomMain : MonoBehaviour
     
     private static PanelRoomMain _instance;
     public static PanelRoomMain Instance => _instance;
+    
+    #region 初始化
 
     void Awake()
     {
@@ -64,7 +67,27 @@ public class PanelRoomMain : MonoBehaviour
         _pickInfoTarget = new PickInfo();
 
         _btnCreateActor.transform.FindChild("Select").gameObject.SetActive(false);
+        AddListener();
     }
+
+    void OnDestroy()
+    {
+        RemoveListener();
+    }
+
+    void AddListener()
+    {
+        MsgDispatcher.RegisterMsg((int)ROOM_REPLY.UpdateResReply, OnUpdateResReply);
+        
+    }
+
+    void RemoveListener()
+    {
+        MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.UpdateResReply, OnUpdateResReply);
+        
+    }
+    
+    #endregion
 
     #region 鼠标操作
 
@@ -484,5 +507,20 @@ public class PanelRoomMain : MonoBehaviour
         _btnCreateActor.transform.FindChild("Select").gameObject.SetActive(true);
     }
 
+    #endregion
+    
+    #region 消息处理
+    
+    private void OnUpdateResReply(byte[] bytes)
+    {
+        UpdateResReply input = UpdateResReply.Parser.ParseFrom(bytes);
+        if (!input.Ret)
+            return;
+        _txtWood.text = input.Wood.ToString();
+        _txtFood.text = input.Food.ToString();
+        _txtIron.text = input.Iron.ToString();
+    }
+
+    
     #endregion
 }

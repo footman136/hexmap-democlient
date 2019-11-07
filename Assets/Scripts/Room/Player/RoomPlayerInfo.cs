@@ -1,12 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class RoomPlayerInfo : MonoBehaviour
 {
+    [SerializeField] private string _account;
+    [SerializeField] private long _tokenId;
     [SerializeField] private int _wood;
     [SerializeField] private int _food;
     [SerializeField] private int _iron;
+
+    public string Account => _account;
+    public long TokenId => _tokenId;
 
     public int Wood => _wood;
     public int Food => _food;
@@ -24,7 +30,13 @@ public class RoomPlayerInfo : MonoBehaviour
         
     }
 
-    public void Set(int wood, int food, int iron)
+    public void Init(string account, long tokenId)
+    {
+        _account = account;
+        _tokenId = tokenId;
+    }
+
+    public void SetRes(int wood, int food, int iron)
     {
         _wood = wood;
         _food = food;
