@@ -202,12 +202,6 @@ public class HexmapHelper : MonoBehaviour
         return false;
     }
 
-    private class CellWithDist
-    {
-        public int _cellIndex;
-        public float _distance;
-    }
-
     /// <summary>
     /// 递归得到距离自己一定范围内的所有Cell
     /// </summary>
