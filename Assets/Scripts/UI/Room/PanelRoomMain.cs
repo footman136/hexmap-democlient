@@ -535,7 +535,7 @@ public class PanelRoomMain : MonoBehaviour
     private void RangeTest()
     {
         var current = GetCellUnderCursor();
-        List<HexCell> findCells = hexmapHelper.GetCellsInRange(current, 2);
+        List<HexCell> findCells = hexmapHelper.GetCellsInRange(current, 5);
         int index = 0;
         foreach (var cell in findCells)
         {

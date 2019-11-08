@@ -216,34 +216,24 @@ public class HexmapHelper : MonoBehaviour
     /// <returns></returns>
     public List<HexCell> GetCellsInRange(HexCell current, int range)
     {
-        // Union无法做到去掉重复项，原因不明
-//        List<CellWithDist> list1 = new List<CellWithDist>() {new CellWithDist() {_cellIndex = 1111, _distance = 17.12345f}};
-//        List<CellWithDist> list2 = new List<CellWithDist>() {new CellWithDist() {_cellIndex = 1111, _distance = 17.12345f}};
-//        List<CellWithDist> list3 = list1.Union(list2).ToList();
-        
-        List<CellWithDist> cwdList = getCellsInRange(current, current, range);
-        cwdList.Sort((a,b) => (int)(a._distance-b._distance));
-        List<HexCell> cellList = new List<HexCell>();
-        foreach (CellWithDist cwd in cwdList)
-        {
-            if(!cellList.Contains(GetCell(cwd._cellIndex)))
-                cellList.Add(GetCell(cwd._cellIndex));
-        }
-
+        List<HexCell> cellList = getCellsInRange(current, current, range);
+        cellList.Sort((a, b)=>sortByCellDistance(a, b, current));
         return cellList;
     }
 
-    private List<CellWithDist> getCellsInRange(HexCell center, HexCell current, int range)
+    private int sortByCellDistance(HexCell a, HexCell b, HexCell center)
     {
-        List<CellWithDist> findCells = new List<CellWithDist>();
+        float dist1 = Vector3.SqrMagnitude(a.Position - center.Position);
+        float dist2 = Vector3.SqrMagnitude(b.Position - center.Position);
+        return (int)(dist1 - dist2);
+    }
+
+    private List<HexCell> getCellsInRange(HexCell center, HexCell current, int range)
+    {
+        List<HexCell> findCells = new List<HexCell>();
         if (range == 0)
         {
-            CellWithDist cwd = new CellWithDist()
-            {
-                _cellIndex = current.Index,
-                _distance = Vector3.Distance(center.Position,current.Position),
-            };
-            findCells.Add(cwd);
+            findCells.Add(current);
             return findCells;
         }
 
