@@ -7,7 +7,8 @@ using JetBrains.Annotations;
 using Protobuf.Room;
 using UnityEngine;
 using Random = UnityEngine.Random;
-
+using AI;
+using static FSMStateActor;
 namespace Animation
 {
     /// <summary>
@@ -31,11 +32,17 @@ namespace Animation
         [Header("Data Attributes"), Space(5)] 
         public string Name;
         public int Hp;
+        public int Hp_Max;
         public float AttackPower;
         public float DefencePower;
         public float Speed;
         public float FieldOfVision;
         public float ShootingRange;
+        
+        public float AttackDuration; // 攻击持续时间
+        public float AttackInterval; // 攻击间隔
+        public int AmmuBase; // 弹药基数
+
         
         [Header("Animation States"), Space(5)]
         [SerializeField]
@@ -97,15 +104,21 @@ namespace Animation
         void OnEnable()
         {
             MsgDispatcher.RegisterMsg((int)ROOM_REPLY.TroopAiStateReply, OnAiStateChanged);
-            MsgDispatcher.RegisterMsg((int)ROOM_REPLY.HarvestStartReply, OnHarvestStart);
-            MsgDispatcher.RegisterMsg((int)ROOM_REPLY.HarvestStopReply, OnHarvestStop);
+            MsgDispatcher.RegisterMsg((int)ROOM_REPLY.HarvestStartReply, OnHarvestStartReply);
+            MsgDispatcher.RegisterMsg((int)ROOM_REPLY.HarvestStopReply, OnHarvestStopReply);
+            MsgDispatcher.RegisterMsg((int)ROOM_REPLY.FightStartReply, OnFightStartReply);
+            MsgDispatcher.RegisterMsg((int)ROOM_REPLY.FightStopReply, OnFightStopReply);
+            MsgDispatcher.RegisterMsg((int)ROOM_REPLY.UpdateActorInfoReply, OnUpdateActorInfoReply);
         }
 
         void OnDisable()
         {
             MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.TroopAiStateReply, OnAiStateChanged);
-            MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.HarvestStartReply, OnHarvestStart);
-            MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.HarvestStopReply, OnHarvestStop);
+            MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.HarvestStartReply, OnHarvestStartReply);
+            MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.HarvestStopReply, OnHarvestStopReply);
+            MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.FightStartReply, OnFightStartReply);
+            MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.FightStopReply, OnFightStopReply);
+            MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.UpdateActorInfoReply, OnUpdateActorInfoReply);
         }
 
         // Update is called once per frame
@@ -201,42 +214,46 @@ namespace Animation
             AnimationState[] aniState = null;
             switch (CurrentAiState)
             {
-                case FSMStateActor.StateEnum.IDLE:
+                case StateEnum.IDLE:
                     TargetPosition = CurrentPosition;
                     GameRoomManager.Instance.HexmapHelper.Stop(input.ActorId);
                     aniState = idleStates;
                     break;
-                case FSMStateActor.StateEnum.WALK:
+                case StateEnum.VANISH:
+                    break;
+                case StateEnum.DIE:
+                    aniState = deathStates;
+                    break;
+                case StateEnum.WALK:
+                case StateEnum.WALKFIGHT:
+                case StateEnum.WALKGUARD:
                     GameRoomManager.Instance.HexmapHelper.DoMove(input.ActorId, input.PosXFrom, input.PosZFrom, input.PosXTo, input.PosZTo);
                     Debug.Log($"MSG: TroopAiState - {CurrentAiState} - From<{input.PosXFrom},{input.PosZFrom}> - To<{input.PosXTo},{input.PosZTo}>");
                     //aniState = movementStates;
                     aniState = runningStates;
                     break;
-                case FSMStateActor.StateEnum.FIGHT:
+                case StateEnum.FIGHT:
                     aniState = attackingStates;
                     break;
-                case FSMStateActor.StateEnum.GUARD:
+                case StateEnum.GUARD:
                     aniState = idleStates;
                     break;
-                case FSMStateActor.StateEnum.HARVEST:
+                case StateEnum.HARVEST:
                     aniState = harvestStates;
                     break;
-                case FSMStateActor.StateEnum.DIE:
-                    aniState = deathStates;
-                    break;
-                case FSMStateActor.StateEnum.NONE:
+                case StateEnum.NONE:
                     aniState = idleStates;
                     break;
             }
             PlayAnimation(aniState);
 
-            if (CurrentAiState == FSMStateActor.StateEnum.VANISH)
+            if (CurrentAiState == StateEnum.VANISH)
             {
                 StartCoroutine(Vanishing());
             }
         }
 
-        private void OnHarvestStart(byte[] bytes)
+        private void OnHarvestStartReply(byte[] bytes)
         {
             HarvestStartReply input = HarvestStartReply.Parser.ParseFrom(bytes);
             if (!input.Ret)
@@ -256,7 +273,7 @@ namespace Animation
             }
         }
         
-        private void OnHarvestStop(byte[] bytes)
+        private void OnHarvestStopReply(byte[] bytes)
         {
             HarvestStopReply input = HarvestStopReply.Parser.ParseFrom(bytes);
             if (!input.Ret)
@@ -286,8 +303,36 @@ namespace Animation
             GameRoomManager.Instance.Log("MSG: HarvestStop OK - " + msg + $" - 剩余资源{input.ResRemain}");
         }
         
-        #endregion
+        private void OnFightStartReply(byte[] bytes)
+        {
+            FightStartReply input = FightStartReply.Parser.ParseFrom(bytes);
+            if (!input.Ret)
+                return;
+            if (input.ActorId != ActorId)
+                return; // 不是自己，略过
+            
+        }
+
+        private void OnFightStopReply(byte[] bytes)
+        {
+            FightStopReply input = FightStopReply.Parser.ParseFrom(bytes);
+            if (!input.Ret)
+                return;
+            if (input.ActorId != ActorId)
+                return; // 不是自己，略过
+        }
+
+        private void OnUpdateActorInfoReply(byte[] bytes)
+        {
+            UpdateActorInfoReply input = UpdateActorInfoReply.Parser.ParseFrom(bytes);
+            if (input.ActorId != ActorId)
+                return; // 不是自己，略过
+            
+            Hp = input.Hp;
+        }
         
+        #endregion
+
     }
 
 }

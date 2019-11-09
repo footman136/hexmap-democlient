@@ -1,10 +1,13 @@
 ﻿using Animation;
 using Assets.Gamelogic.FSM;
+using Google.Protobuf;
+using Protobuf.Room;
 using UnityEngine;
+using static FSMStateActor;
 
 namespace AI
 {
-    public class ActorFightState : FsmBaseState<StateMachineActor, FSMStateActor.StateEnum>
+    public class ActorFightState : FsmBaseState<StateMachineActor, StateEnum>
     {
         private readonly ActorBehaviour _actorBehaviour;
 
@@ -18,24 +21,23 @@ namespace AI
         public override void Enter()
         {
             _enemyActorId = 0;
-            // 找周围一圈看看有没有敌人
-            HexCell current = GameRoomManager.Instance.HexmapHelper.GetCell(_actorBehaviour.CellIndex);
-            for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
+            ActorBehaviour abEnemy = GameRoomManager.Instance.RoomLogic.ActorManager.GetActor(Owner.TargetActorId);
+            if (abEnemy != null && _actorBehaviour.IsEnemyInRange(abEnemy))
             {
-                HexCell neighbor = current.GetNeighbor(d);
-                if (!neighbor) continue;
-                if (!neighbor.Unit) continue;
-                var enemyAv = neighbor.Unit.GetComponent<ActorVisualizer>();
-                if (enemyAv == null) continue;
-                if (enemyAv.OwnerId != GameRoomManager.Instance.CurrentPlayer.TokenId)
-                { // 所有者不是自己就肯定是敌人,暂时不考虑外交关系
-                    _enemyActorId = enemyAv.ActorId;
-                }
+                _enemyActorId = abEnemy.ActorId;
+                FightStart output = new FightStart()
+                {
+                    RoomId = GameRoomManager.Instance.RoomId,
+                    OwnerId = _actorBehaviour.OwnerId,
+                    ActorId = _actorBehaviour.ActorId,
+                    TargetId = abEnemy.ActorId,
+                    // SkillId
+                };
+                GameRoomManager.Instance.SendMsg(ROOM.FightStart, output.ToByteArray());
             }
-
-            if (_enemyActorId == 0)
+            else
             { // 如果没有找到敌人
-                Owner.TriggerTransition(FSMStateActor.StateEnum.GUARD);
+                Owner.TriggerTransition(StateEnum.GUARD);
             }
         }
 
@@ -53,14 +55,31 @@ namespace AI
 
             if (Owner.TimeIsUp())
             {
-                
-                return;
+                if (_actorBehaviour.AmmuBase > 0)
+                {
+                    Owner.TriggerTransition(StateEnum.FIGHT);
+                }
+                else
+                {
+                    Owner.TriggerTransition(StateEnum.IDLE);
+                }
             }
+            
 
         }
 
         public override void Exit(bool disabled)
         {
+            if (_enemyActorId == 0)
+                return;
+            FightStop output = new FightStop()
+            {
+                RoomId = GameRoomManager.Instance.RoomId,
+                OwnerId = _actorBehaviour.OwnerId,
+                ActorId = _actorBehaviour.ActorId,
+                TargetId = _enemyActorId,
+            };
+            GameRoomManager.Instance.SendMsg(ROOM.FightStop, output.ToByteArray());
         }
     }
 }

@@ -3,10 +3,11 @@ using Assets.Gamelogic.FSM;
 using Google.Protobuf;
 using Protobuf.Room;
 using UnityEngine;
+using static FSMStateActor;
 
 namespace AI
 {
-    public class ActorHarvestState : FsmBaseState<StateMachineActor, FSMStateActor.StateEnum>
+    public class ActorHarvestState : FsmBaseState<StateMachineActor, StateEnum>
     {
         private readonly ActorBehaviour _actorBehaviour;
 
@@ -23,7 +24,7 @@ namespace AI
         {
             if (Owner.TimeIsUp())
             {
-                Owner.TriggerTransition(FSMStateActor.StateEnum.IDLE);
+                Owner.TriggerTransition(StateEnum.IDLE);
             }
         }
 
@@ -31,7 +32,7 @@ namespace AI
         {
             var av = _actorBehaviour.HexUnit.GetComponent<ActorVisualizer>();
             if (av != null)
-            {
+            { // 这里因为要获得地图上的资源数据,所以只能找到ActorVisualizer,如果改到服务器端要另外处理
                 var currentCell = av.HexUnit.Location;
                 var resType = currentCell.Res.ResType;
                 int resAmount = currentCell.Res.GetAmount(resType);

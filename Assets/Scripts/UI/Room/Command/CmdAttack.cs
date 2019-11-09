@@ -49,10 +49,10 @@ public class CmdAttack : MonoBehaviour, ICommand
         if (ab == null)
             return;
         
-        var currentCell = av.HexUnit.Location;
-        cellTarget = TryFindANeighbor(av.HexUnit.Location, cellTarget);
-        GameRoomManager.Instance.HexmapHelper.hexGrid.FindPath(currentCell, cellTarget, av.HexUnit);
         var hexmapHelper = GameRoomManager.Instance.HexmapHelper;
+        var currentCell = av.HexUnit.Location;
+        cellTarget = hexmapHelper.TryFindADest(av.HexUnit.Location, cellTarget);
+        GameRoomManager.Instance.HexmapHelper.hexGrid.FindPath(currentCell, cellTarget, av.HexUnit);
         if (!hexmapHelper.hexGrid.HasPath)
         {// 如果选中的是一个单位，则需要走到该单位的相邻点上去
             Debug.Log($"CmdAttack OnCommandTargetSelected Error - Cannot go to target position:<{currentCell.coordinates.X},{currentCell.coordinates.Z}> ");
@@ -60,49 +60,16 @@ public class CmdAttack : MonoBehaviour, ICommand
         }
 
         Debug.Log($"CmdAttack - From<{av.PosX},{av.PosZ}> - Dest Pos<{cellTarget.coordinates.X},{cellTarget.coordinates.Z}>");
-        ab.CommandArrived = ActorBehaviour.COMMAND_ARRIVED.FIGHT; // 移动结束后,进入战斗状态
-        ab.StateMachine.TriggerTransition(FSMStateActor.StateEnum.WALK, cellTarget, 30f);
-        
+
+        if (piTarget.CurrentActor && piTarget.CurrentActor.OwnerId != av.OwnerId)
+        {// 目标点是一支部队,且是敌人的部队,则盯住这支部队猛打
+            ab.StateMachine.TriggerTransition(FSMStateActor.StateEnum.WALKFIGHT, cellTarget, 0, piTarget.CurrentActor.ActorId);
+        }
+        else
+        {// 目标点仅仅是一个位置坐标,则在行军过程中,搜索进攻,发现任意敌人就停下来打它
+            ab.StateMachine.TriggerTransition(FSMStateActor.StateEnum.WALKFIGHT, cellTarget);
+        }
+
         Stop();
-    }
-
-    private class NeighborCell
-    {
-        public float _distance;
-        public HexCell _cell;
-    }
-
-    /// <summary>
-    /// 递归查询距离给定目标点current附近，距离地址点最近的有效目标点（没有单位在上面）
-    /// </summary>
-    /// <param name="from"></param>
-    /// <param name="current"></param>
-    /// <returns></returns>
-    private HexCell TryFindANeighbor(HexCell from, HexCell current)
-    {
-        if (current.Unit == null)// 如果这个目标点上没有单位，则直接返回该点
-            return current;
-        List<NeighborCell> Neighbors = new List<NeighborCell>();
-        for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
-        {
-            HexCell neighbor = current.GetNeighbor(d);
-            if (!neighbor) continue;
-            float dist = Vector3.Distance(neighbor.Position, @from.Position);
-            NeighborCell ncell = new NeighborCell()
-            {
-                _cell = neighbor,
-                _distance = dist,
-            };
-            Neighbors.Add(ncell);
-        }
-        Neighbors.Sort((a, b) => (int)(a._distance - b._distance));
-        foreach (var ncell in Neighbors)
-        {
-            var findCell = TryFindANeighbor(from, ncell._cell);
-            if (findCell != null)
-                return findCell;
-        }
-
-        return null;
     }
 }

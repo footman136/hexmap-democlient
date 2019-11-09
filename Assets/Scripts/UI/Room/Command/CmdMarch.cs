@@ -79,7 +79,6 @@ public class CmdMarch : MonoBehaviour, ICommand
             }
         
             Debug.Log($"CmdMarch - From<{av.PosX},{av.PosZ}> - Dest<{cellTarget.coordinates.X},{cellTarget.coordinates.Z}>");
-            ab.CommandArrived = ActorBehaviour.COMMAND_ARRIVED.NONE;
             ab.StateMachine.TriggerTransition(FSMStateActor.StateEnum.WALK, cellTarget);
         }
         Stop();

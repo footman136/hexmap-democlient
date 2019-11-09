@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Net.Sockets;
+using Animation;
 using GameUtils;
 using Google.Protobuf;
 using JetBrains.Annotations;
@@ -34,11 +35,16 @@ namespace AI
         // 这些数据一开始从表格读取
         public string Name;
         public int Hp;
+        public int Hp_Max;
         public float AttackPower;
         public float DefencePower;
         public float Speed;
         public float FieldOfVision;
         public float ShootingRange;
+        
+        public float AttackDuration; // 攻击持续时间
+        public float AttackInterval; // 攻击间隔
+        public int AmmuBase; // 弹药基数
 
         //This specific animal stats asset, create a new one from the asset menu under (LowPolyAnimals/NewAnimalStats)
         private ActorStats ScriptableActorStats;
@@ -46,18 +52,10 @@ namespace AI
         public StateMachineActor StateMachine;
         public Vector3 CurrentPosition; // 3D精确坐标，等同于transform.localPosition
 
-        // 当移动到目的地以后,需要执行的指令
-        public enum COMMAND_ARRIVED
-        {
-            NONE = 0,
-            FIGHT = 1,
-            GUARD = 2,
-        }
-
-        public COMMAND_ARRIVED CommandArrived;
-        
         public HexUnit HexUnit;
         private float _distance;
+        public float Distance => _distance;
+        
         private float TIME_DELAY;
 
         //If true, AI changes to this animal will be logged in the console.
@@ -83,8 +81,8 @@ namespace AI
         private float timeNow = 0;
         public void Tick()
         {
+            CurrentPosition = HexUnit.transform.localPosition; // 不是Cell的坐标
             _distance = Vector3.Distance(CurrentPosition, StateMachine.TargetPosition);
-            CurrentPosition = HexUnit.transform.localPosition;
             int posXOld = PosX;
             int posZOld = PosZ;
             var curentCell = HexUnit.Grid.GetCell(CurrentPosition);
@@ -94,7 +92,7 @@ namespace AI
             Orientation = HexUnit.Orientation;
             if (posXOld != PosX || posZOld != PosZ)
             { // 发送最新坐标给服务器
-                UpdatePos();
+                UpdateActorPos();
             }
             
             StateMachine.Tick();
@@ -120,14 +118,44 @@ namespace AI
         #endregion
         
         #region 外部接口
+        public bool IsEnemyInRange(ActorBehaviour abEnemy)
+        {
+            if (abEnemy == null) return false;
+            List<HexCell> cellsInRange = GameRoomManager.Instance.HexmapHelper.GetCellsInRange(HexUnit.Location, (int)ShootingRange);
+            if (cellsInRange.Contains(abEnemy.HexUnit.Location))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public ActorBehaviour FindEnemyInRange()
+        {
+            List<HexCell> cellsInRange = GameRoomManager.Instance.HexmapHelper.GetCellsInRange(HexUnit.Location, (int)ShootingRange);
+            foreach (HexCell cell in cellsInRange)
+            {
+                if (cell.Unit != null)
+                {
+                    var av = cell.Unit.GetComponent<ActorVisualizer>();
+                    if (av != null && av.OwnerId != OwnerId)
+                    { // 绕这么大一圈子,将来移植到服务器的话,需要考虑应该如何做
+                        var ab = GameRoomManager.Instance.RoomLogic.ActorManager.GetActor(av.ActorId);
+                        return ab;
+                    }
+                }
+            }
+
+            return null;
+        }
 
         #endregion
         
         #region 消息
 
-        private void UpdatePos()
+        private void UpdateActorPos()
         {
-            UpdatePos output = new UpdatePos()
+            UpdateActorPos output = new UpdateActorPos()
             {
                 RoomId = RoomId,
                 OwnerId = OwnerId,
@@ -137,7 +165,7 @@ namespace AI
                 CellIndex = CellIndex,
                 Orientation = Orientation,
             };
-            GameRoomManager.Instance.SendMsg(ROOM.UpdatePos, output.ToByteArray());
+            GameRoomManager.Instance.SendMsg(ROOM.UpdateActorPos, output.ToByteArray());
         }
         
         #endregion

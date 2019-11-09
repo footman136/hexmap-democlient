@@ -202,12 +202,16 @@ public class HexmapHelper : MonoBehaviour
         return false;
     }
 
+    #endregion
+    
+    #region 射程
+    
     /// <summary>
     /// 递归得到距离自己一定范围内的所有Cell
     /// </summary>
     /// <param name="current">当前点，以该点为中心</param>
     /// <param name="range">距离，格子数——间隔几个格子</param>
-    /// <returns></returns>
+    /// <returns>得到的结果从近到远排列</returns>
     public List<HexCell> GetCellsInRange(HexCell current, int range)
     {
         List<HexCell> cellList = getCellsInRange(current, current, range);
@@ -241,9 +245,43 @@ public class HexmapHelper : MonoBehaviour
 
         return findCells;
     }
+    
+    #endregion
+    
+    #region 最近可到达点
+    
+    /// <summary>
+    /// 递归查询距离给定目标点current附近，距离地址点最近的有效目标点（没有单位在上面）
+    /// </summary>
+    /// <param name="from"></param>
+    /// <param name="current"></param>
+    /// <returns></returns>
+    public HexCell TryFindADest(HexCell from, HexCell current)
+    {
+        if (current.Unit == null)// 如果这个目标点上没有单位，则直接返回该点
+            return current;
+        List<HexCell> Neighbors = new List<HexCell>();
+        for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
+        {
+            HexCell neighbor = current.GetNeighbor(d);
+            if (!neighbor) continue;
+            Neighbors.Add(neighbor);
+        }
+        Neighbors.Sort((a, b) => sortByCellDistance(a, b, from));
+        foreach (var cell in Neighbors)
+        {
+            var findCell = TryFindADest(from, cell);
+            if (findCell != null)
+                return findCell;
+        }
+
+        return null;
+    }
+    
     #endregion
 
     #region 城市
+        
     public void AddCity(int cellIndex, int citySize, bool isMyCity)
     {
         HexCell current = hexGrid.GetCell(cellIndex);
@@ -320,9 +358,14 @@ public class HexmapHelper : MonoBehaviour
     /// <param name="speed"></param>
     /// <param name="filedOfVision"></param>
     /// <param name="shootingRange"></param>
+    /// <param name="attackDuration"></param>
+    /// <param name="attackInterval"></param>
+    /// <param name="ammuBase"></param>
     /// <returns></returns>
-    public bool CreateUnit (long roomId, long ownerId, long actorId, int posX, int posZ, float orientation, string unitName, int cellIndex, int actorInfoId,
-        string name, int hp, float attackPower, float defencePower, float speed, float filedOfVision, float shootingRange)
+    public bool CreateUnit (long roomId, long ownerId, long actorId, int posX, int posZ, float orientation, 
+        string unitName, int cellIndex, int actorInfoId,
+        string name, int hp, float attackPower, float defencePower, float speed, float filedOfVision, float shootingRange,
+        float attackDuration, float attackInterval, int ammuBase)
     {
         HexCell cell = GetCell(posX, posZ);
         if (!cell)
@@ -398,6 +441,10 @@ public class HexmapHelper : MonoBehaviour
                     av.Speed = speed;
                     av.FieldOfVision = filedOfVision;
                     av.ShootingRange = shootingRange;
+
+                    av.AttackDuration = attackDuration;
+                    av.AttackInterval = attackInterval;
+                    av.AmmuBase = ammuBase;
                 }
 
                 // 关闭预制件上没用的东西，看以后这东西能否用得上，如果没用，就完全干掉
@@ -427,6 +474,10 @@ public class HexmapHelper : MonoBehaviour
                         Speed = speed,
                         FieldOfVision = filedOfVision,
                         ShootingRange = shootingRange,
+                        
+                        AttackDuration = attackDuration,
+                        AttackInterval = attackInterval,
+                        AmmuBase = ammuBase,
                     };
                     GameRoomManager.Instance.RoomLogic.ActorManager.AddActor(ab, hu);
                 }

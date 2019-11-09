@@ -1,14 +1,15 @@
-﻿using Assets.Gamelogic.FSM;
+﻿using System;
+using Assets.Gamelogic.FSM;
 using UnityEngine;
 using static FSMStateActor;
 
 namespace AI
 {
-    public class ActorWalkState : FsmBaseState<StateMachineActor, StateEnum>
+    public class ActorWalkGuardState : FsmBaseState<StateMachineActor, StateEnum>
     {
         private readonly ActorBehaviour _actorBehaviour;
 
-        public ActorWalkState(StateMachineActor owner, ActorBehaviour ab) : base(owner)
+        public ActorWalkGuardState(StateMachineActor owner, ActorBehaviour ab) : base(owner)
         {
             _actorBehaviour = ab;
         }
@@ -31,7 +32,7 @@ namespace AI
             
             if(_actorBehaviour.CurrentPosition == vecLast && _actorBehaviour.CellIndex == Owner.TargetCellIndex)
             {   
-                Owner.TriggerTransition(StateEnum.IDLE);
+                Owner.TriggerTransition(StateEnum.GUARD);
             }
 
             vecLast = _actorBehaviour.CurrentPosition;
@@ -40,6 +41,5 @@ namespace AI
         public override void Exit(bool disabled)
         {
         }
-
     }
 }

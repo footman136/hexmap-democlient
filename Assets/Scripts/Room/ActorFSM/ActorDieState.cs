@@ -1,8 +1,9 @@
 ﻿using Assets.Gamelogic.FSM;
+using static FSMStateActor;
 
 namespace AI
 {
-    public class ActorDieState : FsmBaseState<StateMachineActor, FSMStateActor.StateEnum>
+    public class ActorDieState : FsmBaseState<StateMachineActor, StateEnum>
     {
         private readonly ActorBehaviour _actorBehaviour;
     
