@@ -1,5 +1,5 @@
 ﻿#,,,,,,,,,攻击持续时间(s),攻击间隔(s),弹药基数
-Id,Name,ArtPrefab,Hp,AttackPower,DefencePower,Speed,FieldOfVision,ShootingRange,AttackDuration,AttackInterval,AmmuBase
+Id,Name,ArtPrefab,Hp,AttackPower,DefencePower,Speed,FieldOfVision,ShootingRange,AttackDuration,AttackInterval,AmmoBase
 2001,主城,,10000,0,50,0,5,0,,,
 2002,桥梁,,1000,0,10,0,1,0,,,
 2003,兵营,,2000,0,20,0,1,0,,,

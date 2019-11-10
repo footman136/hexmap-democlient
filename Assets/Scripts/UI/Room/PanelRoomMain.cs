@@ -71,8 +71,8 @@ public class PanelRoomMain : MonoBehaviour
         _pickInfoMaster = new PickInfo();
         _pickInfoTarget = new PickInfo();
 
-        _btnCreateActor.transform.FindChild("Select").gameObject.SetActive(false);
-        _btnDestroyActor.transform.FindChild("Select").gameObject.SetActive(false);
+        _btnCreateActor.transform.Find("Select").gameObject.SetActive(false);
+        _btnDestroyActor.transform.Find("Select").gameObject.SetActive(false);
         AddListener();
     }
 
@@ -112,14 +112,14 @@ public class PanelRoomMain : MonoBehaviour
                 AskCreateUnit(GetCellUnderCursor(), 10010);
                 _isCreatingActor = false;
                 CursorManager.Instance.RestoreCursor();
-                _btnCreateActor.transform.FindChild("Select").gameObject.SetActive(false);
+                _btnCreateActor.transform.Find("Select").gameObject.SetActive(false);
             }
             else if (_isRangeTesting)
             {
                 RangeTest();
                 _isRangeTesting = false;
                 CursorManager.Instance.RestoreCursor();
-                _btnDestroyActor.transform.FindChild("Select").gameObject.SetActive(false);
+                _btnDestroyActor.transform.Find("Select").gameObject.SetActive(false);
             }
             else
             {
@@ -520,7 +520,7 @@ public class PanelRoomMain : MonoBehaviour
         SetSelection(null);
         _isCreatingActor = true;
         CursorManager.Instance.ShowCursor(CursorManager.CURSOR_TYPE.CRAETE_ACTOR);
-        _btnCreateActor.transform.FindChild("Select").gameObject.SetActive(true);
+        _btnCreateActor.transform.Find("Select").gameObject.SetActive(true);
     }
 
     private bool _isRangeTesting = false;
@@ -529,7 +529,7 @@ public class PanelRoomMain : MonoBehaviour
         SetSelection(null);
         _isRangeTesting = true;
         CursorManager.Instance.ShowCursor(CursorManager.CURSOR_TYPE.CRAETE_ACTOR);
-        _btnDestroyActor.transform.FindChild("Select").gameObject.SetActive(true);
+        _btnDestroyActor.transform.Find("Select").gameObject.SetActive(true);
     }
 
     private void RangeTest()

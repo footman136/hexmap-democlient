@@ -625,12 +625,13 @@ namespace GameUtils
                 ArrayList colAL = rowMap[strKey];
                 if (colTitleMap.ContainsKey(GetColName))
                 {
-                    return int.Parse(colAL[colTitleMap[GetColName]].ToString());
+                    int value;
+                    return int.TryParse(colAL[colTitleMap[GetColName]].ToString(), out value) ? value : 0;
                 }
             }
 
             Debug.LogError(
-                $"CsvStreamReader GetValueInt Error - Data not found! TableName:{fileName} - Key:{Key} - Value:{GetColName}");
+                $"CsvStreamReader GetValue Error - Data not found! TableName:{fileName} - Key:{Key} - Value:{GetColName}");
 
             return 0;
         }
@@ -643,12 +644,13 @@ namespace GameUtils
                 ArrayList colAL = rowMap[strKey];
                 if (colTitleMap.ContainsKey(GetColName))
                 {
-                    return float.Parse(colAL[colTitleMap[GetColName]].ToString());
+                    float value;
+                    return float.TryParse(colAL[colTitleMap[GetColName]].ToString(), out value) ? value : 0;
                 }
             }
 
             Debug.LogError(
-                $"CsvStreamReader GetValueFloat Error - Data not found! TableName:{fileName} - Key:{Key} - Value:{GetColName}");
+                $"CsvStreamReader GetValue Error - Data not found! TableName:{fileName} - Key:{Key} - Value:{GetColName}");
 
             return 0;
         }
@@ -660,7 +662,8 @@ namespace GameUtils
                 ArrayList colAL = rowMap[strKey];
                 if (colTitleMap.ContainsKey(GetColName))
                 {
-                    return long.Parse(colAL[colTitleMap[GetColName]].ToString());
+                    long value;
+                    return long.TryParse(colAL[colTitleMap[GetColName]].ToString(), out value) ? value : 0;
                 }
             }
 
