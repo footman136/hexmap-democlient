@@ -24,40 +24,50 @@ namespace GameUtils
 
         public CsvStreamReader()
         {
-            this.rowAL = new ArrayList();
-            this.fileName = "";
-            this.encoding = Encoding.Default;
-            this.rowMap = new Dictionary<string, ArrayList>();
-            this.colTitleMap = new Dictionary<string, int>();
+            rowAL = new ArrayList();
+            encoding = Encoding.Default;
+            rowMap = new Dictionary<string, ArrayList>();
+            colTitleMap = new Dictionary<string, int>();
+            fileName = "";
         }
 
         /// <summary>
         ///
         /// </summary>
         /// <param name="fileName">文件名,包括文件路径</param>
-        public CsvStreamReader(string fileName)
+        public CsvStreamReader(string filename)
         {
-            this.rowAL = new ArrayList();
-            this.fileName = fileName;
-            this.encoding = Encoding.Default;
-            this.rowMap = new Dictionary<string, ArrayList>();
-            this.colTitleMap = new Dictionary<string, int>();
+            rowAL = new ArrayList();
+            encoding = Encoding.Default;
+            rowMap = new Dictionary<string, ArrayList>();
+            colTitleMap = new Dictionary<string, int>();
+            fileName = filename;
             LoadCsvFile();
         }
 
         /// <summary>
         ///
         /// </summary>
-        /// <param name="fileName">文件名,包括文件路径</param>
+        /// <param name="filename">文件名,包括文件路径</param>
         /// <param name="encoding">文件编码</param>
-        public CsvStreamReader(string fileName, Encoding encoding)
+        public CsvStreamReader(string filename, Encoding encoding)
         {
-            this.rowAL = new ArrayList();
-            this.fileName = fileName;
+            rowAL = new ArrayList();
+            rowMap = new Dictionary<string, ArrayList>();
+            colTitleMap = new Dictionary<string, int>();
+            fileName = filename;
             this.encoding = encoding;
-            this.rowMap = new Dictionary<string, ArrayList>();
-            this.colTitleMap = new Dictionary<string, int>();
             LoadCsvFile();
+        }
+
+        public CsvStreamReader(string filename, MemoryStream ms, Encoding encoding)
+        {
+            rowAL = new ArrayList();
+            rowMap = new Dictionary<string, ArrayList>();
+            colTitleMap = new Dictionary<string, int>();
+            fileName = filename;
+            this.encoding = encoding;
+            LoadCsvBuffer(ms);
         }
 
         /// <summary>
@@ -296,7 +306,7 @@ namespace GameUtils
             }
             else if (!File.Exists(this.fileName))
             {
-                throw new Exception("指定的CSV文件不存在");
+                throw new Exception($"指定的CSV文件不存在 - {fileName}");
             }
             else
             {
@@ -384,6 +394,93 @@ namespace GameUtils
             if (csvDataLine.Length > 0)
             {
                 throw new Exception($"CsvStreamReader LoadCsvFile Exception - CSV文件的格式有错误! FileName:{fileName}");
+            }
+        }
+
+        private void LoadCsvBuffer(MemoryStream ms)
+        {
+            if (this.encoding == null)
+            {
+                this.encoding = Encoding.Default;
+            }
+
+            StreamReader sr = new StreamReader(ms);
+            string csvDataLine;
+
+            csvDataLine = "";
+            while (true)
+            {
+                string fileDataLine;
+
+                fileDataLine = sr.ReadLine();
+                if (fileDataLine == null)
+                {
+                    break;
+                }
+
+                if (csvDataLine == "")
+                {
+                    csvDataLine = fileDataLine; //GetDeleteQuotaDataLine(fileDataLine);
+                }
+                else
+                {
+                    csvDataLine += "\r\n" + fileDataLine; //GetDeleteQuotaDataLine(fileDataLine);
+                }
+
+                //如果包含偶数个引号，说明该行数据中出现回车符或包含逗号
+                if (!IfOddQuota(csvDataLine))
+                {
+                    AddNewDataLine(csvDataLine);
+                    csvDataLine = "";
+                }
+            }
+
+            try
+            {
+                // 把list转为Map,为了提高查询的效率,Map的key就是第一列
+                for (int i = 0; i < rowAL.Count; ++i)
+                {
+                    ArrayList colAL = (ArrayList) this.rowAL[i];
+                    string key = colAL[0].ToString();
+                    if (!string.IsNullOrEmpty(key))
+                    {
+                        rowMap.Add(colAL[0].ToString(), colAL);
+                    }
+                }
+
+                // 得到每一列的Title的名字及其对应的列序号
+                {
+                    ArrayList colAL = (ArrayList) rowAL[0];
+                    if (this[1, 1].ToString() == "#")
+                    {
+                        // 如果(0,0)字段是"#",那么下一行(第2行)就是title
+                        if (RowCount > 2)
+                        {
+                            colAL = (ArrayList) rowAL[1];
+                        }
+                        else
+                        {
+                            throw new Exception("找不到每列的标题!");
+                        }
+                    }
+
+                    for (int i = 0; i < ColCount; ++i)
+                    {
+                        string title = colAL[i].ToString();
+                        colTitleMap.Add(title, i);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"CsvStreamReader LoadCsvBuffer Exception - FileName:{fileName} - {e}");
+            }
+
+            sr.Close();
+            //数据行出现奇数个引号
+            if (csvDataLine.Length > 0)
+            {
+                throw new Exception($"CsvStreamReader LoadCsvBuffer Exception - CSV文件的格式有错误! FileName:{fileName}");
             }
         }
 
