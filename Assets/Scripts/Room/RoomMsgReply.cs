@@ -74,6 +74,12 @@ public class RoomMsgReply
             string msg = "玩家成功加入战场服务器!";
             UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Success);
             GameRoomManager.Instance.Log($"MSG: PLAYER_ENTER_REPLY OK - " + msg);
+            
+            //载入地图(调试Only)
+            if (ClientManager.Instance == null)
+            {
+                GameRoomManager.Instance.LoadMap();
+            }
         }
         else
         {

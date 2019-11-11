@@ -24,7 +24,6 @@ public class ClientScript : MonoBehaviour
     protected void Start()
     {
         _client = new AsynSocketClient(BUFF_SIZE);
-        _client.ConnectAsync(_address, _port);
         _client.Received += OnReceiveMsg;
         _client.Completed += OnComplete;
 
@@ -84,6 +83,11 @@ public class ClientScript : MonoBehaviour
     public void SendMsg(string data)
     {
         _client.SendAsync(data);
+    }
+
+    public void Connect()
+    {
+        _client.ConnectAsync(_address, _port);
     }
 
     void OnReceiveMsg(DataEventArgs args)

@@ -43,7 +43,7 @@ public class GameRoomManager : ClientScript
         else
         {
             CsvDataManager = gameObject.AddComponent<CsvDataManager>();
-            CsvDataManager.LoadDataAll();
+            StartCoroutine(DownloadDataFiles());
         }
     }
 
@@ -51,7 +51,37 @@ public class GameRoomManager : ClientScript
     // Start is called before the first frame update
     void Start()
     {
-         roomData = new EnterRoomData();
+        UIManager.Instance.BeginLoading();
+        
+        base.Start();
+
+        //网络
+        Completed += OnComplete;
+        Received += OnReceiveMsg;
+        RoomLogic.Init();
+        Log($"GameRoomManager.Start()! 开始链接RoomServer - {_address}:{_port}");
+        
+    }
+
+    void OnDestroy()
+    {
+        Completed -= OnComplete;
+        Received -= OnReceiveMsg;
+        RoomLogic.Fini();
+    }
+
+    // Update is called once per frame
+    protected void Update()
+    {
+        base.Update();
+    }
+    
+    IEnumerator DownloadDataFiles()
+    {
+        yield return StartCoroutine(CsvDataManager.LoadDataAllAndroid());
+        CommandManager.LoadCommands();
+        
+        roomData = new EnterRoomData();
         if (ClientManager.Instance != null)
         {
             roomData = ClientManager.Instance.EnterRoom;
@@ -78,54 +108,23 @@ public class GameRoomManager : ClientScript
             roomData.RoomId = defaultRoomId;
         }
         
-        UIManager.Instance.BeginLoading();
-        
-        base.Start();
-
-        //网络
-        Completed += OnComplete;
-        Received += OnReceiveMsg;
-        RoomLogic.Init();
-        Log($"GameRoomManager.Start()! 开始链接RoomServer - {_address}:{_port}");
-        
-        CommandManager.LoadCommands();        
-            
-        //载入地图(调试Only)
-        if (ClientManager.Instance == null)
-            StartCoroutine(LoadMap());
-
-        //心跳
-        InvokeRepeating(nameof(HeartBeat), _heartBeatInterval, _heartBeatInterval);
+        Connect();
         
         //初始化结束
         IsAiOn = false;
+        Debug.Log("GameRoomManager DowloadDataFiles - OK!");
     }
 
-    IEnumerator LoadMap()
+    public void LoadMap()
     {
-        yield return null;
         CreateJoinRoom(roomData);
-        
     }
 
-    void OnDestroy()
-    {
-        Completed -= OnComplete;
-        Received -= OnReceiveMsg;
-        RoomLogic.Fini();
-    }
-
-    // Update is called once per frame
-    protected void Update()
-    {
-        base.Update();
-    }
-    
     #endregion
     
     #region 心跳
     
-    private void StartHeartBeat()
+    public void StartHeartBeat()
     {
         InvokeRepeating(nameof(HeartBeat), 0, _heartBeatInterval);
     }
@@ -208,8 +207,11 @@ public class GameRoomManager : ClientScript
 
     public void CreateJoinRoom(EnterRoomData roomData)
     {
+        Debug.Log("GameRoomManager CreateJoinRoom() Begin...");
         if (roomData.IsCreatingRoom)
         {// 创建房间流程
+            
+            Log($"MSG: CreateJoinRoom - 创建房间：{roomData.RoomName}");
 
             // 把地图数据上传到房间服务器保存。后面的和加入房间一样了。
             BinaryReader reader = HexmapHelper.BeginLoadBuffer(roomData.RoomName);
