@@ -104,14 +104,15 @@ public class PanelRoomMain : MonoBehaviour
     void Update()
     {
         // 本函数用来判定，是否点击到了界面，只有没有点击界面，才处理战场内的事件
-        if (Input.touchCount > 0)
+        // 下面的这两种做法在手机上均无效,只有使用IsPointerOverUIObject()这个自己写的代码才能生效,原因不明.
+        //    if (EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId))
+        //        return;
+        //    if (EventSystem.current.IsPointerOverGameObject())
+        //        return;
+        if (IsPointerOverUIObject())
         {
-            if (EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId))
-                return;
-        }
-
-        if (EventSystem.current.IsPointerOverGameObject())
             return;
+        }
 
         if (Input.GetMouseButtonUp(0))
         {
@@ -140,6 +141,18 @@ public class PanelRoomMain : MonoBehaviour
             DoPathfinding();
         }
     }
+
+    //    ————————————————
+    //    版权声明：本文为CSDN博主「SunnyIncsdn」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。
+    //    原文链接：https://blog.csdn.net/SunnyInCSDN/article/details/72470247
+    private bool IsPointerOverUIObject() {//判断是否点击的是UI，有效应对安卓没有反应的情况，true为UI
+        PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
+        eventDataCurrentPosition.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
+        return results.Count > 0;
+    }
+
 
     HexCell GetCellUnderCursor () {
         return
