@@ -45,7 +45,6 @@ public class PanelLobbyMain : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
     }
 
     #region 事件处理

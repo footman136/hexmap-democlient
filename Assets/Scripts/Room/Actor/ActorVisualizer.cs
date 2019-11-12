@@ -101,6 +101,12 @@ namespace Animation
             PlayAnimation(idleStates);
         }
 
+        void OnDestroy()
+        {
+            _allActors.Clear();
+            HexUnit = null;
+        }
+
         void OnEnable()
         {
             MsgDispatcher.RegisterMsg((int)ROOM_REPLY.TroopAiStateReply, OnAiStateChanged);

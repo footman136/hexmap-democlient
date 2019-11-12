@@ -83,15 +83,15 @@ public class RoomMsgReply
         }
         else
         {
-            string msg = "玩家加入战场服务器失败！重复登录！";
+            string msg = "玩家加入战场服务器失败！";
             // 不能使用SystemTips,因为会切换场景(scene),切换场景的时候,SystemTips无法显示
             //UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
-            UIManager.Instance.MessageBox("错误", msg, (int)PanelMessageBox.BUTTON.OK, OnClickMessageBox);
+            UIManager.Instance.MessageBox("错误", msg, (int)PanelMessageBox.BUTTON.OK, OnClickPlayerEnterFailed);
             GameRoomManager.Instance.Log($"MSG: ROOM PLAYER_ENTER_REPLY Error - " + msg);
         }
     }
     
-    static void OnClickMessageBox(int index)
+    static void OnClickPlayerEnterFailed(int index)
     {
         if (ClientManager.Instance != null)
         {
@@ -103,7 +103,6 @@ public class RoomMsgReply
         }
     }
     
-
     private static void UPLOAD_MAP_REPLY(byte[] bytes)
     {
         UploadMapReply input = UploadMapReply.Parser.ParseFrom(bytes);
@@ -255,7 +254,7 @@ public class RoomMsgReply
         else
         {
             ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.RESULT);
-            GameRoomManager.Instance.Log($"MSG: DOWNLOAD_RES_REPLY OK - ");
+            GameRoomManager.Instance.Log($"MSG: LEAVE_ROOM_REPLY OK - ");
         }
     }
 
