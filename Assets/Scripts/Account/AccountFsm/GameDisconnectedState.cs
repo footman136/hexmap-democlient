@@ -31,7 +31,7 @@ public class GameDisconnectedState : FsmBaseState<ConnectionStateMachine, Connec
         if (isFirst)
         {
             isFirst = false;
-            ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.LOBBY);
+            ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.START);
         }
     }
 

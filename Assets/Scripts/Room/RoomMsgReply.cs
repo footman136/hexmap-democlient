@@ -73,7 +73,7 @@ public class RoomMsgReply
 
             string msg = "玩家成功加入战场服务器!";
             UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Success);
-            GameRoomManager.Instance.Log($"MSG: PLAYER_ENTER_REPLY OK - " + msg);
+            GameRoomManager.Instance.Log($"MSG: ROOM PLAYER_ENTER_REPLY OK - " + msg);
             
             //载入地图(调试Only)
             if (ClientManager.Instance == null)
@@ -83,13 +83,26 @@ public class RoomMsgReply
         }
         else
         {
-            ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.LOBBY);
-            string msg = "玩家进入战场服务器失败！！！";
-            UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
-            GameRoomManager.Instance.Log($"MSG: PLAYER_ENTER_REPLY Error - " + msg);
-            ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.START);
+            string msg = "玩家加入战场服务器失败！重复登录！";
+            // 不能使用SystemTips,因为会切换场景(scene),切换场景的时候,SystemTips无法显示
+            //UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
+            UIManager.Instance.MessageBox("错误", msg, (int)PanelMessageBox.BUTTON.OK, OnClickMessageBox);
+            GameRoomManager.Instance.Log($"MSG: ROOM PLAYER_ENTER_REPLY Error - " + msg);
         }
     }
+    
+    static void OnClickMessageBox(int index)
+    {
+        if (ClientManager.Instance != null)
+        {
+            ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.LOBBY);
+        }
+        else
+        {
+            Application.Quit();
+        }
+    }
+    
 
     private static void UPLOAD_MAP_REPLY(byte[] bytes)
     {
@@ -235,8 +248,15 @@ public class RoomMsgReply
     private static void LEAVE_ROOM_REPLY(byte[] bytes)
     {
         LeaveRoomReply input = LeaveRoomReply.Parser.ParseFrom(bytes);
-        ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.RESULT);
-        GameRoomManager.Instance.Log($"MSG: DOWNLOAD_RES_REPLY OK - ");
+        if (ClientManager.Instance == null)
+        {
+            Application.Quit();
+        }
+        else
+        {
+            ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.RESULT);
+            GameRoomManager.Instance.Log($"MSG: DOWNLOAD_RES_REPLY OK - ");
+        }
     }
 
     private static void DOWNLOAD_ACTORS_REPLY(byte[] bytes)

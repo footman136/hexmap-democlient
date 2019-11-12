@@ -53,15 +53,23 @@ public class LobbyMsgReply
         PlayerEnterReply input = PlayerEnterReply.Parser.ParseFrom(bytes);
         if (input.Ret)
         {
+            string msg = "玩家成功加入大厅服务器!";
+            ClientManager.Instance.LobbyManager.Log($"MSG: LOBBY PLAYER_ENTER_REPLY OK - " + msg);
             ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.CONNECTED);
         }
         else
         {
-            string msg = "玩家进入大厅失败！！！";
-            UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
-            ClientManager.Instance.LobbyManager.Log("MSG: PLAYER_ENTER_REPLY - " + msg);
-            ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.DISCONNECTED);
+            string msg = "玩家进入大厅失败！！！重复登录";
+            // 不能使用SystemTips,因为会切换场景(scene),切换场景的时候,SystemTips无法显示
+            //UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
+            UIManager.Instance.MessageBox("错误", msg, (int)PanelMessageBox.BUTTON.OK, OnClickMessageBox);
+            ClientManager.Instance.LobbyManager.Log("MSG: LOBBY PLAYER_ENTER_REPLY - " + msg);
         }
+    }
+
+    static void OnClickMessageBox(int index)
+    {
+        ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.DISCONNECTED);
     }
 
     static void ASK_ROOM_LIST_REPLY(byte[] bytes)

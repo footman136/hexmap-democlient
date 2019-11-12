@@ -74,7 +74,7 @@ public class ConnectionStateMachine : FiniteStateMachine<ConnectionFSMStateEnum.
         });
         allowedTransitions.Add(ConnectionFSMStateEnum.StateEnum.DISCONNECTED, new List<ConnectionFSMStateEnum.StateEnum>
         {
-            ConnectionFSMStateEnum.StateEnum.LOBBY,
+            ConnectionFSMStateEnum.StateEnum.START,
         });
         allowedTransitions.Add(ConnectionFSMStateEnum.StateEnum.RESULT, new List<ConnectionFSMStateEnum.StateEnum>
         {
