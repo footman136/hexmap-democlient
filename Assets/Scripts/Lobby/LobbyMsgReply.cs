@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using System;
 using Google.Protobuf;
 // https://github.com/LitJSON/litjson
@@ -8,8 +6,7 @@ using LitJson;
 using Main;
 // https://blog.csdn.net/u014308482/article/details/52958148
 using Protobuf.Lobby;
-using Protobuf.Room;
-using PlayerEnterReply = Protobuf.Lobby.PlayerEnterReply;
+using Google.Protobuf.Collections;
 
 public class LobbyMsgReply
 {
@@ -33,6 +30,9 @@ public class LobbyMsgReply
             case LOBBY_REPLY.PlayerEnterReply:
                 PLAYER_ENTER_REPLY(recvData);
                 break;
+            case LOBBY_REPLY.PlayerLeaveReply:
+                PLAYER_LEAVE_REPLY(recvData);
+                break;
             case LOBBY_REPLY.AskRoomListReply:
                 ASK_ROOM_LIST_REPLY(recvData);
                 break;
@@ -53,15 +53,46 @@ public class LobbyMsgReply
         PlayerEnterReply input = PlayerEnterReply.Parser.ParseFrom(bytes);
         if (input.Ret)
         {
+            string msg = "玩家成功加入大厅服务器!";
+            ClientManager.Instance.LobbyManager.Log($"MSG: LOBBY PLAYER_ENTER_REPLY OK - " + msg);
             ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.CONNECTED);
         }
         else
         {
             string msg = "玩家进入大厅失败！！！";
-            UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
-            ClientManager.Instance.LobbyManager.Log("MSG: PLAYER_ENTER_REPLY - " + msg);
-            ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.DISCONNECTED);
+            // 不能使用SystemTips,因为会切换场景(scene),切换场景的时候,SystemTips无法显示
+            //UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
+            UIManager.Instance.MessageBox("错误", msg, (int)PanelMessageBox.BUTTON.OK, OnClickPlayerEnterFailed);
+            ClientManager.Instance.LobbyManager.Log("MSG: LOBBY PLAYER_ENTER_REPLY Error - " + msg);
         }
+    }
+
+    static void OnClickPlayerEnterFailed(int index)
+    {
+        ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.DISCONNECTED);
+    }
+
+    static void PLAYER_LEAVE_REPLY(byte[] bytes)
+    {
+        PlayerLeaveReply input = PlayerLeaveReply.Parser.ParseFrom(bytes);
+        if (input.TokenId != ClientManager.Instance.Player.TokenId)
+        {
+            string msg = "不是自己!";
+            ClientManager.Instance.LobbyManager.Log("MSG: LOBBY PLAYER_LEAVE_REPLY Error - " + msg);
+            return;
+        }
+
+        if (input.IsKicked)
+        {
+            string msg = $"本用户在其他地方登录, 请确认是您的账号安全.";
+            UIManager.Instance.MessageBox("警告", msg, (int)PanelMessageBox.BUTTON.OK, OnClickPlayerLeave);
+            ClientManager.Instance.LobbyManager.Log("MSG: LOBBY PLAYER_LEAVE_REPLY OK - " + msg);
+        }
+    }
+    
+    static void OnClickPlayerLeave(int index)
+    {
+        ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.DISCONNECTED);
     }
 
     static void ASK_ROOM_LIST_REPLY(byte[] bytes)
@@ -71,7 +102,7 @@ public class LobbyMsgReply
         {
             string msg = "获取房间信息失败！";
             UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
-            ClientManager.Instance.LobbyManager.Log("MSG: ASK_ROOM_LIST_REPLY - " + msg);
+            ClientManager.Instance.LobbyManager.Log("MSG: ASK_ROOM_LIST_REPLY Error - " + msg);
             return;
         }
         PanelLobbyMain.Instance.ClearRoomList();
@@ -102,13 +133,13 @@ public class LobbyMsgReply
             
             // 正式进入房间了。。。加载Room场景
             ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.CONNECTING_ROOM);
-            ClientManager.Instance.LobbyManager.Log($"MSG: ASK_CREATE_ROOM_REPLY - 大厅回复可以创建房间。RoomServer:{roomData.Address}:{roomData.Port} - Room Name:{roomData.RoomName}");
+            ClientManager.Instance.LobbyManager.Log($"MSG: ASK_CREATE_ROOM_REPLY OK - 大厅回复可以创建房间。RoomServer:{roomData.Address}:{roomData.Port} - Room Name:{roomData.RoomName}");
         }
         else
         {
             string msg = $"大厅发现没有多余的房间服务器可以分配！";
             UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
-            ClientManager.Instance.LobbyManager.Log("MSG: ASK_CREATE_ROOM_REPLY - " + msg);
+            ClientManager.Instance.LobbyManager.Log("MSG: ASK_CREATE_ROOM_REPLY Error - " + msg);
         }
     }
     static void ASK_JOIN_ROOM_REPLY(byte[] bytes)
@@ -130,13 +161,13 @@ public class LobbyMsgReply
             
             // 正式进入房间了。。。加载Room场景
             ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.CONNECTING_ROOM);
-            ClientManager.Instance.LobbyManager.Log($"MSG: ASK_JOIN_ROOM_REPLY - 大厅回复可以加入房间。RoomServer:{roomData.Address}:{roomData.Port} - Room Name:{roomData.RoomId}");
+            ClientManager.Instance.LobbyManager.Log($"MSG: ASK_JOIN_ROOM_REPLY OK - 大厅回复可以加入房间。RoomServer:{roomData.Address}:{roomData.Port} - Room Name:{roomData.RoomId}");
         }
         else
         {
             string msg = $"大厅发现没有多余的房间服务器可以分配！";
             UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
-            ClientManager.Instance.LobbyManager.Log("MSG: ASK_JOIN_ROOM_REPLY - " + msg);
+            ClientManager.Instance.LobbyManager.Log("MSG: ASK_JOIN_ROOM_REPLY - Error " + msg);
         }
     }
 
@@ -145,13 +176,13 @@ public class LobbyMsgReply
         DestroyRoomReply input = DestroyRoomReply.Parser.ParseFrom(bytes);
         if (!input.Ret)
         {
-            ClientManager.Instance.LobbyManager.Log("MSG: DESTROY_ROOM_REPLY - 删除房间失败！");
+            ClientManager.Instance.LobbyManager.Log("MSG: DESTROY_ROOM_REPLY Error - 删除房间失败！");
             return;
         }
 
         string msg = $"删除房间成功！{input.RoomName}";
         UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Success);
-        ClientManager.Instance.LobbyManager.Log("MSG: DESTROY_ROOM_REPLY - " + msg);
+        ClientManager.Instance.LobbyManager.Log("MSG: DESTROY_ROOM_REPLY OK - " + msg);
 
         AskRoomList output = new AskRoomList();
         ClientManager.Instance.LobbyManager.SendMsg(LOBBY.AskRoomList, output.ToByteArray());

@@ -72,7 +72,19 @@ public class RoomLogic : MonoBehaviour
             GameRoomManager.Instance.Log("MSG: OnActorAddReply - " + msg);
             return;
         }
-        
+
+        if (input.CellIndex == 0)
+        {
+            Debug.LogError("RoomLogic OnActorAddReply Error - CellIndex is lost!!!");
+            return;
+        }
+
+        if (GameRoomManager.Instance == null
+            || GameRoomManager.Instance.HexmapHelper == null)
+        {
+            Debug.LogError("What the Fuck! with GameRoomManager and HexmapHelper!!!");
+            return;
+        }
         GameRoomManager.Instance.HexmapHelper.CreateUnit(input.RoomId, input.OwnerId, input.ActorId,   
             input.PosX, input.PosZ, input.Orientation, input.Species, input.CellIndex, input.ActorInfoId, 
             input.Name, input.Hp, input.AttackPower, input.DefencePower, input.Speed, input.FieldOfVision, 
@@ -106,7 +118,7 @@ public class RoomLogic : MonoBehaviour
             return;
         }
 
-        GameRoomManager.Instance.HexmapHelper.DoMove(input.ActorId, input.PosFromX, input.PosFromZ, input.PosToX, input.PosToZ);
+        GameRoomManager.Instance.HexmapHelper.DoMove(input.ActorId, input.CellIndexFrom, input.CellIndexTo);
     }
 
     private void OnCityAddReply(byte[] bytes)

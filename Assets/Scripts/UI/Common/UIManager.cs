@@ -257,4 +257,26 @@ public class UIManager : MonoBehaviour
     }
 
     #endregion
+    
+    #region 退出游戏
+    
+    public void AskToExitGame()
+    {
+        string msg = "确认退出游戏吗?";
+        UIManager.Instance.MessageBox("提示", msg, (int)PanelMessageBox.BUTTON.YES|(int)PanelMessageBox.BUTTON.NO, OnClickExitGame);
+    }
+
+    void OnClickExitGame(int index)
+    {
+        switch ((PanelMessageBox.BUTTON) index)
+        {
+            case PanelMessageBox.BUTTON.YES:
+                Application.Quit();
+                break;
+            case PanelMessageBox.BUTTON.NO:
+                break;
+        }
+    }
+    
+    #endregion
 }

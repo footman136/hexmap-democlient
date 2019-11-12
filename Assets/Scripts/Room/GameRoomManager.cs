@@ -35,13 +35,17 @@ public class GameRoomManager : ClientScript
         Instance = this;
         
         //读取数据
-        // CsvDataManager这个实例可能在游戏一开始已经被ClientManager初始化过
+        // 为了测试战场内的功能,我需要单独运行Room场景,直接进入房间服务器,这时候CsvDataManger还没有被初始化,所以需要单独被初始化
+        // 但是因为这个初始化只能是异步的(从StreamingAssets目录里读取文件,只能使用WWW异步读取),
+        // 所以这里做出分支,如果ClientManager.Instance不存在,就说是是独立运行的分支.
+        
         if (ClientManager.Instance != null)
-        {
+        { // CsvDataManager这个实例在游戏一开始已经被ClientManager初始化过
             CsvDataManager = ClientManager.Instance.CsvDataManager;
+            CommandManager.LoadCommands();
         }
         else
-        {
+        { // CsvDataManager尚未被初始化过
             CsvDataManager = gameObject.AddComponent<CsvDataManager>();
             StartCoroutine(DownloadDataFiles());
         }
@@ -60,7 +64,11 @@ public class GameRoomManager : ClientScript
         Received += OnReceiveMsg;
         RoomLogic.Init();
         Log($"GameRoomManager.Start()! 开始链接RoomServer - {_address}:{_port}");
-        
+
+        if (ClientManager.Instance != null)
+        { // 数据都有了,可以直连房间服务器
+            Connect();
+        }
     }
 
     void OnDestroy()
@@ -108,6 +116,7 @@ public class GameRoomManager : ClientScript
             roomData.RoomId = defaultRoomId;
         }
         
+        // 读取了数据表才能开始连接房间服务器
         Connect();
         
         //初始化结束
@@ -175,7 +184,7 @@ public class GameRoomManager : ClientScript
                 else
                 {
                     enter.Account = "Footman3";
-                    enter.TokenId = 1234563;
+                    enter.TokenId = -5280871521389498391;
                 }
                 CurrentPlayer.Init(enter.Account, enter.TokenId);
                 SendMsg(ROOM.PlayerEnter, enter.ToByteArray());
@@ -256,5 +265,6 @@ public class GameRoomManager : ClientScript
             Log($"MSG: CreateJoinRoom - 申请进入房间：{roomData.RoomName}");
         }
     }
+
     #endregion
 }

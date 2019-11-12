@@ -171,11 +171,6 @@ public class HexmapHelper : MonoBehaviour
             hexGrid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
     }
 
-    public HexCell GetCell(int posX, int posZ)
-    {
-        return hexGrid.GetCell(new HexCoordinates(posX, posZ));
-    }
-
     public HexCell GetCell(Vector3 position)
     {
         return hexGrid.GetCell(position);
@@ -335,6 +330,16 @@ public class HexmapHelper : MonoBehaviour
         hexCamera.SetPosition(current);
     }
 
+    public void SetCameraPosition(Vector3 pos)
+    {
+        hexCamera.SetPosition(pos);
+    }
+
+    public Vector3 GetCameraPosition()
+    {
+        return hexCamera.GetPosition();
+    }
+
     #endregion
     
     #region 单元
@@ -367,10 +372,16 @@ public class HexmapHelper : MonoBehaviour
         string name, int hp, float attackPower, float defencePower, float speed, float filedOfVision, float shootingRange,
         float attackDuration, float attackInterval, int ammoBase)
     {
-        HexCell cell = GetCell(posX, posZ);
+        HexCell cell = GetCell(cellIndex);
         if (!cell)
         {
             GameRoomManager.Instance.Log($"HexmapHelper CreateUnit ：创建Actor失败！格子越界 - <{posX},{posZ}> - {unitName}");
+            return false;
+        }
+
+        if (cellIndex == 0)
+        {
+            Debug.LogError("HexmapHelper CreateUnit Error - CellIndex is lost!!!");
             return false;
         }
 
@@ -380,7 +391,7 @@ public class HexmapHelper : MonoBehaviour
             for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
             {
                 HexCell neighbor = cell.GetNeighbor(d);
-                if (!neighbor.Unit)
+                if (neighbor && !neighbor.Unit)
                 {
                     newCell = neighbor;
                     break;
@@ -444,7 +455,7 @@ public class HexmapHelper : MonoBehaviour
 
                     av.AttackDuration = attackDuration;
                     av.AttackInterval = attackInterval;
-                    av.AmmuBase = ammoBase;
+                    av.AmmoBase = ammoBase;
                 }
 
                 // 关闭预制件上没用的东西，看以后这东西能否用得上，如果没用，就完全干掉
@@ -477,7 +488,7 @@ public class HexmapHelper : MonoBehaviour
                         
                         AttackDuration = attackDuration,
                         AttackInterval = attackInterval,
-                        AmmuBase = ammoBase,
+                        AmmoBase = ammoBase,
                     };
                     GameRoomManager.Instance.RoomLogic.ActorManager.AddActor(ab, hu);
                 }
@@ -510,7 +521,7 @@ public class HexmapHelper : MonoBehaviour
         return false;
     }
 
-    public void DoMove (long actorId, int posXFrom, int posZFrom, int posXTo, int posZTo)
+    public void DoMove (long actorId, int cellIndexFrom, int cellIndexTo)
     {
         if (ActorVisualizer.AllActors.ContainsKey(actorId))
         {
@@ -520,8 +531,8 @@ public class HexmapHelper : MonoBehaviour
                 var hu = av.GetComponent<HexUnit>();
                 if (hu != null)
                 {
-                    HexCell hcFrom = GetCell(posXFrom, posZFrom);
-                    HexCell hcTo = GetCell(posXTo, posZTo);
+                    HexCell hcFrom = GetCell(cellIndexFrom);
+                    HexCell hcTo = GetCell(cellIndexTo);
                     if (hu.IsValidDestination(hcTo))
                     {
                         hexGrid.FindPath(hcFrom, hcTo, hu);

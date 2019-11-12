@@ -74,7 +74,7 @@ public class ConnectionStateMachine : FiniteStateMachine<ConnectionFSMStateEnum.
         });
         allowedTransitions.Add(ConnectionFSMStateEnum.StateEnum.DISCONNECTED, new List<ConnectionFSMStateEnum.StateEnum>
         {
-            ConnectionFSMStateEnum.StateEnum.LOBBY,
+            ConnectionFSMStateEnum.StateEnum.START,
         });
         allowedTransitions.Add(ConnectionFSMStateEnum.StateEnum.RESULT, new List<ConnectionFSMStateEnum.StateEnum>
         {
@@ -84,6 +84,7 @@ public class ConnectionStateMachine : FiniteStateMachine<ConnectionFSMStateEnum.
         {
             ConnectionFSMStateEnum.StateEnum.START,
             ConnectionFSMStateEnum.StateEnum.CONNECTING_ROOM,
+            ConnectionFSMStateEnum.StateEnum.DISCONNECTED,
         });
         allowedTransitions.Add(ConnectionFSMStateEnum.StateEnum.CONNECTING_ROOM, new List<ConnectionFSMStateEnum.StateEnum>
         {
@@ -98,6 +99,7 @@ public class ConnectionStateMachine : FiniteStateMachine<ConnectionFSMStateEnum.
         {
             ConnectionFSMStateEnum.StateEnum.LOBBY,
             ConnectionFSMStateEnum.StateEnum.RESULT,
+            ConnectionFSMStateEnum.StateEnum.DISCONNECTED,
         });
         SetTransitions(allowedTransitions);
     }
