@@ -55,7 +55,7 @@ namespace AI
 
             if (Owner.TimeIsUp())
             {
-                if (_actorBehaviour.AmmuBase > 0)
+                if (_actorBehaviour.AmmoBase > 0)
                 {
                     Owner.TriggerTransition(StateEnum.FIGHT);
                 }

@@ -41,7 +41,7 @@ namespace Animation
         
         public float AttackDuration; // 攻击持续时间
         public float AttackInterval; // 攻击间隔
-        public int AmmuBase; // 弹药基数
+        public int AmmoBase; // 弹药基数
 
         
         [Header("Animation States"), Space(5)]
@@ -227,7 +227,7 @@ namespace Animation
                 case StateEnum.WALK:
                 case StateEnum.WALKFIGHT:
                 case StateEnum.WALKGUARD:
-                    GameRoomManager.Instance.HexmapHelper.DoMove(input.ActorId, input.PosXFrom, input.PosZFrom, input.PosXTo, input.PosZTo);
+                    GameRoomManager.Instance.HexmapHelper.DoMove(input.ActorId, input.CellIndexFrom, input.CellIndexTo);
                     Debug.Log($"MSG: TroopAiState - {CurrentAiState} - From<{input.PosXFrom},{input.PosZFrom}> - To<{input.PosXTo},{input.PosZTo}>");
                     //aniState = movementStates;
                     aniState = runningStates;

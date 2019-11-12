@@ -14,7 +14,7 @@ public class HexMapCamera : MonoBehaviour {
 
 	public HexGrid grid;
 
-	float zoom = 1f;
+	float zoom = 0.8f;
 
 	float rotationAngle;
 
@@ -33,15 +33,24 @@ public class HexMapCamera : MonoBehaviour {
 	void Awake () {
 		swivel = transform.GetChild(0);
 		stick = swivel.GetChild(0);
+		AdjustZoom(0);
 	}
 
 	void OnEnable () {
 		instance = this;
 		ValidatePosition();
 	}
+	
+	// 触屏双指缩放屏幕:
+	public Vector2 st0, st1, od0, od1;
 
-	void Update () {
-		float zoomDelta = Input.GetAxis("Mouse ScrollWheel");
+	void Update ()
+	{
+		#if UNITY_STANDALONE_WIN || UNITY_EDITOR
+			float zoomDelta = Input.GetAxis("Mouse ScrollWheel");
+		#else
+			float zoomDelta = GetZoomDelta();
+		#endif
 		if (zoomDelta != 0f) {
 			AdjustZoom(zoomDelta);
 		}
@@ -135,7 +144,7 @@ public class HexMapCamera : MonoBehaviour {
 	/// </summary>
 	public void CameraMove()
 	{
-		if (Input.GetMouseButton(1))
+		if (Input.GetMouseButton(0))
 		{
 			Vector3 mousePos = Input.mousePosition;
 			if (!_leftMouseDown)
@@ -167,6 +176,44 @@ public class HexMapCamera : MonoBehaviour {
 
 	public void SetPosition(HexCell cell)
 	{
-		transform.position = new Vector3(cell.Position.x, 0, cell.Position.z);
+		SetPosition(cell.Position);
+	}
+
+	public void SetPosition(Vector3 pos)
+	{
+		transform.position = new Vector3(pos.x, 0, pos.z);
+	}
+
+	public Vector3 GetPosition()
+	{
+		return transform.position;
+	}
+
+	private float GetZoomDelta()
+	{
+		//判断是否双手触控
+		if (Input.touchCount >= 2)
+		{
+			if (Input.GetTouch(1).phase == TouchPhase.Began)
+			{
+				//如果刚开始双手触控，记录位置不做处理
+				st0 = od0 = Input.GetTouch(0).position;
+				st1 = od1 = Input.GetTouch(1).position;
+				return 0;
+			}
+
+			//获得新的手指位置
+			st0 = Input.GetTouch(0).position;
+			st1 = Input.GetTouch(1).position;
+
+			//如果双指之间的距离变化了，视野缩放
+			float delta = (Vector2.Distance(st0, st1) - Vector2.Distance(od0, od1)) / 1000;
+			//给老坐标赋值
+			od0 = st0;
+			od1 = st1;
+			return delta;
+		}
+
+		return 0;
 	}
 }

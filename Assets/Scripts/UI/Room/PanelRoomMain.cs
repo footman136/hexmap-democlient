@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using Animation;
 using GameUtils;
@@ -19,7 +20,8 @@ public class PanelRoomMain : MonoBehaviour
     [SerializeField] private Toggle _togFollowCamera;
     [SerializeField] private Toggle _togShowRes;
     [SerializeField] private GameObject _btnCreateActor;
-    [SerializeField] private GameObject _btnDestroyActor;
+    [SerializeField] private GameObject _btnRangeTest;
+    [SerializeField] private GameObject _btnReturnCity;
     [SerializeField] private Text _txtPlayerName;
     [SerializeField] private Text _txtWood;
     [SerializeField] private Text _txtFood;
@@ -72,7 +74,7 @@ public class PanelRoomMain : MonoBehaviour
         _pickInfoTarget = new PickInfo();
 
         _btnCreateActor.transform.Find("Select").gameObject.SetActive(false);
-        _btnDestroyActor.transform.Find("Select").gameObject.SetActive(false);
+        _btnRangeTest.transform.Find("Select").gameObject.SetActive(false);
         AddListener();
     }
 
@@ -102,6 +104,12 @@ public class PanelRoomMain : MonoBehaviour
     void Update()
     {
         // 本函数用来判定，是否点击到了界面，只有没有点击界面，才处理战场内的事件
+        if (Input.touchCount > 0)
+        {
+            if (EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId))
+                return;
+        }
+
         if (EventSystem.current.IsPointerOverGameObject())
             return;
 
@@ -119,7 +127,7 @@ public class PanelRoomMain : MonoBehaviour
                 RangeTest();
                 _isRangeTesting = false;
                 CursorManager.Instance.RestoreCursor();
-                _btnDestroyActor.transform.Find("Select").gameObject.SetActive(false);
+                _btnRangeTest.transform.Find("Select").gameObject.SetActive(false);
             }
             else
             {
@@ -138,11 +146,6 @@ public class PanelRoomMain : MonoBehaviour
             hexmapHelper.hexGrid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
     }
 
-    HexCell GetCell(int posX, int posZ)
-    {
-        return hexmapHelper.hexGrid.GetCell(new HexCoordinates(posX, posZ));
-    }
-    
     bool UpdateCurrentCell () {
         HexCell cell =
             hexmapHelper.hexGrid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
@@ -529,7 +532,55 @@ public class PanelRoomMain : MonoBehaviour
         SetSelection(null);
         _isRangeTesting = true;
         CursorManager.Instance.ShowCursor(CursorManager.CURSOR_TYPE.CRAETE_ACTOR);
-        _btnDestroyActor.transform.Find("Select").gameObject.SetActive(true);
+        _btnRangeTest.transform.Find("Select").gameObject.SetActive(true);
+    }
+
+    public void OnClickReturnCity()
+    {
+        Vector3 posCity = Vector3.zero;
+        if (GameRoomManager.Instance.RoomLogic.UrbanManager.Cities.Count > 0)
+        {
+            UrbanCity city = null;
+            foreach (var keyValue in GameRoomManager.Instance.RoomLogic.UrbanManager.Cities)
+            {
+                UrbanCity urban = keyValue.Value;
+                if (urban != null)
+                {
+                    if (urban.OwnerId == GameRoomManager.Instance.CurrentPlayer.TokenId && urban.IsCapital)
+                    {
+                        city = urban;
+                    }
+                }
+                
+            }
+            if (city != null)
+            {
+                var cell = GameRoomManager.Instance.HexmapHelper.GetCell(city.CellIndex);
+                if (cell != null)
+                {
+                    posCity = cell.Position;
+                }
+            }
+        }
+
+        if (posCity != Vector3.zero)
+        {
+            StartCoroutine(ReturningCity(posCity));  
+        }
+    }
+
+    IEnumerator ReturningCity(Vector3 posCity)
+    {
+        float dist = 99999;
+        float speed = 10f;
+        while (dist > 1f)
+        {
+            var posCamera = GameRoomManager.Instance.HexmapHelper.GetCameraPosition();
+            var posNew = Vector3.Lerp(posCamera, posCity, speed * Time.deltaTime);
+            GameRoomManager.Instance.HexmapHelper.SetCameraPosition(posNew);
+            dist = Vector2.Distance(new Vector2(posNew.x, posNew.z), new Vector2(posCity.x, posCity.z));
+            yield return null;
+        }
     }
 
     private void RangeTest()

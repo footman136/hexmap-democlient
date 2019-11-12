@@ -30,6 +30,8 @@ public class GameLobbyManager : ClientScript
 
         Completed += OnComplete;
         Received += OnReceiveMsg;
+        
+        Connect();
     }
 
     void OnDestroy()

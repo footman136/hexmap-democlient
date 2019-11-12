@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using GameUtils;
+using System.Collections;
 
 namespace Main
 {
@@ -48,7 +49,7 @@ namespace Main
             
             // 初始化数据表
             CsvDataManager = gameObject.AddComponent<CsvDataManager>();
-            CsvDataManager.Instance.LoadDataAll();
+            StartCoroutine(DownloadDataFiles());
         }
 
         // Start is called before the first frame update
@@ -70,6 +71,11 @@ namespace Main
         void Update()
         {
             _stateMachine.Tick();
+        }
+
+        IEnumerator DownloadDataFiles()
+        {
+            yield return StartCoroutine(CsvDataManager.LoadDataAllAndroid());
         }
     
     }

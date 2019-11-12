@@ -33,8 +33,7 @@ public class ClientScript : MonoBehaviour
             _recvMsgList = new List<byte[]>();
             _socketEventList = new List<SocketEvent>();
         }
-
-        Log($"Begin connecting server - {_address}:{_port} ...");
+        Log("Client started!");
     }
 
     void OnDestroy()
@@ -87,6 +86,7 @@ public class ClientScript : MonoBehaviour
 
     public void Connect()
     {
+        Log($"Begin connecting server - {_address}:{_port} ...");
         _client.ConnectAsync(_address, _port);
     }
 

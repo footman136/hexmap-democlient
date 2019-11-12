@@ -44,7 +44,7 @@ namespace AI
         
         public float AttackDuration; // 攻击持续时间
         public float AttackInterval; // 攻击间隔
-        public int AmmuBase; // 弹药基数
+        public int AmmoBase; // 弹药基数
 
         //This specific animal stats asset, create a new one from the asset menu under (LowPolyAnimals/NewAnimalStats)
         private ActorStats ScriptableActorStats;
@@ -85,10 +85,19 @@ namespace AI
             _distance = Vector3.Distance(CurrentPosition, StateMachine.TargetPosition);
             int posXOld = PosX;
             int posZOld = PosZ;
-            var curentCell = HexUnit.Grid.GetCell(CurrentPosition);
-            PosX = curentCell.coordinates.X;
-            PosZ = curentCell.coordinates.Z;
-            CellIndex = curentCell.Index;
+            var currentCell = HexUnit.Grid.GetCell(CurrentPosition);
+            if (currentCell != null)
+            {
+                if (currentCell.Index == 0)
+                {
+                    Debug.LogError($"ActorBehaviour Fuck!!! - actor position is lost!!! - Position:{CurrentPosition} - HexUnit:{HexUnit.Location.Position} - local:{HexUnit.transform.localPosition}");
+                }
+
+                PosX = currentCell.coordinates.X;
+                PosZ = currentCell.coordinates.Z;
+                CellIndex = currentCell.Index;
+            }
+
             Orientation = HexUnit.Orientation;
             if (posXOld != PosX || posZOld != PosZ)
             { // 发送最新坐标给服务器
