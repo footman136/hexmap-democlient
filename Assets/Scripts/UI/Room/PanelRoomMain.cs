@@ -99,7 +99,9 @@ public class PanelRoomMain : MonoBehaviour
 
     #region 鼠标操作
 
-    private int soldierIndex = 0;
+    private bool isMouseDown = false;
+    private Vector3 vecLastMousePosition = Vector3.zero;
+    
     // Update is called once per frame
     void Update()
     {
@@ -109,13 +111,28 @@ public class PanelRoomMain : MonoBehaviour
         //        return;
         //    if (EventSystem.current.IsPointerOverGameObject())
         //        return;
-        if (IsPointerOverUIObject())
+        
+        // 因为检测的是Up消息,所以延迟一帧
+//        if (vecLastMousePosition == Vector3.zero)
+//            vecLastMousePosition = Input.mousePosition;
+        bool over = IsPointerOverUIObject(vecLastMousePosition);
+        if (over)
         {
+            vecLastMousePosition = Input.mousePosition;
             return;
         }
 
-        if (Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButtonDown(0))
         {
+            isMouseDown = true;
+        }
+        vecLastMousePosition = Input.mousePosition;
+
+        if (Input.GetMouseButtonUp(0) && isMouseDown)
+        {
+            isMouseDown = false;
+            vecLastMousePosition = Vector3.zero;
+            
             if (_isCreatingActor)
             {
                 AskCreateUnit(GetCellUnderCursor(), 10010);
@@ -145,9 +162,9 @@ public class PanelRoomMain : MonoBehaviour
     //    ————————————————
     //    版权声明：本文为CSDN博主「SunnyIncsdn」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。
     //    原文链接：https://blog.csdn.net/SunnyInCSDN/article/details/72470247
-    private bool IsPointerOverUIObject() {//判断是否点击的是UI，有效应对安卓没有反应的情况，true为UI
+    private bool IsPointerOverUIObject(Vector3 mousePosition) {//判断是否点击的是UI，有效应对安卓没有反应的情况，true为UI
         PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
-        eventDataCurrentPosition.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+        eventDataCurrentPosition.position = new Vector2(mousePosition.x, mousePosition.y);
         List<RaycastResult> results = new List<RaycastResult>();
         EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
         return results.Count > 0;
