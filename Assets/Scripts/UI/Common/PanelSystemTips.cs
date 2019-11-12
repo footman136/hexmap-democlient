@@ -33,6 +33,13 @@ public class PanelSystemTips : MonoBehaviour
     void Awake()
     {
         _posSaved = transform.localPosition;
+        if (_group == null)
+            _group = gameObject.GetComponent<CanvasGroup>();
+        if (_group == null)
+        {
+            Debug.LogWarning("PanelSystemTips Awake() Canvas Group not found!!! 这个SystemTips不知道是从哪里初始化来的...");
+        }
+        
     }
     // Start is called before the first frame update
     void Start()
@@ -56,12 +63,14 @@ public class PanelSystemTips : MonoBehaviour
         // 淡入动画
         _alphaStart = 0f;
         _alphaEnd = 1f;
-        _group.alpha = _alphaStart;
+        if(_group != null)
+            _group.alpha = _alphaStart;
         yield return new WaitForSeconds(3f);
         // 淡出动画
         _alphaStart = 1f;
         _alphaEnd = 0f;
-        _group.alpha = _alphaStart;
+        if(_group != null)
+            _group.alpha = _alphaStart;
         IsPlaying = false;
         _Completed?.Invoke();
     }
@@ -77,6 +86,8 @@ public class PanelSystemTips : MonoBehaviour
             transform.localPosition = posNow;
         }
         // 淡入淡出动画
+        if (_group == null)
+            return;
         if (Mathf.Abs(_group.alpha - _alphaEnd) > 0.01f)
         {
             float alphaNow = Mathf.Lerp(_group.alpha, _alphaEnd, Time.deltaTime * ratio);

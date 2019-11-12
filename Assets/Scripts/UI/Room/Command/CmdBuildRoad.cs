@@ -12,6 +12,7 @@ public class CmdBuildRoad : MonoBehaviour, ICommand
     }
     public void Run()
     {
+        UIManager.Instance.SystemTips("本功能尚未完成!", PanelSystemTips.MessageType.Info);
     }
     public void Tick()
     {
