@@ -251,10 +251,14 @@ public class RoomMsgReply
         {
             Application.Quit();
         }
-        else
+        else if(!input.IsKicked)
         {
             ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.RESULT);
             GameRoomManager.Instance.Log($"MSG: LEAVE_ROOM_REPLY OK - ");
+        }
+        else
+        {
+            GameRoomManager.Instance.Log($"MSG: LEAVE_ROOM_REPLY OK - Kicked out!");
         }
     }
 
