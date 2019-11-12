@@ -79,10 +79,10 @@ namespace Protobuf.Room {
             "UQoQQWN0b3JSZW1vdmVSZXBseRIOCgZSb29tSWQYASABKAMSDwoHT3duZXJJ",
             "ZBgCIAEoAxIPCgdBY3RvcklkGAMgASgDEgsKA3JldBgEIAEoCCJpCglUcm9v",
             "cE1vdmUSDgoGUm9vbUlkGAEgASgDEg8KB093bmVySWQYAiABKAMSDwoHQWN0",
-            "b3JJZBgDIAEoAxIVCg1DZWxsSW5kZXhGcm9tGAQgASgFEhMKC0NlbGxJbnRl",
+            "b3JJZBgDIAEoAxIVCg1DZWxsSW5kZXhGcm9tGAQgASgFEhMKC0NlbGxJbmRl",
             "eFRvGAUgASgFInsKDlRyb29wTW92ZVJlcGx5Eg4KBlJvb21JZBgBIAEoAxIP",
             "CgdPd25lcklkGAIgASgDEg8KB0FjdG9ySWQYAyABKAMSFQoNQ2VsbEluZGV4",
-            "RnJvbRgEIAEoBRITCgtDZWxsSW50ZXhUbxgFIAEoBRILCgNSZXQYBiABKAgi",
+            "RnJvbRgEIAEoBRITCgtDZWxsSW5kZXhUbxgFIAEoBRILCgNSZXQYBiABKAgi",
             "4wEKDFRyb29wQWlTdGF0ZRIOCgZSb29tSWQYASABKAMSDwoHT3duZXJJZBgC",
             "IAEoAxIPCgdBY3RvcklkGAMgASgDEg0KBVN0YXRlGAQgASgFEhAKCFBvc1hG",
             "cm9tGAUgASgFEhAKCFBvc1pGcm9tGAYgASgFEg4KBlBvc1hUbxgHIAEoBRIO",
@@ -165,8 +165,8 @@ namespace Protobuf.Room {
             new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.ActorAddReply), global::Protobuf.Room.ActorAddReply.Parser, new[]{ "RoomId", "OwnerId", "ActorId", "PosX", "PosZ", "Orientation", "Species", "CellIndex", "ActorInfoId", "Name", "Hp", "HpMax", "AttackPower", "DefencePower", "Speed", "FieldOfVision", "ShootingRange", "AttackDuration", "AttackInterval", "AmmoBase", "Ret" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.ActorRemove), global::Protobuf.Room.ActorRemove.Parser, new[]{ "RoomId", "OwnerId", "ActorId" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.ActorRemoveReply), global::Protobuf.Room.ActorRemoveReply.Parser, new[]{ "RoomId", "OwnerId", "ActorId", "Ret" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.TroopMove), global::Protobuf.Room.TroopMove.Parser, new[]{ "RoomId", "OwnerId", "ActorId", "CellIndexFrom", "CellIntexTo" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.TroopMoveReply), global::Protobuf.Room.TroopMoveReply.Parser, new[]{ "RoomId", "OwnerId", "ActorId", "CellIndexFrom", "CellIntexTo", "Ret" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.TroopMove), global::Protobuf.Room.TroopMove.Parser, new[]{ "RoomId", "OwnerId", "ActorId", "CellIndexFrom", "CellIndexTo" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.TroopMoveReply), global::Protobuf.Room.TroopMoveReply.Parser, new[]{ "RoomId", "OwnerId", "ActorId", "CellIndexFrom", "CellIndexTo", "Ret" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.TroopAiState), global::Protobuf.Room.TroopAiState.Parser, new[]{ "RoomId", "OwnerId", "ActorId", "State", "PosXFrom", "PosZFrom", "PosXTo", "PosZTo", "CellIndexFrom", "CellIndexTo", "Orientation", "Speed" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.TroopAiStateReply), global::Protobuf.Room.TroopAiStateReply.Parser, new[]{ "RoomId", "OwnerId", "ActorId", "State", "PosXFrom", "PosZFrom", "PosXTo", "PosZTo", "CellIndexFrom", "CellIndexTo", "Orientation", "Speed", "Ret" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.UpdateActorPos), global::Protobuf.Room.UpdateActorPos.Parser, new[]{ "RoomId", "OwnerId", "ActorId", "PosX", "PosZ", "CellIndex", "Orientation" }, null, null, null, null),
@@ -5868,7 +5868,7 @@ namespace Protobuf.Room {
       ownerId_ = other.ownerId_;
       actorId_ = other.actorId_;
       cellIndexFrom_ = other.cellIndexFrom_;
-      cellIntexTo_ = other.cellIntexTo_;
+      cellIndexTo_ = other.cellIndexTo_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -5921,14 +5921,14 @@ namespace Protobuf.Room {
       }
     }
 
-    /// <summary>Field number for the "CellIntexTo" field.</summary>
-    public const int CellIntexToFieldNumber = 5;
-    private int cellIntexTo_;
+    /// <summary>Field number for the "CellIndexTo" field.</summary>
+    public const int CellIndexToFieldNumber = 5;
+    private int cellIndexTo_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public int CellIntexTo {
-      get { return cellIntexTo_; }
+    public int CellIndexTo {
+      get { return cellIndexTo_; }
       set {
-        cellIntexTo_ = value;
+        cellIndexTo_ = value;
       }
     }
 
@@ -5949,7 +5949,7 @@ namespace Protobuf.Room {
       if (OwnerId != other.OwnerId) return false;
       if (ActorId != other.ActorId) return false;
       if (CellIndexFrom != other.CellIndexFrom) return false;
-      if (CellIntexTo != other.CellIntexTo) return false;
+      if (CellIndexTo != other.CellIndexTo) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -5960,7 +5960,7 @@ namespace Protobuf.Room {
       if (OwnerId != 0L) hash ^= OwnerId.GetHashCode();
       if (ActorId != 0L) hash ^= ActorId.GetHashCode();
       if (CellIndexFrom != 0) hash ^= CellIndexFrom.GetHashCode();
-      if (CellIntexTo != 0) hash ^= CellIntexTo.GetHashCode();
+      if (CellIndexTo != 0) hash ^= CellIndexTo.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -5990,9 +5990,9 @@ namespace Protobuf.Room {
         output.WriteRawTag(32);
         output.WriteInt32(CellIndexFrom);
       }
-      if (CellIntexTo != 0) {
+      if (CellIndexTo != 0) {
         output.WriteRawTag(40);
-        output.WriteInt32(CellIntexTo);
+        output.WriteInt32(CellIndexTo);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -6014,8 +6014,8 @@ namespace Protobuf.Room {
       if (CellIndexFrom != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(CellIndexFrom);
       }
-      if (CellIntexTo != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(CellIntexTo);
+      if (CellIndexTo != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(CellIndexTo);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -6040,8 +6040,8 @@ namespace Protobuf.Room {
       if (other.CellIndexFrom != 0) {
         CellIndexFrom = other.CellIndexFrom;
       }
-      if (other.CellIntexTo != 0) {
-        CellIntexTo = other.CellIntexTo;
+      if (other.CellIndexTo != 0) {
+        CellIndexTo = other.CellIndexTo;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -6071,7 +6071,7 @@ namespace Protobuf.Room {
             break;
           }
           case 40: {
-            CellIntexTo = input.ReadInt32();
+            CellIndexTo = input.ReadInt32();
             break;
           }
         }
@@ -6109,7 +6109,7 @@ namespace Protobuf.Room {
       ownerId_ = other.ownerId_;
       actorId_ = other.actorId_;
       cellIndexFrom_ = other.cellIndexFrom_;
-      cellIntexTo_ = other.cellIntexTo_;
+      cellIndexTo_ = other.cellIndexTo_;
       ret_ = other.ret_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
@@ -6163,14 +6163,14 @@ namespace Protobuf.Room {
       }
     }
 
-    /// <summary>Field number for the "CellIntexTo" field.</summary>
-    public const int CellIntexToFieldNumber = 5;
-    private int cellIntexTo_;
+    /// <summary>Field number for the "CellIndexTo" field.</summary>
+    public const int CellIndexToFieldNumber = 5;
+    private int cellIndexTo_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public int CellIntexTo {
-      get { return cellIntexTo_; }
+    public int CellIndexTo {
+      get { return cellIndexTo_; }
       set {
-        cellIntexTo_ = value;
+        cellIndexTo_ = value;
       }
     }
 
@@ -6202,7 +6202,7 @@ namespace Protobuf.Room {
       if (OwnerId != other.OwnerId) return false;
       if (ActorId != other.ActorId) return false;
       if (CellIndexFrom != other.CellIndexFrom) return false;
-      if (CellIntexTo != other.CellIntexTo) return false;
+      if (CellIndexTo != other.CellIndexTo) return false;
       if (Ret != other.Ret) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -6214,7 +6214,7 @@ namespace Protobuf.Room {
       if (OwnerId != 0L) hash ^= OwnerId.GetHashCode();
       if (ActorId != 0L) hash ^= ActorId.GetHashCode();
       if (CellIndexFrom != 0) hash ^= CellIndexFrom.GetHashCode();
-      if (CellIntexTo != 0) hash ^= CellIntexTo.GetHashCode();
+      if (CellIndexTo != 0) hash ^= CellIndexTo.GetHashCode();
       if (Ret != false) hash ^= Ret.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -6245,9 +6245,9 @@ namespace Protobuf.Room {
         output.WriteRawTag(32);
         output.WriteInt32(CellIndexFrom);
       }
-      if (CellIntexTo != 0) {
+      if (CellIndexTo != 0) {
         output.WriteRawTag(40);
-        output.WriteInt32(CellIntexTo);
+        output.WriteInt32(CellIndexTo);
       }
       if (Ret != false) {
         output.WriteRawTag(48);
@@ -6273,8 +6273,8 @@ namespace Protobuf.Room {
       if (CellIndexFrom != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(CellIndexFrom);
       }
-      if (CellIntexTo != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(CellIntexTo);
+      if (CellIndexTo != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(CellIndexTo);
       }
       if (Ret != false) {
         size += 1 + 1;
@@ -6302,8 +6302,8 @@ namespace Protobuf.Room {
       if (other.CellIndexFrom != 0) {
         CellIndexFrom = other.CellIndexFrom;
       }
-      if (other.CellIntexTo != 0) {
-        CellIntexTo = other.CellIntexTo;
+      if (other.CellIndexTo != 0) {
+        CellIndexTo = other.CellIndexTo;
       }
       if (other.Ret != false) {
         Ret = other.Ret;
@@ -6336,7 +6336,7 @@ namespace Protobuf.Room {
             break;
           }
           case 40: {
-            CellIntexTo = input.ReadInt32();
+            CellIndexTo = input.ReadInt32();
             break;
           }
           case 48: {
