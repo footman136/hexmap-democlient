@@ -126,6 +126,7 @@ public class PanelRoomMain : MonoBehaviour
         {
             isMouseDown = true;
         }
+
         vecLastMousePosition = Input.mousePosition;
 
         if (Input.GetMouseButtonUp(0) && isMouseDown)
