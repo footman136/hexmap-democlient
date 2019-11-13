@@ -12,6 +12,7 @@ public class CmdBuildBridge : MonoBehaviour, ICommand
     }
     public void Run()
     {
+        UIManager.Instance.SystemTips("本功能尚未开放!", PanelSystemTips.MessageType.Info);
     }
     public void Tick()
     {
