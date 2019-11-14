@@ -357,16 +357,12 @@ public class PanelRoomMain : MonoBehaviour
     {
         // 这里有点复杂哈,ActorVisualizer是挂接在HexUnit上的,而ActorBehaviour是被ActorManager管理的
         // 所以,如果只知道ActorId的话,只能先找到ActorBehaviour,然后通过HexUnit找到ActorVisualizer
-        var ab = GameRoomManager.Instance.RoomLogic.ActorManager.GetActor(actorId);
-        if (ab != null)
+        var av = GameRoomManager.Instance.GetActorVisualizer(actorId);
+        if (av != null)
         {
-            var av = ab.HexUnit.GetComponent<ActorVisualizer>();
-            if (av != null)
+            if (IsShowingSelector(av))
             {
-                if (IsShowingSelector(av))
-                {
-                    SetSelection(null);
-                }
+                SetSelection(null);
             }
         }
     }

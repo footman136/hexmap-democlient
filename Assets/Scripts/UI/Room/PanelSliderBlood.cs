@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Experimental.PlayerLoop;
 using UnityEngine.UI;
 
-public class PanelSliderHarvest : MonoBehaviour
+public class PanelSliderBlood : MonoBehaviour
 {
     [SerializeField] private Slider _slider;
     [SerializeField] private Vector3 _pos;
@@ -13,6 +13,7 @@ public class PanelSliderHarvest : MonoBehaviour
 
     private ActorVisualizer _actor;
 
+    private const float _MORE_DELAY_TIME = 3f; // 在战斗结束后再延迟多少秒 
     private float _startTime;
     private float _durationTime;
     
@@ -25,12 +26,11 @@ public class PanelSliderHarvest : MonoBehaviour
     void Update()
     {
         _startTime += Time.deltaTime;
-        if (_startTime >= _durationTime)
+        SetValue(_actor.Hp);
+        if (_startTime > _durationTime)
         {
-            _startTime = _durationTime;
+            gameObject.Recycle();
         }
-        
-        SetValue(_startTime);
     }
 
     private void LateUpdate()
@@ -41,14 +41,14 @@ public class PanelSliderHarvest : MonoBehaviour
         transform.position = _posScreen;
     }
 
-    public void Init(ActorVisualizer av, float durationTime)
+    public void Init(ActorVisualizer av)
     {
         _actor = av;
         _slider.minValue = 0;
-        _slider.maxValue = durationTime;
+        _slider.maxValue = av.HpMax;
         _startTime = 0;
-        _durationTime = durationTime;
-        SetValue(0);
+        _durationTime = av.AttackDuration + _MORE_DELAY_TIME;
+        SetValue(av.Hp);
     }
 
     public void SetValue(float value)

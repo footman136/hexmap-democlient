@@ -14,6 +14,10 @@ public class PanelSystemTips : MonoBehaviour
     [SerializeField] private Text _lbMsg;
     [SerializeField] private CanvasGroup _group;
 
+    private const float _FLY_HEIGHT = 100f; // 飞行高度
+    private const float _SPEED = 1.0f; // 移动速度
+    private const float _BG_BORDER = 22f; // 背景比文字高度多多少
+    
     public enum MessageType
     {
         None = 0,
@@ -58,7 +62,7 @@ public class PanelSystemTips : MonoBehaviour
     {
         // 移动动画
         _posStart = _posSaved + new Vector3(0,0,0);
-        _posEnd = _posSaved + new Vector3(0,40,0);
+        _posEnd = _posSaved + new Vector3(0,_FLY_HEIGHT,0);
         transform.localPosition = _posStart;
         // 淡入动画
         _alphaStart = 0f;
@@ -78,11 +82,10 @@ public class PanelSystemTips : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float ratio = 3f;
         // 移动动画
         if (Mathf.Abs(transform.localPosition.y - _posEnd.y) > 0.01f)
         {
-            Vector3 posNow = Vector3.Lerp(transform.localPosition, _posEnd, Time.deltaTime * ratio);
+            Vector3 posNow = Vector3.Lerp(transform.localPosition, _posEnd, Time.deltaTime * _SPEED);
             transform.localPosition = posNow;
         }
         // 淡入淡出动画
@@ -90,12 +93,12 @@ public class PanelSystemTips : MonoBehaviour
             return;
         if (Mathf.Abs(_group.alpha - _alphaEnd) > 0.01f)
         {
-            float alphaNow = Mathf.Lerp(_group.alpha, _alphaEnd, Time.deltaTime * ratio);
+            float alphaNow = Mathf.Lerp(_group.alpha, _alphaEnd, Time.deltaTime * _SPEED);
             _group.alpha = alphaNow;
         }
         var back = GetComponent<Image>();
-        var txtHeight = _lbMsg.rectTransform.rect.height;
-        float y = txtHeight + 22;
+        var txtHeight = _lbMsg.rectTransform.rect.height; // 背景高度比文字高度多22
+        float y = txtHeight + _BG_BORDER;
         back.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, y);
     }
 
@@ -128,7 +131,7 @@ public class PanelSystemTips : MonoBehaviour
 
         var back = GetComponent<Image>();
         var txtHeight = _lbMsg.rectTransform.rect.height;
-        float y = txtHeight + 22;
+        float y = txtHeight + _BG_BORDER;
         back.rectTransform.sizeDelta = new Vector2(back.rectTransform.sizeDelta.x, y);
         
         StopAllCoroutines(); // 新消息顶掉旧消息

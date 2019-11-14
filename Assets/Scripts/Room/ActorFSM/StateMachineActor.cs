@@ -63,6 +63,7 @@ using static FSMStateActor;
                 StateEnum.IDLE,
                 StateEnum.DIE,
                 StateEnum.HARVEST,
+                StateEnum.FIGHT, // 敌人如果在附近,直接可以进入战斗状态
                 StateEnum.WALK,
                 StateEnum.WALKFIGHT,
                 StateEnum.WALKGUARD,
@@ -79,12 +80,17 @@ using static FSMStateActor;
             {
                 StateEnum.IDLE,
                 StateEnum.DIE,
+                StateEnum.WALK,
+                StateEnum.WALKFIGHT,
+                StateEnum.WALKGUARD,
             });
             allowedTransitions.Add(StateEnum.WALK, new List<StateEnum>
             {
                 StateEnum.IDLE,
                 StateEnum.WALK,
                 StateEnum.DIE,
+                StateEnum.WALKFIGHT,
+                StateEnum.WALKGUARD,
             });
             allowedTransitions.Add(StateEnum.WALKFIGHT, new List<StateEnum>
             {

@@ -32,7 +32,7 @@ namespace Animation
         [Header("Data Attributes"), Space(5)] 
         public string Name;
         public int Hp;
-        public int Hp_Max;
+        public int HpMax;
         public float AttackPower;
         public float DefencePower;
         public float Speed;
@@ -62,21 +62,24 @@ namespace Animation
         [SerializeField, Tooltip("This specific animal stats asset, create a new one from the asset menu under (LowPolyAnimals/NewAnimalStats)")]
         public Vector3 TargetPosition;
         public Vector3 CurrentPosition;
-        public FSMStateActor.StateEnum CurrentAiState; // AI的当前状态
+        public StateEnum CurrentAiState; // AI的当前状态
         public HexUnit HexUnit;
         
         [SerializeField] private float _distance;
         private ActorStats ScriptableActorStats;
         private Coroutine lookAtCoroutine;
 
-        [Space(), Header("显示"), Space(5)] 
-        private GameObject _goHarvest;
+        [Space(), Header("UI显示"), Space(5)] 
+        [SerializeField] private PanelSliderHarvest _sliderHarvest;
+        [SerializeField] private PanelSliderBlood _sliderBlood;
 
         [Space(), Header("Debug"), Space(5)]
         [SerializeField, Tooltip("If true, AI changes to this animal will be logged in the console.")]
         public bool _logChanges = false;
         
         private Animator animator;
+
+        private Transform _inner;
         
         private static Dictionary<long, ActorVisualizer> _allActors = new Dictionary<long, ActorVisualizer>();
         public static Dictionary<long, ActorVisualizer> AllActors => _allActors;
@@ -89,6 +92,7 @@ namespace Animation
         {
             animator = GetComponentInChildren<Animator>();
             animator.applyRootMotion = false;
+            _inner = UIManager.Instance.Root.Find("Inner");
         }
         // Start is called before the first frame update
         void Start()
@@ -114,6 +118,7 @@ namespace Animation
             MsgDispatcher.RegisterMsg((int)ROOM_REPLY.HarvestStopReply, OnHarvestStopReply);
             MsgDispatcher.RegisterMsg((int)ROOM_REPLY.FightStartReply, OnFightStartReply);
             MsgDispatcher.RegisterMsg((int)ROOM_REPLY.FightStopReply, OnFightStopReply);
+            MsgDispatcher.RegisterMsg((int)ROOM_REPLY.SprayBloodReply, OnSprayBloodReply);
             MsgDispatcher.RegisterMsg((int)ROOM_REPLY.UpdateActorInfoReply, OnUpdateActorInfoReply);
         }
 
@@ -124,6 +129,7 @@ namespace Animation
             MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.HarvestStopReply, OnHarvestStopReply);
             MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.FightStartReply, OnFightStartReply);
             MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.FightStopReply, OnFightStopReply);
+            MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.SprayBloodReply, OnSprayBloodReply);
             MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.UpdateActorInfoReply, OnUpdateActorInfoReply);
         }
 
@@ -132,6 +138,7 @@ namespace Animation
         {
             _distance = Vector3.Distance(CurrentPosition, TargetPosition);
             CurrentPosition = HexUnit.transform.localPosition;
+            //CurrentPosition = transform.localPosition;
             PosX = HexUnit.Location.coordinates.X;
             PosZ = HexUnit.Location.coordinates.Z;
             CellIndex = HexUnit.Location.Index;
@@ -197,18 +204,13 @@ namespace Animation
         private void OnAiStateChanged(byte[] bytes)
         {
             TroopAiStateReply input = TroopAiStateReply.Parser.ParseFrom(bytes);
-            if (!input.Ret)
-                return;
             if (input.ActorId != ActorId)
                 return; // 不是自己，略过
+            if (!input.Ret)
+                return;
             HexCell targetCell = GameRoomManager.Instance.HexmapHelper.GetCell(input.CellIndexFrom);
             Vector3 newPosition = targetCell.Position;
-            FSMStateActor.StateEnum newAiState = (FSMStateActor.StateEnum)input.State;
-//            if (newAiState == CurrentAiState && newPosition == TargetPosition)
-//            {
-//                Debug.LogWarning("DinoVisualizer - duplicate AI state : " + newAiState);
-//                return;
-//            }
+            StateEnum newAiState = (StateEnum)input.State;
             
             if (lookAtCoroutine != null && newAiState != CurrentAiState)
             { // 状态不同的时候才需要停止携程，防止同一个状态下，动画发生抖动（不停地进行【转向】/【停止转向】）
@@ -239,6 +241,7 @@ namespace Animation
                     aniState = runningStates;
                     break;
                 case StateEnum.FIGHT:
+                    GameRoomManager.Instance.HexmapHelper.LookAt(input.ActorId, targetCell.Position);
                     aniState = attackingStates;
                     break;
                 case StateEnum.GUARD:
@@ -258,34 +261,31 @@ namespace Animation
                 StartCoroutine(Vanishing());
             }
         }
+        
+        #endregion
+        
+        #region 采集
 
         private void OnHarvestStartReply(byte[] bytes)
         {
             HarvestStartReply input = HarvestStartReply.Parser.ParseFrom(bytes);
-            if (!input.Ret)
-                return;
             if (input.ActorId != ActorId)
                 return; // 不是自己，略过
+            if (!input.Ret)
+                return;
 
-            var go = UIManager.Instance.CreatePanel(UIManager.Instance.Root, "", "UI/Room/PanelSliderHarvest");
-            if (go)
-            {
-                _goHarvest = go;
-                var slider = go.GetComponent<PanelSliderHarvest>();
-                if (slider)
-                {
-                    slider.Init(this, input.DurationTime);
-                }
-            }
+            // 显示进度条
+            _sliderHarvest = GameRoomManager.Instance.FightManager.SliderHarvest.Spawn(_inner, Vector3.zero);
+            _sliderHarvest.Init(this, input.DurationTime);
         }
         
         private void OnHarvestStopReply(byte[] bytes)
         {
             HarvestStopReply input = HarvestStopReply.Parser.ParseFrom(bytes);
-            if (!input.Ret)
-                return;
             if (input.ActorId != ActorId)
                 return; // 不是自己，略过
+            if (!input.Ret)
+                return;
 
             HexResource.RESOURCE_TYPE resType = (HexResource.RESOURCE_TYPE) input.ResType;
             HexCell currentCell = HexUnit.Location;
@@ -298,9 +298,11 @@ namespace Animation
                 res.Refresh(currentCell);
             }
 
-            if (_goHarvest)
+            // 隐藏进度条
+            if (_sliderHarvest)
             {
-                UIManager.Instance.DestroyPanel(ref _goHarvest);
+                _sliderHarvest.Recycle();
+                _sliderHarvest = null;
             }
 
             string [] resTypes = {"木材","粮食","铁矿"};
@@ -309,31 +311,82 @@ namespace Animation
             GameRoomManager.Instance.Log("MSG: HarvestStop OK - " + msg + $" - 剩余资源{input.ResRemain}");
         }
         
+        #endregion
+        
+        #region 战斗
+
         private void OnFightStartReply(byte[] bytes)
         {
             FightStartReply input = FightStartReply.Parser.ParseFrom(bytes);
-            if (!input.Ret)
-                return;
             if (input.ActorId != ActorId)
                 return; // 不是自己，略过
+            if (!input.Ret)
+                return;
             
+            // 显示自己的血条
+            ShowSliderBlood();
+            
+            // 显示对方的血条
+            var avTarget = GameRoomManager.Instance.GetActorVisualizer(input.TargetId);
+            if (!avTarget) return;
+            avTarget.ShowSliderBlood();
+            
+            GameRoomManager.Instance.Log("ActorVisualizer OnFightStart ...");
+        }
+
+        private void ShowSliderBlood()
+        {
+            if (!_sliderBlood)
+            {
+                _sliderBlood = GameRoomManager.Instance.FightManager.SliderBlood.Spawn(_inner, Vector3.zero);
+                if (!_sliderBlood) return;
+            }
+            else
+            {
+                // 如果上一个血条还没有消失,就用原来的
+            }
+            _sliderBlood.Init(this);
         }
 
         private void OnFightStopReply(byte[] bytes)
         {
             FightStopReply input = FightStopReply.Parser.ParseFrom(bytes);
-            if (!input.Ret)
-                return;
             if (input.ActorId != ActorId)
                 return; // 不是自己，略过
+            if (!input.Ret)
+            {
+                GameRoomManager.Instance.Log($"ActorVisualizer OnFightStopReply Error - {input.ErrMsg}");
+                return;
+            }
+
+            GameRoomManager.Instance.Log("ActorVisualizer OnFightStop ...");
         }
+
+        private void OnSprayBloodReply(byte[] bytes)
+        {
+            SprayBloodReply input = SprayBloodReply.Parser.ParseFrom(bytes);
+            if (input.ActorId != ActorId)
+                return; // 不是自己，略过
+
+            // 每次都创建新的
+            var spray = GameRoomManager.Instance.FightManager.SprayBlood.Spawn(_inner, Vector3.zero);
+            if (spray == null) return;
+            spray.Play(this, input.Damage);
+
+            GameRoomManager.Instance.Log($"Spraying Blood ...");
+        }
+        
+        #endregion
+        
+        #region 刷新属性
 
         private void OnUpdateActorInfoReply(byte[] bytes)
         {
             UpdateActorInfoReply input = UpdateActorInfoReply.Parser.ParseFrom(bytes);
             if (input.ActorId != ActorId)
                 return; // 不是自己，略过
-            
+
+            // 客户端
             Hp = input.Hp;
         }
         

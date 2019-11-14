@@ -194,9 +194,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1147489689889950937}
   - component: {fileID: 642387106099826877}
-  - component: {fileID: 8617612010086560233}
+  - component: {fileID: 4138220395765204711}
   m_Layer: 5
-  m_Name: PanelSliderHarvest
+  m_Name: PanelSliderBlood
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -276,7 +276,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.Slider+SliderEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
---- !u!114 &8617612010086560233
+--- !u!114 &4138220395765204711
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -285,7 +285,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2510737029518156019}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c077f28c4e47e10418c0fe1ef156a798, type: 3}
+  m_Script: {fileID: 11500000, guid: 1ffaedfbb70735049b6bddb46e9bb6ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _slider: {fileID: 642387106099826877}
@@ -385,7 +385,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.9622642, g: 0.6556223, b: 0.022694906, a: 1}
+  m_Color: {r: 0, g: 1, b: 0.22719026, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:

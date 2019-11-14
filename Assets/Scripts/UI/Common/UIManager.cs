@@ -199,6 +199,7 @@ public class UIManager : MonoBehaviour
         if (go != null)
         {
             var go2 = Instantiate(go, anchor) as GameObject;
+            go2.transform.localPosition = Vector3.zero;
             return go2;
         }
 

@@ -35,7 +35,7 @@ namespace AI
         // 这些数据一开始从表格读取
         public string Name;
         public int Hp;
-        public int Hp_Max;
+        public int HpMax;
         public float AttackPower;
         public float DefencePower;
         public float Speed;
@@ -70,10 +70,22 @@ namespace AI
             StateMachine = new StateMachineActor(this);
             HexUnit = hu;
             CurrentPosition = HexUnit.transform.localPosition;
-            
+            AddListener();
         }
         public void Fini()
         {
+            RemoveListener();
+        }
+
+        private void AddListener()
+        {
+            MsgDispatcher.RegisterMsg((int)ROOM_REPLY.UpdateActorInfoReply, OnUpdateActorInfoReply);
+
+        }
+
+        private void RemoveListener()
+        {
+            MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.UpdateActorInfoReply, OnUpdateActorInfoReply);
         }
 
 
@@ -175,6 +187,16 @@ namespace AI
                 Orientation = Orientation,
             };
             GameRoomManager.Instance.SendMsg(ROOM.UpdateActorPos, output.ToByteArray());
+        }
+
+        private void OnUpdateActorInfoReply(byte[] bytes)
+        {
+            UpdateActorInfoReply input = UpdateActorInfoReply.Parser.ParseFrom(bytes);
+            if (input.ActorId != ActorId)
+                return; // 不是自己，略过
+            
+            // AI
+            Hp = input.Hp;
         }
         
         #endregion

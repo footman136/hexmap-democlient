@@ -6,6 +6,8 @@ using Google.Protobuf;
 using Protobuf.Room;
 using System;
 using System.IO;
+using AI;
+using Animation;
 
 public class GameRoomManager : ClientScript
 {
@@ -20,6 +22,7 @@ public class GameRoomManager : ClientScript
     [HideInInspector]
     public CsvDataManager CsvDataManager;
     public CommandManager CommandManager;
+    public FightManager FightManager;
 
     public long RoomId;
     public string RoomName;
@@ -184,7 +187,8 @@ public class GameRoomManager : ClientScript
                 else
                 {
                     enter.Account = "Footman3";
-                    enter.TokenId = -5280871521389498391;
+                    //enter.TokenId = -5280871521389498391;
+                    enter.TokenId = 123456;
                 }
                 CurrentPlayer.Init(enter.Account, enter.TokenId);
                 SendMsg(ROOM.PlayerEnter, enter.ToByteArray());
@@ -266,5 +270,25 @@ public class GameRoomManager : ClientScript
         }
     }
 
+    #endregion
+    
+    #region 得到角色
+
+//    public ActorBehaviour GetActorBehaviour(long actorId)
+//    {
+//        var ab = RoomLogic.ActorManager.GetActor(actorId);
+//        return ab;
+//    }
+
+    public ActorVisualizer GetActorVisualizer(long actorId)
+    {
+        var ab = RoomLogic.ActorManager.GetActor(actorId);
+        if (ab == null) return null;
+        var cell = HexmapHelper.GetCell(ab.CellIndex);
+        var av = cell.Unit.GetComponent<ActorVisualizer>();
+        return av;
+    }
+    
+    
     #endregion
 }

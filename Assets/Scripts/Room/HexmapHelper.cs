@@ -369,7 +369,7 @@ public class HexmapHelper : MonoBehaviour
     /// <returns></returns>
     public bool CreateUnit (long roomId, long ownerId, long actorId, int posX, int posZ, float orientation, 
         string unitName, int cellIndex, int actorInfoId,
-        string name, int hp, float attackPower, float defencePower, float speed, float filedOfVision, float shootingRange,
+        string name, int hp, int hpMax, float attackPower, float defencePower, float speed, float filedOfVision, float shootingRange,
         float attackDuration, float attackInterval, int ammoBase)
     {
         HexCell cell = GetCell(cellIndex);
@@ -447,6 +447,7 @@ public class HexmapHelper : MonoBehaviour
                     
                     av.Name = name;
                     av.Hp = hp;
+                    av.HpMax = hpMax;
                     av.AttackPower = attackPower;
                     av.DefencePower = defencePower;
                     av.Speed = speed;
@@ -480,6 +481,7 @@ public class HexmapHelper : MonoBehaviour
                     
                         Name = name,
                         Hp = hp,
+                        HpMax = hpMax,
                         AttackPower = attackPower,
                         DefencePower = defencePower,
                         Speed = speed,
@@ -561,6 +563,22 @@ public class HexmapHelper : MonoBehaviour
                 {
                     hu.Stop();
                     hexGrid.ClearPath();
+                }
+            }
+        }
+    }
+
+    public void LookAt(long actorId, Vector3 position)
+    {
+        if (ActorVisualizer.AllActors.ContainsKey(actorId))
+        {
+            var av = ActorVisualizer.AllActors[actorId];
+            if (av != null)
+            {
+                var hu = av.GetComponent<HexUnit>();
+                if (hu != null)
+                {
+                    StartCoroutine(hu.LookAt(position));
                 }
             }
         }

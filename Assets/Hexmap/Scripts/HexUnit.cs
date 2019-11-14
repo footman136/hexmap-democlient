@@ -220,7 +220,7 @@ public class HexUnit : MonoBehaviour {
 		pathToTravel = null;
 	}
 
-	IEnumerator LookAt (Vector3 point) {
+	public IEnumerator LookAt (Vector3 point) {
 		if (HexMetrics.Wrapping) {
 			float xDistance = point.x - transform.localPosition.x;
 			if (xDistance < -HexMetrics.innerRadius * HexMetrics.wrapSize) {

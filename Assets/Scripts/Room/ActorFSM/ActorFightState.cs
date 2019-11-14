@@ -55,17 +55,15 @@ namespace AI
 
             if (Owner.TimeIsUp())
             {
-                if (_actorBehaviour.AmmoBase > 0)
-                {
-                    Owner.TriggerTransition(StateEnum.FIGHT);
-                }
-                else
+//                if (_actorBehaviour.AmmoBase > 0)
+//                {
+//                    Owner.TriggerTransition(StateEnum.FIGHT);
+//                }
+//                else
                 {
                     Owner.TriggerTransition(StateEnum.IDLE);
                 }
             }
-            
-
         }
 
         public override void Exit(bool disabled)
