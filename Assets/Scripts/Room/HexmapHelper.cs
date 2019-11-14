@@ -517,6 +517,7 @@ public class HexmapHelper : MonoBehaviour
                     hexGrid.RemoveUnit(hu);
                     return true;
                 }
+                
             }
         }
 

@@ -18,6 +18,10 @@ namespace AI
     
         public override void Tick()
         {
+            if (Owner.TimeIsUp())
+            {
+                Owner.TriggerTransition(StateEnum.VANISH);
+            }
         }
     
         public override void Exit(bool disabled)

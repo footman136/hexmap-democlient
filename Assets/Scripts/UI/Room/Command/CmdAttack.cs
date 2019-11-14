@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using AI;
+using Protobuf.Room;
 using UnityEngine;
 using static FSMStateActor;
 
@@ -41,6 +42,7 @@ public class CmdAttack : MonoBehaviour, ICommand
         var avMe = CommandManager.Instance.CurrentExecuter.CurrentActor;
         if (!avMe)
             return;
+        var avTarget = piTarget.CurrentActor;
         
         HexCell cellTarget = piTarget.CurrentCell;
         if (!cellTarget)
@@ -50,14 +52,14 @@ public class CmdAttack : MonoBehaviour, ICommand
         if (abMe == null)
             return;
         
-        ////////////////////
+        ////////////////////$
         // 如果目标点在射程以内,则直接攻击
-        if (piTarget.CurrentActor)
+        if (avTarget)
         {
-            var abTarget = GameRoomManager.Instance.RoomLogic.ActorManager.GetActor(piTarget.CurrentActor.ActorId);
-            if (abMe.IsEnemyInRange(abTarget))
+            if (avMe.IsEnemyInRange(avTarget) && avMe.OwnerId != avMe.OwnerId)
             {
-                abMe.StateMachine.TriggerTransition(StateEnum.FIGHT, cellTarget, abMe.AttackDuration, piTarget.CurrentActor.ActorId);
+                // 这里其实应该发送TroopAiState消息到服务器,而不是直接操作状态机,但是因为状态机目前均行在本地,所以就直接调用了
+                abMe.StateMachine.TriggerTransition(StateEnum.FIGHT, cellTarget.Index, abMe.AttackDuration, piTarget.CurrentActor.ActorId);
                 return;
             }
         }
@@ -77,13 +79,13 @@ public class CmdAttack : MonoBehaviour, ICommand
 
         Debug.Log($"CmdAttack - From<{avMe.PosX},{avMe.PosZ}> - Dest Pos<{cellTarget.coordinates.X},{cellTarget.coordinates.Z}>");
 
-        if (piTarget.CurrentActor && piTarget.CurrentActor.OwnerId != avMe.OwnerId)
+        if ( avTarget && avTarget.OwnerId != avMe.OwnerId)
         {// 目标点是一支部队,且是敌人的部队,则盯住这支部队猛打
-            abMe.StateMachine.TriggerTransition(FSMStateActor.StateEnum.WALKFIGHT, cellTarget, 0, piTarget.CurrentActor.ActorId);
+            abMe.StateMachine.TriggerTransition(FSMStateActor.StateEnum.WALKFIGHT, cellTarget.Index, 0, avTarget.ActorId);
         }
         else
         {// 目标点仅仅是一个位置坐标,则在行军过程中,搜索进攻,发现任意敌人就停下来打它
-            abMe.StateMachine.TriggerTransition(FSMStateActor.StateEnum.WALKFIGHT, cellTarget);
+            abMe.StateMachine.TriggerTransition(FSMStateActor.StateEnum.WALKFIGHT, cellTarget.Index);
         }
 
         Stop();

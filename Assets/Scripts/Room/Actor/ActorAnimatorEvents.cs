@@ -2,15 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FightManager : MonoBehaviour
+public class ActorAnimatorEvents : MonoBehaviour
 {
-    [Space(), Header("UI显示"), Space(5)] 
-    public PanelSliderHarvest SliderHarvest;
-    public PanelSliderBlood SliderBlood;
-    public PanelSprayBlood SprayBlood;
-    
-    
-    
     // Start is called before the first frame update
     void Start()
     {
@@ -23,4 +16,12 @@ public class FightManager : MonoBehaviour
         
     }
 
+    public void OnAttack()
+    {
+        Debug.LogError("OnAttack ...");
+    }
+    public void OnHit()
+    {
+        Debug.LogError("OnHit ...");
+    }
 }

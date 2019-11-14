@@ -13,7 +13,7 @@ public class PanelSliderBlood : MonoBehaviour
 
     private ActorVisualizer _actor;
 
-    private const float _MORE_DELAY_TIME = 3f; // 在战斗结束后再延迟多少秒 
+    private const float _MORE_DELAY_TIME = 5f; // 在战斗结束后再延迟多少秒 
     private float _startTime;
     private float _durationTime;
     

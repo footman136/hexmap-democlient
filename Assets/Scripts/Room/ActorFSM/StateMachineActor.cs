@@ -33,7 +33,7 @@ using static FSMStateActor;
 
             var idleState = new ActorIdleState(this, _actorBehaviour);
             var dieState = new ActorDieState(this, _actorBehaviour);
-            var vanishState = new ActorDieState(this, _actorBehaviour);
+            var vanishState = new ActorVanishState(this, _actorBehaviour);
             var harvestState = new ActorHarvestState(this, _actorBehaviour);
             var walkState = new ActorWalkState(this, _actorBehaviour);
             var walkFightState = new ActorWalkFightState(this, _actorBehaviour);
@@ -75,6 +75,7 @@ using static FSMStateActor;
             allowedTransitions.Add(StateEnum.VANISH, new List<StateEnum>
             {
                 StateEnum.NONE,
+                StateEnum.VANISH,
             });
             allowedTransitions.Add(StateEnum.HARVEST, new List<StateEnum>
             {
@@ -133,11 +134,11 @@ using static FSMStateActor;
             SetTransitions(allowedTransitions);
         }
 
-        public void TriggerTransition(StateEnum newState, HexCell cellTarget = null, float durationTime = 0, long actorId = 0)
+        public void TriggerTransition(StateEnum newState, int cellIndex = 0, float durationTime = 0, long actorId = 0)
         {
             if (IsValidTransition(newState))
             {
-                SetTarget(cellTarget, actorId);
+                SetTarget(cellIndex, actorId);
                 var ab = _actorBehaviour;
                 TroopAiState output = new TroopAiState()
                 {
@@ -151,6 +152,7 @@ using static FSMStateActor;
                     PosZTo = TargetPosZ,
                     CellIndexFrom = ab.CellIndex,
                     CellIndexTo = TargetCellIndex,
+                    TargetId = TargetActorId,
                     Orientation = ab.Orientation,
                     Speed = ab.Speed,
                 };
@@ -184,14 +186,16 @@ using static FSMStateActor;
         
         #region 参数-目的地
 
-        public void SetTarget(HexCell cellTarget, long actorId)
+        public void SetTarget(int cellIndex, long actorId)
         {
             TargetActorId = actorId;
-            if (!cellTarget) return;
+            HexCell cellTarget = GameRoomManager.Instance.HexmapHelper.GetCell(cellIndex);
+            if (cellIndex == 0) return;
+            
             TargetPosition = cellTarget.Position;
             TargetPosX = cellTarget.coordinates.X;
             TargetPosZ = cellTarget.coordinates.Z;
-            TargetCellIndex = cellTarget.Index;
+            TargetCellIndex = cellIndex;
         }
         
         #endregion

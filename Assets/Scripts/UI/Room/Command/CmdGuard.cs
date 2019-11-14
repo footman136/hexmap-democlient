@@ -59,7 +59,7 @@ public class CmdGuard : MonoBehaviour, ICommand
         }
 
         Debug.Log($"CmdAttack - From<{av.PosX},{av.PosZ}> - Dest Pos<{cellTarget.coordinates.X},{cellTarget.coordinates.Z}>");
-        ab.StateMachine.TriggerTransition(FSMStateActor.StateEnum.WALKGUARD, cellTarget, 30f);
+        ab.StateMachine.TriggerTransition(FSMStateActor.StateEnum.WALKGUARD, cellTarget.Index, 30f);
         
         Stop();
     }

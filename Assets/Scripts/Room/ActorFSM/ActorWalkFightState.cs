@@ -42,7 +42,7 @@ namespace AI
                 {
                     if (_actorBehaviour.Distance < 18f * _actorBehaviour.ShootingRange)
                     { // 敌人进入射程,进入攻击状态. 注意:这时候的敌人,可能不是之前要打的敌人
-                        Owner.TriggerTransition(StateEnum.FIGHT, abEnemy.HexUnit.Location, _actorBehaviour.AttackDuration, abEnemy.ActorId);    
+                        Owner.TriggerTransition(StateEnum.FIGHT, abEnemy.CellIndex, _actorBehaviour.AttackDuration, abEnemy.ActorId);    
                     }
                 }
             }

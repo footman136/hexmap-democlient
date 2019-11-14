@@ -2179,7 +2179,7 @@ ModelImporter:
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 1
+      loopTime: 0
       loopBlend: 0
       loopBlendOrientation: 1
       loopBlendPositionY: 1
@@ -2511,7 +2511,15 @@ ModelImporter:
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
-      events: []
+      events:
+      - time: 0.5109718
+        functionName: OnAttack
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: 66a8c737e7bbcf74bbc09cf971a344c2,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
       transformMask:
       - path: 
         weight: 1
@@ -2671,7 +2679,15 @@ ModelImporter:
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
-      events: []
+      events:
+      - time: 0.55172414
+        functionName: OnAttack
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: 66a8c737e7bbcf74bbc09cf971a344c2,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
       transformMask:
       - path: 
         weight: 1
@@ -2831,7 +2847,15 @@ ModelImporter:
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
-      events: []
+      events:
+      - time: 0.6520376
+        functionName: OnAttack
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: 66a8c737e7bbcf74bbc09cf971a344c2,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
       transformMask:
       - path: 
         weight: 1
@@ -2991,7 +3015,15 @@ ModelImporter:
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
-      events: []
+      events:
+      - time: 0.70219433
+        functionName: OnAttack
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: 66a8c737e7bbcf74bbc09cf971a344c2,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
       transformMask:
       - path: 
         weight: 1
@@ -3151,7 +3183,15 @@ ModelImporter:
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
-      events: []
+      events:
+      - time: 0.56426334
+        functionName: OnAttack
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: 66a8c737e7bbcf74bbc09cf971a344c2,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
       transformMask:
       - path: 
         weight: 1

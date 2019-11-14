@@ -39,7 +39,7 @@ public class CmdLumberjack : MonoBehaviour, ICommand
             };
             GameRoomManager.Instance.SendMsg(ROOM.HarvestStart, output.ToByteArray());
 
-            ab.StateMachine.TriggerTransition(FSMStateActor.StateEnum.HARVEST, null, durationTime);
+            ab.StateMachine.TriggerTransition(FSMStateActor.StateEnum.HARVEST, 0, durationTime);
         }
         else
         {

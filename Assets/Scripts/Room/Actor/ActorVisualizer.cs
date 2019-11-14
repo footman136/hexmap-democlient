@@ -107,7 +107,7 @@ namespace Animation
 
         void OnDestroy()
         {
-            _allActors.Clear();
+            _allActors.Remove(ActorId);
             HexUnit = null;
         }
 
@@ -152,6 +152,36 @@ namespace Animation
         
         #endregion
         
+        #region 外部接口
+        
+        public bool IsEnemyInRange(ActorVisualizer avEnemy)
+        {
+            if (avEnemy == null) return false;
+            List<HexCell> cellsInRange = GameRoomManager.Instance.HexmapHelper.GetCellsInRange(HexUnit.Location, (int)ShootingRange);
+            if (cellsInRange.Contains(avEnemy.HexUnit.Location))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public ActorVisualizer FindEnemyInRange()
+        {
+            List<HexCell> cellsInRange = GameRoomManager.Instance.HexmapHelper.GetCellsInRange(HexUnit.Location, (int)ShootingRange);
+            foreach (HexCell cell in cellsInRange)
+            {
+                if (cell.Unit != null)
+                {
+                    var av = cell.Unit.GetComponent<ActorVisualizer>();
+                    return av;
+                }
+            }
+
+            return null;
+        }
+
+        #endregion
         #region 播放动画
 
         private void StopAllAnimations()
@@ -166,7 +196,7 @@ namespace Animation
         
         private void PlayAnimation([NotNull] AnimationState[] animationState)
         {
-            if (animationState == null) throw new ArgumentNullException(nameof(animationState));
+            if (animationState == null) return;
             StopAllAnimations();
             int totalState = 1;//animationState.Length;
             int randomValue = Random.Range(0, totalState);
@@ -182,7 +212,7 @@ namespace Animation
                 transform.position = newpos;
                 if (newpos.y <= -3f)
                 {
-                    DestroyActor();
+                    GameRoomManager.Instance.HexmapHelper.DestroyUnit(ActorId);
                     yield break;
                 }
 
@@ -198,8 +228,7 @@ namespace Animation
         
         #endregion
         
-        
-        #region 消息处理
+        #region 状态改变
         
         private void OnAiStateChanged(byte[] bytes)
         {
@@ -208,8 +237,16 @@ namespace Animation
                 return; // 不是自己，略过
             if (!input.Ret)
                 return;
-            HexCell targetCell = GameRoomManager.Instance.HexmapHelper.GetCell(input.CellIndexFrom);
+
+            HexCell targetCell = GameRoomManager.Instance.HexmapHelper.GetCell(input.CellIndexTo);
             Vector3 newPosition = targetCell.Position;
+            ActorVisualizer avTarget = null;
+            if (AllActors.ContainsKey(input.TargetId))
+            { //如果目标是单位,优先用单位的坐标作为目标点
+                avTarget = AllActors[input.TargetId];
+                newPosition = avTarget.CurrentPosition;
+            }
+            
             StateEnum newAiState = (StateEnum)input.State;
             
             if (lookAtCoroutine != null && newAiState != CurrentAiState)
@@ -241,7 +278,7 @@ namespace Animation
                     aniState = runningStates;
                     break;
                 case StateEnum.FIGHT:
-                    GameRoomManager.Instance.HexmapHelper.LookAt(input.ActorId, targetCell.Position);
+                    GameRoomManager.Instance.HexmapHelper.LookAt(input.ActorId, TargetPosition);
                     aniState = attackingStates;
                     break;
                 case StateEnum.GUARD:

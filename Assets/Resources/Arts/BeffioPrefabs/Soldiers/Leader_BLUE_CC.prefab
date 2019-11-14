@@ -137,6 +137,7 @@ GameObject:
   - component: {fileID: 13655544}
   - component: {fileID: 11403138}
   - component: {fileID: 11480202}
+  - component: {fileID: 1891482545}
   m_Layer: 8
   m_Name: Leader_BLUE
   m_TagString: Untagged
@@ -242,6 +243,18 @@ MonoBehaviour:
   m_MoveSpeedMultiplier: 1.5
   m_AnimSpeedMultiplier: 1.5
   m_GroundCheckDistance: 0.3
+--- !u!114 &1891482545
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 116630}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66a8c737e7bbcf74bbc09cf971a344c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &118204
 GameObject:
   m_ObjectHideFlags: 0
@@ -1174,11 +1187,15 @@ MonoBehaviour:
   ActorInfoId: 0
   Name: 
   Hp: 0
+  HpMax: 0
   AttackPower: 0
   DefencePower: 0
   Speed: 0
   FieldOfVision: 0
   ShootingRange: 0
+  AttackDuration: 0
+  AttackInterval: 0
+  AmmoBase: 0
   idleStates:
   - stateName: Idle
     animationBool: isIdling
@@ -1211,6 +1228,8 @@ MonoBehaviour:
   CurrentAiState: 0
   HexUnit: {fileID: 0}
   _distance: 0
+  _sliderHarvest: {fileID: 0}
+  _sliderBlood: {fileID: 0}
   _logChanges: 0
 --- !u!1 &175748
 GameObject:

@@ -74,74 +74,76 @@ namespace Protobuf.Room {
             "dGFja1Bvd2VyGA0gASgCEhQKDERlZmVuY2VQb3dlchgOIAEoAhINCgVTcGVl",
             "ZBgPIAEoAhIVCg1GaWVsZE9mVmlzaW9uGBAgASgCEhUKDVNob290aW5nUmFu",
             "Z2UYESABKAISFgoOQXR0YWNrRHVyYXRpb24YEiABKAISFgoOQXR0YWNrSW50",
-            "ZXJ2YWwYEyABKAISEAoIQW1tb0Jhc2UYFCABKAUSCwoDcmV0GBUgASgIIj8K",
+            "ZXJ2YWwYEyABKAISEAoIQW1tb0Jhc2UYFCABKAUSCwoDcmV0GBUgASgIIlAK",
             "C0FjdG9yUmVtb3ZlEg4KBlJvb21JZBgBIAEoAxIPCgdPd25lcklkGAIgASgD",
-            "Eg8KB0FjdG9ySWQYAyABKAMiUQoQQWN0b3JSZW1vdmVSZXBseRIOCgZSb29t",
-            "SWQYASABKAMSDwoHT3duZXJJZBgCIAEoAxIPCgdBY3RvcklkGAMgASgDEgsK",
-            "A3JldBgEIAEoCCJpCglUcm9vcE1vdmUSDgoGUm9vbUlkGAEgASgDEg8KB093",
-            "bmVySWQYAiABKAMSDwoHQWN0b3JJZBgDIAEoAxIVCg1DZWxsSW5kZXhGcm9t",
-            "GAQgASgFEhMKC0NlbGxJbmRleFRvGAUgASgFInsKDlRyb29wTW92ZVJlcGx5",
-            "Eg4KBlJvb21JZBgBIAEoAxIPCgdPd25lcklkGAIgASgDEg8KB0FjdG9ySWQY",
-            "AyABKAMSFQoNQ2VsbEluZGV4RnJvbRgEIAEoBRITCgtDZWxsSW5kZXhUbxgF",
-            "IAEoBRILCgNSZXQYBiABKAgi4wEKDFRyb29wQWlTdGF0ZRIOCgZSb29tSWQY",
-            "ASABKAMSDwoHT3duZXJJZBgCIAEoAxIPCgdBY3RvcklkGAMgASgDEg0KBVN0",
-            "YXRlGAQgASgFEhAKCFBvc1hGcm9tGAUgASgFEhAKCFBvc1pGcm9tGAYgASgF",
-            "Eg4KBlBvc1hUbxgHIAEoBRIOCgZQb3NaVG8YCCABKAUSFQoNQ2VsbEluZGV4",
-            "RnJvbRgJIAEoBRITCgtDZWxsSW5kZXhUbxgKIAEoBRITCgtPcmllbnRhdGlv",
-            "bhgLIAEoAhINCgVTcGVlZBgMIAEoAiL1AQoRVHJvb3BBaVN0YXRlUmVwbHkS",
+            "Eg8KB0FjdG9ySWQYAyABKAMSDwoHRGllVHlwZRgEIAEoBSJiChBBY3RvclJl",
+            "bW92ZVJlcGx5Eg4KBlJvb21JZBgBIAEoAxIPCgdPd25lcklkGAIgASgDEg8K",
+            "B0FjdG9ySWQYAyABKAMSDwoHRGllVHlwZRgEIAEoBRILCgNyZXQYBSABKAgi",
+            "aQoJVHJvb3BNb3ZlEg4KBlJvb21JZBgBIAEoAxIPCgdPd25lcklkGAIgASgD",
+            "Eg8KB0FjdG9ySWQYAyABKAMSFQoNQ2VsbEluZGV4RnJvbRgEIAEoBRITCgtD",
+            "ZWxsSW5kZXhUbxgFIAEoBSJ7Cg5Ucm9vcE1vdmVSZXBseRIOCgZSb29tSWQY",
+            "ASABKAMSDwoHT3duZXJJZBgCIAEoAxIPCgdBY3RvcklkGAMgASgDEhUKDUNl",
+            "bGxJbmRleEZyb20YBCABKAUSEwoLQ2VsbEluZGV4VG8YBSABKAUSCwoDUmV0",
+            "GAYgASgIIvUBCgxUcm9vcEFpU3RhdGUSDgoGUm9vbUlkGAEgASgDEg8KB093",
+            "bmVySWQYAiABKAMSDwoHQWN0b3JJZBgDIAEoAxINCgVTdGF0ZRgEIAEoBRIQ",
+            "CghQb3NYRnJvbRgFIAEoBRIQCghQb3NaRnJvbRgGIAEoBRIOCgZQb3NYVG8Y",
+            "ByABKAUSDgoGUG9zWlRvGAggASgFEhUKDUNlbGxJbmRleEZyb20YCSABKAUS",
+            "EwoLQ2VsbEluZGV4VG8YCiABKAUSEAoIVGFyZ2V0SWQYCyABKAMSEwoLT3Jp",
+            "ZW50YXRpb24YDCABKAISDQoFU3BlZWQYDSABKAIihwIKEVRyb29wQWlTdGF0",
+            "ZVJlcGx5Eg4KBlJvb21JZBgBIAEoAxIPCgdPd25lcklkGAIgASgDEg8KB0Fj",
+            "dG9ySWQYAyABKAMSDQoFU3RhdGUYBCABKAUSEAoIUG9zWEZyb20YBSABKAUS",
+            "EAoIUG9zWkZyb20YBiABKAUSDgoGUG9zWFRvGAcgASgFEg4KBlBvc1pUbxgI",
+            "IAEoBRIVCg1DZWxsSW5kZXhGcm9tGAkgASgFEhMKC0NlbGxJbmRleFRvGAog",
+            "ASgFEhAKCFRhcmdldElkGAsgASgDEhMKC09yaWVudGF0aW9uGAwgASgCEg0K",
+            "BVNwZWVkGA0gASgCEgsKA1JldBgOIAEoCCKGAQoOVXBkYXRlQWN0b3JQb3MS",
             "DgoGUm9vbUlkGAEgASgDEg8KB093bmVySWQYAiABKAMSDwoHQWN0b3JJZBgD",
-            "IAEoAxINCgVTdGF0ZRgEIAEoBRIQCghQb3NYRnJvbRgFIAEoBRIQCghQb3Na",
-            "RnJvbRgGIAEoBRIOCgZQb3NYVG8YByABKAUSDgoGUG9zWlRvGAggASgFEhUK",
-            "DUNlbGxJbmRleEZyb20YCSABKAUSEwoLQ2VsbEluZGV4VG8YCiABKAUSEwoL",
-            "T3JpZW50YXRpb24YCyABKAISDQoFU3BlZWQYDCABKAISCwoDUmV0GA0gASgI",
-            "IoYBCg5VcGRhdGVBY3RvclBvcxIOCgZSb29tSWQYASABKAMSDwoHT3duZXJJ",
-            "ZBgCIAEoAxIPCgdBY3RvcklkGAMgASgDEgwKBFBvc1gYBCABKAUSDAoEUG9z",
-            "WhgFIAEoBRIRCglDZWxsSW5kZXgYBiABKAUSEwoLT3JpZW50YXRpb24YByAB",
-            "KAIimAEKE1VwZGF0ZUFjdG9yUG9zUmVwbHkSDgoGUm9vbUlkGAEgASgDEg8K",
-            "B093bmVySWQYAiABKAMSDwoHQWN0b3JJZBgDIAEoAxIMCgRQb3NYGAQgASgF",
-            "EgwKBFBvc1oYBSABKAUSEQoJQ2VsbEluZGV4GAYgASgFEhMKC09yaWVudGF0",
-            "aW9uGAcgASgCEgsKA1JldBgIIAEoCCJPCg9VcGRhdGVBY3RvckluZm8SDgoG",
-            "Um9vbUlkGAEgASgDEg8KB093bmVySWQYAiABKAMSDwoHQWN0b3JJZBgDIAEo",
-            "AxIKCgJIcBgFIAEoBSJhChRVcGRhdGVBY3RvckluZm9SZXBseRIOCgZSb29t",
-            "SWQYASABKAMSDwoHT3duZXJJZBgCIAEoAxIPCgdBY3RvcklkGAMgASgDEgoK",
-            "AkhwGAQgASgFEgsKA1JldBgFIAEoCCKNAQoMSGFydmVzdFN0YXJ0Eg4KBlJv",
-            "b21JZBgBIAEoAxIPCgdPd25lcklkGAIgASgDEg8KB0FjdG9ySWQYAyABKAMS",
-            "EQoJQ2VsbEluZGV4GAQgASgFEg8KB1Jlc1R5cGUYBSABKAUSEQoJUmVzUmVt",
-            "YWluGAYgASgFEhQKDER1cmF0aW9uVGltZRgHIAEoAiKfAQoRSGFydmVzdFN0",
-            "YXJ0UmVwbHkSDgoGUm9vbUlkGAEgASgDEg8KB093bmVySWQYAiABKAMSDwoH",
-            "QWN0b3JJZBgDIAEoAxIRCglDZWxsSW5kZXgYBCABKAUSDwoHUmVzVHlwZRgF",
-            "IAEoBRIRCglSZXNSZW1haW4YBiABKAUSFAoMRHVyYXRpb25UaW1lGAcgASgC",
-            "EgsKA1JldBgIIAEoCCKKAQoLSGFydmVzdFN0b3ASDgoGUm9vbUlkGAEgASgD",
-            "Eg8KB093bmVySWQYAiABKAMSDwoHQWN0b3JJZBgDIAEoAxIRCglDZWxsSW5k",
-            "ZXgYBCABKAUSDwoHUmVzVHlwZRgFIAEoBRIRCglSZXNSZW1haW4YBiABKAUS",
-            "EgoKUmVzSGFydmVzdBgHIAEoBSKcAQoQSGFydmVzdFN0b3BSZXBseRIOCgZS",
-            "b29tSWQYASABKAMSDwoHT3duZXJJZBgCIAEoAxIPCgdBY3RvcklkGAMgASgD",
-            "EhEKCUNlbGxJbmRleBgEIAEoBRIPCgdSZXNUeXBlGAUgASgFEhEKCVJlc1Jl",
-            "bWFpbhgGIAEoBRISCgpSZXNIYXJ2ZXN0GAcgASgFEgsKA1JldBgIIAEoCCIh",
-            "Cg9Eb3dubG9hZFJlc0NlbGwSDgoGUm9vbUlkGAEgASgDIkcKDk5ldFJlc0Nl",
-            "bGxJbmZvEhEKCUNlbGxJbmRleBgBIAEoBRIPCgdSZXNUeXBlGAIgASgFEhEK",
-            "CVJlc0Ftb3VudBgDIAEoBSKyAQoURG93bmxvYWRSZXNDZWxsUmVwbHkSDgoG",
-            "Um9vbUlkGAEgASgDEgsKA1JldBgCIAEoCBIOCgZFcnJNc2cYAyABKAkSFAoM",
-            "UGFja2FnZUNvdW50GAQgASgFEhQKDFBhY2thZ2VJbmRleBgFIAEoBRIRCglJ",
-            "bmZvQ291bnQYBiABKAUSLgoHUmVzSW5mbxgHIAMoCzIdLlByb3RvYnVmLlJv",
-            "b20uTmV0UmVzQ2VsbEluZm8iLAoJVXBkYXRlUmVzEg4KBlJvb21JZBgBIAEo",
-            "AxIPCgdPd25lcklkGAIgASgDImgKDlVwZGF0ZVJlc1JlcGx5Eg4KBlJvb21J",
-            "ZBgBIAEoAxIPCgdPd25lcklkGAIgASgDEgsKA1JldBgDIAEoCBIMCgRXb29k",
-            "GAQgASgFEgwKBEZvb2QYBSABKAUSDAoESXJvbhgGIAEoBSJhCgpGaWdodFN0",
-            "YXJ0Eg4KBlJvb21JZBgBIAEoAxIPCgdPd25lcklkGAIgASgDEg8KB0FjdG9y",
-            "SWQYAyABKAMSEAoIVGFyZ2V0SWQYBCABKAMSDwoHU2tpbGxJZBgFIAEoBSJz",
-            "Cg9GaWdodFN0YXJ0UmVwbHkSDgoGUm9vbUlkGAEgASgDEg8KB093bmVySWQY",
-            "AiABKAMSDwoHQWN0b3JJZBgDIAEoAxIQCghUYXJnZXRJZBgEIAEoAxIPCgdT",
-            "a2lsbElkGAUgASgFEgsKA1JldBgGIAEoCCJlCglGaWdodFN0b3ASDgoGUm9v",
-            "bUlkGAEgASgDEg8KB093bmVySWQYAiABKAMSDwoHQWN0b3JJZBgDIAEoAxIQ",
-            "CghUYXJnZXRJZBgEIAEoAxIUCgxEdXJhdGlvblRpbWUYBSABKAIicQoORmln",
-            "aHRTdG9wUmVwbHkSDgoGUm9vbUlkGAEgASgDEg8KB093bmVySWQYAiABKAMS",
-            "DwoHQWN0b3JJZBgDIAEoAxIQCghUYXJnZXRJZBgEIAEoAxILCgNSZXQYBSAB",
-            "KAgSDgoGRXJyTXNnGAYgASgJIk4KClNwcmF5Qmxvb2QSDgoGUm9vbUlkGAEg",
-            "ASgDEg8KB093bmVySWQYAiABKAMSDwoHQWN0b3JJZBgDIAEoAxIOCgZEYW1h",
-            "Z2UYBCABKAUiYAoPU3ByYXlCbG9vZFJlcGx5Eg4KBlJvb21JZBgBIAEoAxIP",
-            "CgdPd25lcklkGAIgASgDEg8KB0FjdG9ySWQYAyABKAMSDgoGRGFtYWdlGAQg",
-            "ASgFEgsKA1JldBgFIAEoCGIGcHJvdG8z"));
+            "IAEoAxIMCgRQb3NYGAQgASgFEgwKBFBvc1oYBSABKAUSEQoJQ2VsbEluZGV4",
+            "GAYgASgFEhMKC09yaWVudGF0aW9uGAcgASgCIpgBChNVcGRhdGVBY3RvclBv",
+            "c1JlcGx5Eg4KBlJvb21JZBgBIAEoAxIPCgdPd25lcklkGAIgASgDEg8KB0Fj",
+            "dG9ySWQYAyABKAMSDAoEUG9zWBgEIAEoBRIMCgRQb3NaGAUgASgFEhEKCUNl",
+            "bGxJbmRleBgGIAEoBRITCgtPcmllbnRhdGlvbhgHIAEoAhILCgNSZXQYCCAB",
+            "KAgiTwoPVXBkYXRlQWN0b3JJbmZvEg4KBlJvb21JZBgBIAEoAxIPCgdPd25l",
+            "cklkGAIgASgDEg8KB0FjdG9ySWQYAyABKAMSCgoCSHAYBSABKAUiYQoUVXBk",
+            "YXRlQWN0b3JJbmZvUmVwbHkSDgoGUm9vbUlkGAEgASgDEg8KB093bmVySWQY",
+            "AiABKAMSDwoHQWN0b3JJZBgDIAEoAxIKCgJIcBgEIAEoBRILCgNSZXQYBSAB",
+            "KAgijQEKDEhhcnZlc3RTdGFydBIOCgZSb29tSWQYASABKAMSDwoHT3duZXJJ",
+            "ZBgCIAEoAxIPCgdBY3RvcklkGAMgASgDEhEKCUNlbGxJbmRleBgEIAEoBRIP",
+            "CgdSZXNUeXBlGAUgASgFEhEKCVJlc1JlbWFpbhgGIAEoBRIUCgxEdXJhdGlv",
+            "blRpbWUYByABKAIinwEKEUhhcnZlc3RTdGFydFJlcGx5Eg4KBlJvb21JZBgB",
+            "IAEoAxIPCgdPd25lcklkGAIgASgDEg8KB0FjdG9ySWQYAyABKAMSEQoJQ2Vs",
+            "bEluZGV4GAQgASgFEg8KB1Jlc1R5cGUYBSABKAUSEQoJUmVzUmVtYWluGAYg",
+            "ASgFEhQKDER1cmF0aW9uVGltZRgHIAEoAhILCgNSZXQYCCABKAgiigEKC0hh",
+            "cnZlc3RTdG9wEg4KBlJvb21JZBgBIAEoAxIPCgdPd25lcklkGAIgASgDEg8K",
+            "B0FjdG9ySWQYAyABKAMSEQoJQ2VsbEluZGV4GAQgASgFEg8KB1Jlc1R5cGUY",
+            "BSABKAUSEQoJUmVzUmVtYWluGAYgASgFEhIKClJlc0hhcnZlc3QYByABKAUi",
+            "nAEKEEhhcnZlc3RTdG9wUmVwbHkSDgoGUm9vbUlkGAEgASgDEg8KB093bmVy",
+            "SWQYAiABKAMSDwoHQWN0b3JJZBgDIAEoAxIRCglDZWxsSW5kZXgYBCABKAUS",
+            "DwoHUmVzVHlwZRgFIAEoBRIRCglSZXNSZW1haW4YBiABKAUSEgoKUmVzSGFy",
+            "dmVzdBgHIAEoBRILCgNSZXQYCCABKAgiIQoPRG93bmxvYWRSZXNDZWxsEg4K",
+            "BlJvb21JZBgBIAEoAyJHCg5OZXRSZXNDZWxsSW5mbxIRCglDZWxsSW5kZXgY",
+            "ASABKAUSDwoHUmVzVHlwZRgCIAEoBRIRCglSZXNBbW91bnQYAyABKAUisgEK",
+            "FERvd25sb2FkUmVzQ2VsbFJlcGx5Eg4KBlJvb21JZBgBIAEoAxILCgNSZXQY",
+            "AiABKAgSDgoGRXJyTXNnGAMgASgJEhQKDFBhY2thZ2VDb3VudBgEIAEoBRIU",
+            "CgxQYWNrYWdlSW5kZXgYBSABKAUSEQoJSW5mb0NvdW50GAYgASgFEi4KB1Jl",
+            "c0luZm8YByADKAsyHS5Qcm90b2J1Zi5Sb29tLk5ldFJlc0NlbGxJbmZvIiwK",
+            "CVVwZGF0ZVJlcxIOCgZSb29tSWQYASABKAMSDwoHT3duZXJJZBgCIAEoAyJo",
+            "Cg5VcGRhdGVSZXNSZXBseRIOCgZSb29tSWQYASABKAMSDwoHT3duZXJJZBgC",
+            "IAEoAxILCgNSZXQYAyABKAgSDAoEV29vZBgEIAEoBRIMCgRGb29kGAUgASgF",
+            "EgwKBElyb24YBiABKAUiYQoKRmlnaHRTdGFydBIOCgZSb29tSWQYASABKAMS",
+            "DwoHT3duZXJJZBgCIAEoAxIPCgdBY3RvcklkGAMgASgDEhAKCFRhcmdldElk",
+            "GAQgASgDEg8KB1NraWxsSWQYBSABKAUicwoPRmlnaHRTdGFydFJlcGx5Eg4K",
+            "BlJvb21JZBgBIAEoAxIPCgdPd25lcklkGAIgASgDEg8KB0FjdG9ySWQYAyAB",
+            "KAMSEAoIVGFyZ2V0SWQYBCABKAMSDwoHU2tpbGxJZBgFIAEoBRILCgNSZXQY",
+            "BiABKAgiZQoJRmlnaHRTdG9wEg4KBlJvb21JZBgBIAEoAxIPCgdPd25lcklk",
+            "GAIgASgDEg8KB0FjdG9ySWQYAyABKAMSEAoIVGFyZ2V0SWQYBCABKAMSFAoM",
+            "RHVyYXRpb25UaW1lGAUgASgCIoYBCg5GaWdodFN0b3BSZXBseRIOCgZSb29t",
+            "SWQYASABKAMSDwoHT3duZXJJZBgCIAEoAxIPCgdBY3RvcklkGAMgASgDEhAK",
+            "CFRhcmdldElkGAQgASgDEhMKC0lzRW5lbXlEZWFkGAUgASgIEgsKA1JldBgG",
+            "IAEoCBIOCgZFcnJNc2cYByABKAkiTgoKU3ByYXlCbG9vZBIOCgZSb29tSWQY",
+            "ASABKAMSDwoHT3duZXJJZBgCIAEoAxIPCgdBY3RvcklkGAMgASgDEg4KBkRh",
+            "bWFnZRgEIAEoBSJgCg9TcHJheUJsb29kUmVwbHkSDgoGUm9vbUlkGAEgASgD",
+            "Eg8KB093bmVySWQYAiABKAMSDwoHQWN0b3JJZBgDIAEoAxIOCgZEYW1hZ2UY",
+            "BCABKAUSCwoDUmV0GAUgASgIYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -167,12 +169,12 @@ namespace Protobuf.Room {
             new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.DownloadActorsReply), global::Protobuf.Room.DownloadActorsReply.Parser, new[]{ "RoomId", "TotalCount", "MyCount", "Ret", "ErrMsg" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.ActorAdd), global::Protobuf.Room.ActorAdd.Parser, new[]{ "RoomId", "OwnerId", "ActorId", "PosX", "PosZ", "Orientation", "Species", "CellIndex", "ActorInfoId" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.ActorAddReply), global::Protobuf.Room.ActorAddReply.Parser, new[]{ "RoomId", "OwnerId", "ActorId", "PosX", "PosZ", "Orientation", "Species", "CellIndex", "ActorInfoId", "Name", "Hp", "HpMax", "AttackPower", "DefencePower", "Speed", "FieldOfVision", "ShootingRange", "AttackDuration", "AttackInterval", "AmmoBase", "Ret" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.ActorRemove), global::Protobuf.Room.ActorRemove.Parser, new[]{ "RoomId", "OwnerId", "ActorId" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.ActorRemoveReply), global::Protobuf.Room.ActorRemoveReply.Parser, new[]{ "RoomId", "OwnerId", "ActorId", "Ret" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.ActorRemove), global::Protobuf.Room.ActorRemove.Parser, new[]{ "RoomId", "OwnerId", "ActorId", "DieType" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.ActorRemoveReply), global::Protobuf.Room.ActorRemoveReply.Parser, new[]{ "RoomId", "OwnerId", "ActorId", "DieType", "Ret" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.TroopMove), global::Protobuf.Room.TroopMove.Parser, new[]{ "RoomId", "OwnerId", "ActorId", "CellIndexFrom", "CellIndexTo" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.TroopMoveReply), global::Protobuf.Room.TroopMoveReply.Parser, new[]{ "RoomId", "OwnerId", "ActorId", "CellIndexFrom", "CellIndexTo", "Ret" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.TroopAiState), global::Protobuf.Room.TroopAiState.Parser, new[]{ "RoomId", "OwnerId", "ActorId", "State", "PosXFrom", "PosZFrom", "PosXTo", "PosZTo", "CellIndexFrom", "CellIndexTo", "Orientation", "Speed" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.TroopAiStateReply), global::Protobuf.Room.TroopAiStateReply.Parser, new[]{ "RoomId", "OwnerId", "ActorId", "State", "PosXFrom", "PosZFrom", "PosXTo", "PosZTo", "CellIndexFrom", "CellIndexTo", "Orientation", "Speed", "Ret" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.TroopAiState), global::Protobuf.Room.TroopAiState.Parser, new[]{ "RoomId", "OwnerId", "ActorId", "State", "PosXFrom", "PosZFrom", "PosXTo", "PosZTo", "CellIndexFrom", "CellIndexTo", "TargetId", "Orientation", "Speed" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.TroopAiStateReply), global::Protobuf.Room.TroopAiStateReply.Parser, new[]{ "RoomId", "OwnerId", "ActorId", "State", "PosXFrom", "PosZFrom", "PosXTo", "PosZTo", "CellIndexFrom", "CellIndexTo", "TargetId", "Orientation", "Speed", "Ret" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.UpdateActorPos), global::Protobuf.Room.UpdateActorPos.Parser, new[]{ "RoomId", "OwnerId", "ActorId", "PosX", "PosZ", "CellIndex", "Orientation" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.UpdateActorPosReply), global::Protobuf.Room.UpdateActorPosReply.Parser, new[]{ "RoomId", "OwnerId", "ActorId", "PosX", "PosZ", "CellIndex", "Orientation", "Ret" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.UpdateActorInfo), global::Protobuf.Room.UpdateActorInfo.Parser, new[]{ "RoomId", "OwnerId", "ActorId", "Hp" }, null, null, null, null),
@@ -189,7 +191,7 @@ namespace Protobuf.Room {
             new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.FightStart), global::Protobuf.Room.FightStart.Parser, new[]{ "RoomId", "OwnerId", "ActorId", "TargetId", "SkillId" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.FightStartReply), global::Protobuf.Room.FightStartReply.Parser, new[]{ "RoomId", "OwnerId", "ActorId", "TargetId", "SkillId", "Ret" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.FightStop), global::Protobuf.Room.FightStop.Parser, new[]{ "RoomId", "OwnerId", "ActorId", "TargetId", "DurationTime" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.FightStopReply), global::Protobuf.Room.FightStopReply.Parser, new[]{ "RoomId", "OwnerId", "ActorId", "TargetId", "Ret", "ErrMsg" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.FightStopReply), global::Protobuf.Room.FightStopReply.Parser, new[]{ "RoomId", "OwnerId", "ActorId", "TargetId", "IsEnemyDead", "Ret", "ErrMsg" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.SprayBlood), global::Protobuf.Room.SprayBlood.Parser, new[]{ "RoomId", "OwnerId", "ActorId", "Damage" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.SprayBloodReply), global::Protobuf.Room.SprayBloodReply.Parser, new[]{ "RoomId", "OwnerId", "ActorId", "Damage", "Ret" }, null, null, null, null)
           }));
@@ -5503,6 +5505,7 @@ namespace Protobuf.Room {
       roomId_ = other.roomId_;
       ownerId_ = other.ownerId_;
       actorId_ = other.actorId_;
+      dieType_ = other.dieType_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -5544,6 +5547,20 @@ namespace Protobuf.Room {
       }
     }
 
+    /// <summary>Field number for the "DieType" field.</summary>
+    public const int DieTypeFieldNumber = 4;
+    private int dieType_;
+    /// <summary>
+    /// À¿Õˆ∑Ω Ω,0-∆’Õ®…æ≥˝;1-’Ω∂∑÷¬À¿
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int DieType {
+      get { return dieType_; }
+      set {
+        dieType_ = value;
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
       return Equals(other as ActorRemove);
@@ -5560,6 +5577,7 @@ namespace Protobuf.Room {
       if (RoomId != other.RoomId) return false;
       if (OwnerId != other.OwnerId) return false;
       if (ActorId != other.ActorId) return false;
+      if (DieType != other.DieType) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -5569,6 +5587,7 @@ namespace Protobuf.Room {
       if (RoomId != 0L) hash ^= RoomId.GetHashCode();
       if (OwnerId != 0L) hash ^= OwnerId.GetHashCode();
       if (ActorId != 0L) hash ^= ActorId.GetHashCode();
+      if (DieType != 0) hash ^= DieType.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -5594,6 +5613,10 @@ namespace Protobuf.Room {
         output.WriteRawTag(24);
         output.WriteInt64(ActorId);
       }
+      if (DieType != 0) {
+        output.WriteRawTag(32);
+        output.WriteInt32(DieType);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -5610,6 +5633,9 @@ namespace Protobuf.Room {
       }
       if (ActorId != 0L) {
         size += 1 + pb::CodedOutputStream.ComputeInt64Size(ActorId);
+      }
+      if (DieType != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(DieType);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -5630,6 +5656,9 @@ namespace Protobuf.Room {
       }
       if (other.ActorId != 0L) {
         ActorId = other.ActorId;
+      }
+      if (other.DieType != 0) {
+        DieType = other.DieType;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -5652,6 +5681,10 @@ namespace Protobuf.Room {
           }
           case 24: {
             ActorId = input.ReadInt64();
+            break;
+          }
+          case 32: {
+            DieType = input.ReadInt32();
             break;
           }
         }
@@ -5688,6 +5721,7 @@ namespace Protobuf.Room {
       roomId_ = other.roomId_;
       ownerId_ = other.ownerId_;
       actorId_ = other.actorId_;
+      dieType_ = other.dieType_;
       ret_ = other.ret_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
@@ -5730,8 +5764,19 @@ namespace Protobuf.Room {
       }
     }
 
+    /// <summary>Field number for the "DieType" field.</summary>
+    public const int DieTypeFieldNumber = 4;
+    private int dieType_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int DieType {
+      get { return dieType_; }
+      set {
+        dieType_ = value;
+      }
+    }
+
     /// <summary>Field number for the "ret" field.</summary>
-    public const int RetFieldNumber = 4;
+    public const int RetFieldNumber = 5;
     private bool ret_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool Ret {
@@ -5757,6 +5802,7 @@ namespace Protobuf.Room {
       if (RoomId != other.RoomId) return false;
       if (OwnerId != other.OwnerId) return false;
       if (ActorId != other.ActorId) return false;
+      if (DieType != other.DieType) return false;
       if (Ret != other.Ret) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -5767,6 +5813,7 @@ namespace Protobuf.Room {
       if (RoomId != 0L) hash ^= RoomId.GetHashCode();
       if (OwnerId != 0L) hash ^= OwnerId.GetHashCode();
       if (ActorId != 0L) hash ^= ActorId.GetHashCode();
+      if (DieType != 0) hash ^= DieType.GetHashCode();
       if (Ret != false) hash ^= Ret.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -5793,8 +5840,12 @@ namespace Protobuf.Room {
         output.WriteRawTag(24);
         output.WriteInt64(ActorId);
       }
-      if (Ret != false) {
+      if (DieType != 0) {
         output.WriteRawTag(32);
+        output.WriteInt32(DieType);
+      }
+      if (Ret != false) {
+        output.WriteRawTag(40);
         output.WriteBool(Ret);
       }
       if (_unknownFields != null) {
@@ -5813,6 +5864,9 @@ namespace Protobuf.Room {
       }
       if (ActorId != 0L) {
         size += 1 + pb::CodedOutputStream.ComputeInt64Size(ActorId);
+      }
+      if (DieType != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(DieType);
       }
       if (Ret != false) {
         size += 1 + 1;
@@ -5836,6 +5890,9 @@ namespace Protobuf.Room {
       }
       if (other.ActorId != 0L) {
         ActorId = other.ActorId;
+      }
+      if (other.DieType != 0) {
+        DieType = other.DieType;
       }
       if (other.Ret != false) {
         Ret = other.Ret;
@@ -5864,6 +5921,10 @@ namespace Protobuf.Room {
             break;
           }
           case 32: {
+            DieType = input.ReadInt32();
+            break;
+          }
+          case 40: {
             Ret = input.ReadBool();
             break;
           }
@@ -6418,6 +6479,7 @@ namespace Protobuf.Room {
       posZTo_ = other.posZTo_;
       cellIndexFrom_ = other.cellIndexFrom_;
       cellIndexTo_ = other.cellIndexTo_;
+      targetId_ = other.targetId_;
       orientation_ = other.orientation_;
       speed_ = other.speed_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
@@ -6538,8 +6600,19 @@ namespace Protobuf.Room {
       }
     }
 
+    /// <summary>Field number for the "TargetId" field.</summary>
+    public const int TargetIdFieldNumber = 11;
+    private long targetId_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public long TargetId {
+      get { return targetId_; }
+      set {
+        targetId_ = value;
+      }
+    }
+
     /// <summary>Field number for the "Orientation" field.</summary>
-    public const int OrientationFieldNumber = 11;
+    public const int OrientationFieldNumber = 12;
     private float orientation_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public float Orientation {
@@ -6550,7 +6623,7 @@ namespace Protobuf.Room {
     }
 
     /// <summary>Field number for the "Speed" field.</summary>
-    public const int SpeedFieldNumber = 12;
+    public const int SpeedFieldNumber = 13;
     private float speed_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public float Speed {
@@ -6583,6 +6656,7 @@ namespace Protobuf.Room {
       if (PosZTo != other.PosZTo) return false;
       if (CellIndexFrom != other.CellIndexFrom) return false;
       if (CellIndexTo != other.CellIndexTo) return false;
+      if (TargetId != other.TargetId) return false;
       if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Orientation, other.Orientation)) return false;
       if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Speed, other.Speed)) return false;
       return Equals(_unknownFields, other._unknownFields);
@@ -6601,6 +6675,7 @@ namespace Protobuf.Room {
       if (PosZTo != 0) hash ^= PosZTo.GetHashCode();
       if (CellIndexFrom != 0) hash ^= CellIndexFrom.GetHashCode();
       if (CellIndexTo != 0) hash ^= CellIndexTo.GetHashCode();
+      if (TargetId != 0L) hash ^= TargetId.GetHashCode();
       if (Orientation != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Orientation);
       if (Speed != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Speed);
       if (_unknownFields != null) {
@@ -6656,12 +6731,16 @@ namespace Protobuf.Room {
         output.WriteRawTag(80);
         output.WriteInt32(CellIndexTo);
       }
+      if (TargetId != 0L) {
+        output.WriteRawTag(88);
+        output.WriteInt64(TargetId);
+      }
       if (Orientation != 0F) {
-        output.WriteRawTag(93);
+        output.WriteRawTag(101);
         output.WriteFloat(Orientation);
       }
       if (Speed != 0F) {
-        output.WriteRawTag(101);
+        output.WriteRawTag(109);
         output.WriteFloat(Speed);
       }
       if (_unknownFields != null) {
@@ -6701,6 +6780,9 @@ namespace Protobuf.Room {
       }
       if (CellIndexTo != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(CellIndexTo);
+      }
+      if (TargetId != 0L) {
+        size += 1 + pb::CodedOutputStream.ComputeInt64Size(TargetId);
       }
       if (Orientation != 0F) {
         size += 1 + 4;
@@ -6748,6 +6830,9 @@ namespace Protobuf.Room {
       }
       if (other.CellIndexTo != 0) {
         CellIndexTo = other.CellIndexTo;
+      }
+      if (other.TargetId != 0L) {
+        TargetId = other.TargetId;
       }
       if (other.Orientation != 0F) {
         Orientation = other.Orientation;
@@ -6806,11 +6891,15 @@ namespace Protobuf.Room {
             CellIndexTo = input.ReadInt32();
             break;
           }
-          case 93: {
-            Orientation = input.ReadFloat();
+          case 88: {
+            TargetId = input.ReadInt64();
             break;
           }
           case 101: {
+            Orientation = input.ReadFloat();
+            break;
+          }
+          case 109: {
             Speed = input.ReadFloat();
             break;
           }
@@ -6855,6 +6944,7 @@ namespace Protobuf.Room {
       posZTo_ = other.posZTo_;
       cellIndexFrom_ = other.cellIndexFrom_;
       cellIndexTo_ = other.cellIndexTo_;
+      targetId_ = other.targetId_;
       orientation_ = other.orientation_;
       speed_ = other.speed_;
       ret_ = other.ret_;
@@ -6976,8 +7066,19 @@ namespace Protobuf.Room {
       }
     }
 
+    /// <summary>Field number for the "TargetId" field.</summary>
+    public const int TargetIdFieldNumber = 11;
+    private long targetId_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public long TargetId {
+      get { return targetId_; }
+      set {
+        targetId_ = value;
+      }
+    }
+
     /// <summary>Field number for the "Orientation" field.</summary>
-    public const int OrientationFieldNumber = 11;
+    public const int OrientationFieldNumber = 12;
     private float orientation_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public float Orientation {
@@ -6988,7 +7089,7 @@ namespace Protobuf.Room {
     }
 
     /// <summary>Field number for the "Speed" field.</summary>
-    public const int SpeedFieldNumber = 12;
+    public const int SpeedFieldNumber = 13;
     private float speed_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public float Speed {
@@ -6999,7 +7100,7 @@ namespace Protobuf.Room {
     }
 
     /// <summary>Field number for the "Ret" field.</summary>
-    public const int RetFieldNumber = 13;
+    public const int RetFieldNumber = 14;
     private bool ret_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool Ret {
@@ -7032,6 +7133,7 @@ namespace Protobuf.Room {
       if (PosZTo != other.PosZTo) return false;
       if (CellIndexFrom != other.CellIndexFrom) return false;
       if (CellIndexTo != other.CellIndexTo) return false;
+      if (TargetId != other.TargetId) return false;
       if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Orientation, other.Orientation)) return false;
       if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Speed, other.Speed)) return false;
       if (Ret != other.Ret) return false;
@@ -7051,6 +7153,7 @@ namespace Protobuf.Room {
       if (PosZTo != 0) hash ^= PosZTo.GetHashCode();
       if (CellIndexFrom != 0) hash ^= CellIndexFrom.GetHashCode();
       if (CellIndexTo != 0) hash ^= CellIndexTo.GetHashCode();
+      if (TargetId != 0L) hash ^= TargetId.GetHashCode();
       if (Orientation != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Orientation);
       if (Speed != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Speed);
       if (Ret != false) hash ^= Ret.GetHashCode();
@@ -7107,16 +7210,20 @@ namespace Protobuf.Room {
         output.WriteRawTag(80);
         output.WriteInt32(CellIndexTo);
       }
+      if (TargetId != 0L) {
+        output.WriteRawTag(88);
+        output.WriteInt64(TargetId);
+      }
       if (Orientation != 0F) {
-        output.WriteRawTag(93);
+        output.WriteRawTag(101);
         output.WriteFloat(Orientation);
       }
       if (Speed != 0F) {
-        output.WriteRawTag(101);
+        output.WriteRawTag(109);
         output.WriteFloat(Speed);
       }
       if (Ret != false) {
-        output.WriteRawTag(104);
+        output.WriteRawTag(112);
         output.WriteBool(Ret);
       }
       if (_unknownFields != null) {
@@ -7156,6 +7263,9 @@ namespace Protobuf.Room {
       }
       if (CellIndexTo != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(CellIndexTo);
+      }
+      if (TargetId != 0L) {
+        size += 1 + pb::CodedOutputStream.ComputeInt64Size(TargetId);
       }
       if (Orientation != 0F) {
         size += 1 + 4;
@@ -7206,6 +7316,9 @@ namespace Protobuf.Room {
       }
       if (other.CellIndexTo != 0) {
         CellIndexTo = other.CellIndexTo;
+      }
+      if (other.TargetId != 0L) {
+        TargetId = other.TargetId;
       }
       if (other.Orientation != 0F) {
         Orientation = other.Orientation;
@@ -7267,15 +7380,19 @@ namespace Protobuf.Room {
             CellIndexTo = input.ReadInt32();
             break;
           }
-          case 93: {
-            Orientation = input.ReadFloat();
+          case 88: {
+            TargetId = input.ReadInt64();
             break;
           }
           case 101: {
+            Orientation = input.ReadFloat();
+            break;
+          }
+          case 109: {
             Speed = input.ReadFloat();
             break;
           }
-          case 104: {
+          case 112: {
             Ret = input.ReadBool();
             break;
           }
@@ -11473,6 +11590,7 @@ namespace Protobuf.Room {
       ownerId_ = other.ownerId_;
       actorId_ = other.actorId_;
       targetId_ = other.targetId_;
+      isEnemyDead_ = other.isEnemyDead_;
       ret_ = other.ret_;
       errMsg_ = other.errMsg_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
@@ -11527,8 +11645,19 @@ namespace Protobuf.Room {
       }
     }
 
+    /// <summary>Field number for the "IsEnemyDead" field.</summary>
+    public const int IsEnemyDeadFieldNumber = 5;
+    private bool isEnemyDead_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool IsEnemyDead {
+      get { return isEnemyDead_; }
+      set {
+        isEnemyDead_ = value;
+      }
+    }
+
     /// <summary>Field number for the "Ret" field.</summary>
-    public const int RetFieldNumber = 5;
+    public const int RetFieldNumber = 6;
     private bool ret_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool Ret {
@@ -11539,7 +11668,7 @@ namespace Protobuf.Room {
     }
 
     /// <summary>Field number for the "ErrMsg" field.</summary>
-    public const int ErrMsgFieldNumber = 6;
+    public const int ErrMsgFieldNumber = 7;
     private string errMsg_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public string ErrMsg {
@@ -11566,6 +11695,7 @@ namespace Protobuf.Room {
       if (OwnerId != other.OwnerId) return false;
       if (ActorId != other.ActorId) return false;
       if (TargetId != other.TargetId) return false;
+      if (IsEnemyDead != other.IsEnemyDead) return false;
       if (Ret != other.Ret) return false;
       if (ErrMsg != other.ErrMsg) return false;
       return Equals(_unknownFields, other._unknownFields);
@@ -11578,6 +11708,7 @@ namespace Protobuf.Room {
       if (OwnerId != 0L) hash ^= OwnerId.GetHashCode();
       if (ActorId != 0L) hash ^= ActorId.GetHashCode();
       if (TargetId != 0L) hash ^= TargetId.GetHashCode();
+      if (IsEnemyDead != false) hash ^= IsEnemyDead.GetHashCode();
       if (Ret != false) hash ^= Ret.GetHashCode();
       if (ErrMsg.Length != 0) hash ^= ErrMsg.GetHashCode();
       if (_unknownFields != null) {
@@ -11609,12 +11740,16 @@ namespace Protobuf.Room {
         output.WriteRawTag(32);
         output.WriteInt64(TargetId);
       }
-      if (Ret != false) {
+      if (IsEnemyDead != false) {
         output.WriteRawTag(40);
+        output.WriteBool(IsEnemyDead);
+      }
+      if (Ret != false) {
+        output.WriteRawTag(48);
         output.WriteBool(Ret);
       }
       if (ErrMsg.Length != 0) {
-        output.WriteRawTag(50);
+        output.WriteRawTag(58);
         output.WriteString(ErrMsg);
       }
       if (_unknownFields != null) {
@@ -11636,6 +11771,9 @@ namespace Protobuf.Room {
       }
       if (TargetId != 0L) {
         size += 1 + pb::CodedOutputStream.ComputeInt64Size(TargetId);
+      }
+      if (IsEnemyDead != false) {
+        size += 1 + 1;
       }
       if (Ret != false) {
         size += 1 + 1;
@@ -11665,6 +11803,9 @@ namespace Protobuf.Room {
       }
       if (other.TargetId != 0L) {
         TargetId = other.TargetId;
+      }
+      if (other.IsEnemyDead != false) {
+        IsEnemyDead = other.IsEnemyDead;
       }
       if (other.Ret != false) {
         Ret = other.Ret;
@@ -11700,10 +11841,14 @@ namespace Protobuf.Room {
             break;
           }
           case 40: {
+            IsEnemyDead = input.ReadBool();
+            break;
+          }
+          case 48: {
             Ret = input.ReadBool();
             break;
           }
-          case 50: {
+          case 58: {
             ErrMsg = input.ReadString();
             break;
           }

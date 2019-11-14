@@ -80,12 +80,14 @@ namespace AI
         private void AddListener()
         {
             MsgDispatcher.RegisterMsg((int)ROOM_REPLY.UpdateActorInfoReply, OnUpdateActorInfoReply);
+            MsgDispatcher.RegisterMsg((int)ROOM_REPLY.FightStopReply, OnFightStopReply);
 
         }
 
         private void RemoveListener()
         {
             MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.UpdateActorInfoReply, OnUpdateActorInfoReply);
+            MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.FightStopReply, OnFightStopReply);
         }
 
 
@@ -197,6 +199,29 @@ namespace AI
             
             // AI
             Hp = input.Hp;
+        }
+        
+        private void OnFightStopReply(byte[] bytes)
+        {
+            FightStopReply input = FightStopReply.Parser.ParseFrom(bytes);
+            if (input.ActorId != ActorId)
+                return; // 不是自己，略过
+            if (!input.Ret)
+            {
+                GameRoomManager.Instance.Log($"ActorBehaviour OnFightStopReply Error - {input.ErrMsg}");
+                return;
+            }
+
+            if (input.IsEnemyDead)
+            { // 杀死了敌人以后, 要走到对方的位置去
+                var abTarget = GameRoomManager.Instance.RoomLogic.ActorManager.GetActor(input.TargetId);
+                if (abTarget != null)
+                {
+                    StateMachine.TriggerTransition(FSMStateActor.StateEnum.WALK, abTarget.CellIndex);
+                }
+            }
+
+            GameRoomManager.Instance.Log("ActorBehaviour OnFightStop ...");
         }
         
         #endregion

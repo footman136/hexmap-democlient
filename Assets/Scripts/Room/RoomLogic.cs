@@ -102,9 +102,18 @@ public class RoomLogic : MonoBehaviour
         else
         {
             PanelRoomMain.Instance.RemoveSelection(input.ActorId); // 如果该单位被选中,要取消选中
-            GameRoomManager.Instance.HexmapHelper.DestroyUnit(input.ActorId);
-            string msg = $"成功解散部队!{input.ActorId}";
-            GameRoomManager.Instance.Log("MSG: OnActorRemoveReply - OK " + msg);
+            if (input.DieType == 0)
+            { // 自然死亡, 部队解散
+                GameRoomManager.Instance.HexmapHelper.DestroyUnit(input.ActorId);
+                string msg = $"成功解散部队!{input.ActorId}";
+                GameRoomManager.Instance.Log("MSG: OnActorRemoveReply - OK " + msg);
+            }
+            else if (input.DieType == 1)
+            { // 战斗致死, 这时候先不删除该单元,而是要等动画结束以后再删除
+                var ab = ActorManager.GetActor(input.ActorId);
+                if (ab == null) return;
+                ab.StateMachine.TriggerTransition(FSMStateActor.StateEnum.DIE, 0, 3f);
+            }
         }
     }
 
