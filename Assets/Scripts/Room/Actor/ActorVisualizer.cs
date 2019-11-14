@@ -71,7 +71,6 @@ namespace Animation
 
         [Space(), Header("UI显示"), Space(5)] 
         [SerializeField] private PanelSliderHarvest _sliderHarvest;
-        [SerializeField] private PanelSliderBlood _sliderBlood;
 
         [Space(), Header("Debug"), Space(5)]
         [SerializeField, Tooltip("If true, AI changes to this animal will be logged in the console.")]
@@ -278,10 +277,12 @@ namespace Animation
                     aniState = runningStates;
                     break;
                 case StateEnum.FIGHT:
+                    GameRoomManager.Instance.HexmapHelper.Stop(input.ActorId);
                     GameRoomManager.Instance.HexmapHelper.LookAt(input.ActorId, TargetPosition);
                     aniState = attackingStates;
                     break;
                 case StateEnum.GUARD:
+                    GameRoomManager.Instance.HexmapHelper.Stop(input.ActorId);
                     aniState = idleStates;
                     break;
                 case StateEnum.HARVEST:
@@ -373,16 +374,9 @@ namespace Animation
 
         private void ShowSliderBlood()
         {
-            if (!_sliderBlood)
-            {
-                _sliderBlood = GameRoomManager.Instance.FightManager.SliderBlood.Spawn(_inner, Vector3.zero);
-                if (!_sliderBlood) return;
-            }
-            else
-            {
-                // 如果上一个血条还没有消失,就用原来的
-            }
-            _sliderBlood.Init(this);
+            var sliderBlood = GameRoomManager.Instance.FightManager.SliderBlood.Spawn(_inner, Vector3.zero);
+            if (!sliderBlood) return;
+            sliderBlood.Init(this);
         }
 
         private void OnFightStopReply(byte[] bytes)

@@ -56,7 +56,7 @@ public class CmdAttack : MonoBehaviour, ICommand
         // 如果目标点在射程以内,则直接攻击
         if (avTarget)
         {
-            if (avMe.IsEnemyInRange(avTarget) && avMe.OwnerId != avMe.OwnerId)
+            if (avMe.IsEnemyInRange(avTarget) && avMe.OwnerId != avTarget.OwnerId)
             {
                 // 这里其实应该发送TroopAiState消息到服务器,而不是直接操作状态机,但是因为状态机目前均行在本地,所以就直接调用了
                 abMe.StateMachine.TriggerTransition(StateEnum.FIGHT, cellTarget.Index, abMe.AttackDuration, piTarget.CurrentActor.ActorId);
