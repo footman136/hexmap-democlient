@@ -8,6 +8,7 @@ using Protobuf.Room;
 using UnityEngine;
 using Random = UnityEngine.Random;
 using AI;
+using UnityEngine.UIElements;
 using static FSMStateActor;
 namespace Animation
 {
@@ -65,11 +66,12 @@ namespace Animation
         public Vector3 TargetPosition;
         public Vector3 CurrentPosition;
         public StateEnum CurrentAiState; // AI的当前状态
+        public long TargetActorId; // 目标单位的id
+        public int TargetCellIndex;
         public HexUnit HexUnit;
         
         [SerializeField] private float _distance;
         private ActorStats ScriptableActorStats;
-        private Coroutine lookAtCoroutine;
 
         [Space(), Header("UI显示"), Space(5)] 
         [SerializeField] private PanelSliderHarvest _sliderHarvest;
@@ -78,7 +80,7 @@ namespace Animation
         [Space(), Header("Debug"), Space(5)]
         [SerializeField, Tooltip("If true, AI changes to this animal will be logged in the console.")]
         public bool _logChanges = false;
-        
+
         private Animator animator;
 
         private Transform _inner;
@@ -141,11 +143,11 @@ namespace Animation
         void Update()
         {
             _distance = Vector3.Distance(CurrentPosition, TargetPosition);
-            CurrentPosition = HexUnit.transform.localPosition;
-            //CurrentPosition = transform.localPosition;
+            CurrentPosition = HexUnit.transform.localPosition; // 不见得是格子中心,所以要这样取值
+            //CurrentPosition = transform.localPosition; // 这里取的是格子中心,所以不能这样取
+            CellIndex = HexUnit.Location.Index;
             PosX = HexUnit.Location.coordinates.X;
             PosZ = HexUnit.Location.coordinates.Z;
-            CellIndex = HexUnit.Location.Index;
         }
 
         public void Log(string msg)
@@ -247,13 +249,47 @@ namespace Animation
             animator.SetBool(vanishStates[0].animationBool, false);
         }
         
-        private void PlayAnimation([NotNull] AnimationState[] animationState)
+        private void PlayAnimation(AnimationState[] animationState)
         {
-            if (animationState == null) return;
-            StopAllAnimations();
-            int totalState = 1;//animationState.Length;
-            int randomValue = Random.Range(0, totalState);
-            animator.SetBool(animationState[randomValue].animationBool, true);
+            if (animationState != null)
+            {
+                StopAllAnimations();
+                int totalState = 1; //animationState.Length;
+                int randomValue = Random.Range(0, totalState);
+                animator.SetBool(animationState[randomValue].animationBool, true);
+            }
+
+            // 这是纯客户端行为,所以不要在StateMachine里执行,StateMachine还是服务器的逻辑(只不过现在在客户端里借用)
+            if (CurrentAiState == StateEnum.VANISH)
+            {
+                StartCoroutine(Vanishing());
+            }
+        }
+
+        public void SetAiState(StateEnum aiState)
+        {
+            CurrentAiState = aiState;
+            switch (aiState)
+            {
+                case StateEnum.IDLE:
+                    PlayAnimation(idleStates);
+                    break;
+                case StateEnum.WALK:
+                    PlayAnimation(runningStates);
+                    break;
+                case StateEnum.FIGHT:
+                    PlayAnimation(attackingStates);
+                    break;
+                case StateEnum.HARVEST:
+                    PlayAnimation(harvestStates);
+                    break;
+                case StateEnum.DIE:
+                    PlayAnimation(deathStates);
+                    break;
+                case StateEnum.VANISH:
+                    PlayAnimation(null); // vanishStates这个状态的动画不知道为什么不正确,这里只能继续沿用Die的最后一帧了
+                    break;
+            }
         }
         
         private IEnumerator Vanishing()
@@ -272,12 +308,6 @@ namespace Animation
                 yield return new WaitForSeconds(0.1f);
             }
         }
-    
-        public void DestroyActor()
-        {
-            // 客户端貌似不能发送WorldCommand
-            Destroy(gameObject);
-        }
         
         #endregion
         
@@ -291,6 +321,8 @@ namespace Animation
             if (!input.Ret)
                 return;
 
+            HexCell fromCell = GameRoomManager.Instance.HexmapHelper.GetCell(input.CellIndexFrom);
+            
             HexCell targetCell = GameRoomManager.Instance.HexmapHelper.GetCell(input.CellIndexTo);
             Vector3 newPosition = targetCell.Position;
             ActorVisualizer avTarget = null;
@@ -299,15 +331,13 @@ namespace Animation
                 avTarget = AllActors[input.TargetId];
                 newPosition = avTarget.CurrentPosition;
             }
-            
+
             StateEnum newAiState = (StateEnum)input.State;
             
-            if (lookAtCoroutine != null && newAiState != CurrentAiState)
-            { // 状态不同的时候才需要停止携程，防止同一个状态下，动画发生抖动（不停地进行【转向】/【停止转向】）
-                StopCoroutine(lookAtCoroutine);
-            }
             CurrentAiState = newAiState;
             TargetPosition = newPosition;
+            TargetActorId = input.TargetId;
+            TargetCellIndex = input.CellIndexTo;
 
             AnimationState[] aniState = null;
             switch (CurrentAiState)
@@ -318,7 +348,7 @@ namespace Animation
                     aniState = idleStates;
                     break;
                 case StateEnum.VANISH:
-                    aniState = vanishStates;
+                    //aniState = vanishStates; // vanishStates这个状态的动画不知道为什么不正确,这里只能继续沿用Die的最后一帧了
                     break;
                 case StateEnum.DIE:
                     aniState = deathStates;
@@ -327,7 +357,7 @@ namespace Animation
                 case StateEnum.WALKFIGHT:
                 case StateEnum.WALKGUARD:
                     GameRoomManager.Instance.HexmapHelper.DoMove(input.ActorId, input.CellIndexFrom, input.CellIndexTo);
-                    Debug.Log($"MSG: TroopAiState - {CurrentAiState} - From<{input.PosXFrom},{input.PosZFrom}> - To<{input.PosXTo},{input.PosZTo}>");
+                    Debug.Log($"MSG: TroopAiState - {CurrentAiState} - From<{fromCell.coordinates.X},{fromCell.coordinates.X}> - To<{targetCell.coordinates.X},{targetCell.coordinates.Z}>");
                     //aniState = movementStates;
                     aniState = runningStates;
                     break;
@@ -348,11 +378,6 @@ namespace Animation
                     break;
             }
             PlayAnimation(aniState);
-
-            if (CurrentAiState == StateEnum.VANISH)
-            {
-                StartCoroutine(Vanishing());
-            }
         }
         
         #endregion
@@ -427,15 +452,23 @@ namespace Animation
             GameRoomManager.Instance.Log("ActorVisualizer OnFightStart ...");
         }
 
-        private void ShowSliderBlood()
+        public void ShowSliderBlood(bool show = true)
         {
-            if (!_sliderBlood.gameObject.activeSelf)
+            if (show)
             {
-                _sliderBlood = GameRoomManager.Instance.FightManager.SliderBlood.Spawn(_inner, Vector3.zero);
-            }
+                if (!_sliderBlood || !_sliderBlood.gameObject.activeSelf)
+                {
+                    _sliderBlood = GameRoomManager.Instance.FightManager.SliderBlood.Spawn(_inner, Vector3.zero);
+                }
 
-            if (!_sliderBlood) return;
-            _sliderBlood.Init(this);
+                if (!_sliderBlood) return;
+                _sliderBlood.Init(this);
+            }
+            else
+            {
+                if(_sliderBlood)
+                    _sliderBlood.Recycle();
+            }
         }
 
         private void OnFightStopReply(byte[] bytes)

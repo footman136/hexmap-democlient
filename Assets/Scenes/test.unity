@@ -287,8 +287,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1905068265}
-  m_LocalRotation: {x: 0.19102456, y: 0.6726425, z: -0.18615925, w: 0.69022197}
-  m_LocalPosition: {x: -36.927296, y: 24.382366, z: -0.6853506}
+  m_LocalRotation: {x: 0.30100092, y: 0.28450176, z: -0.0945968, w: 0.90526724}
+  m_LocalPosition: {x: -7.758603, y: 12.969932, z: -22.610182}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -304,6 +304,10 @@ PrefabInstance:
     - target: {fileID: 148466, guid: d92011b5a7a9f994a9ad3e7c135bf3bd, type: 3}
       propertyPath: m_Name
       value: SwordsMan_BLUE_CC
+      objectReference: {fileID: 0}
+    - target: {fileID: 148466, guid: d92011b5a7a9f994a9ad3e7c135bf3bd, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 401352, guid: d92011b5a7a9f994a9ad3e7c135bf3bd, type: 3}
       propertyPath: m_LocalPosition.x
@@ -362,6 +366,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Horse_BLUE_CC
       objectReference: {fileID: 0}
+    - target: {fileID: 155100, guid: ef81ab34d8105d54795887cc91ccd771, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 467446, guid: ef81ab34d8105d54795887cc91ccd771, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -418,6 +426,10 @@ PrefabInstance:
     - target: {fileID: 122588, guid: 46e30ffc346a26a419f345b5f240a1c4, type: 3}
       propertyPath: m_Name
       value: SwordsMan_YELLOW_CC
+      objectReference: {fileID: 0}
+    - target: {fileID: 122588, guid: 46e30ffc346a26a419f345b5f240a1c4, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 406954, guid: 46e30ffc346a26a419f345b5f240a1c4, type: 3}
       propertyPath: m_LocalPosition.x
@@ -476,6 +488,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Hunter_RED_CC
       objectReference: {fileID: 0}
+    - target: {fileID: 133904, guid: 1b63a8f3e1f28ea4eb852dc542d7793c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 460938, guid: 1b63a8f3e1f28ea4eb852dc542d7793c, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -532,6 +548,10 @@ PrefabInstance:
     - target: {fileID: 151118, guid: ec21e7e5cc8cb0549923961b5af40677, type: 3}
       propertyPath: m_Name
       value: LanceKnight_YELLOW_CC
+      objectReference: {fileID: 0}
+    - target: {fileID: 151118, guid: ec21e7e5cc8cb0549923961b5af40677, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 415938, guid: ec21e7e5cc8cb0549923961b5af40677, type: 3}
       propertyPath: m_LocalPosition.x
@@ -590,6 +610,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: LanceKnight_RED_CC
       objectReference: {fileID: 0}
+    - target: {fileID: 172520, guid: c697fc8ec1428694a8a224580eea9acb, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 424276, guid: c697fc8ec1428694a8a224580eea9acb, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -646,6 +670,10 @@ PrefabInstance:
     - target: {fileID: 132012, guid: 192ed96dfcf00d648b557f407e709fe3, type: 3}
       propertyPath: m_Name
       value: SwordsMan_RED_CC
+      objectReference: {fileID: 0}
+    - target: {fileID: 132012, guid: 192ed96dfcf00d648b557f407e709fe3, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 432644, guid: 192ed96dfcf00d648b557f407e709fe3, type: 3}
       propertyPath: m_LocalPosition.x
@@ -704,6 +732,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Horse_RED_CC
       objectReference: {fileID: 0}
+    - target: {fileID: 106334, guid: 76ce618e5a1d1114b9c0b35ae8b12f35, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 489344, guid: 76ce618e5a1d1114b9c0b35ae8b12f35, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -760,6 +792,10 @@ PrefabInstance:
     - target: {fileID: 182760, guid: 4fd8eb81e0641a744b3946efd3791d95, type: 3}
       propertyPath: m_Name
       value: Horse_YELLOW_CC
+      objectReference: {fileID: 0}
+    - target: {fileID: 182760, guid: 4fd8eb81e0641a744b3946efd3791d95, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 430506, guid: 4fd8eb81e0641a744b3946efd3791d95, type: 3}
       propertyPath: m_LocalPosition.x
@@ -818,6 +854,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Hunter_BLUE_CC
       objectReference: {fileID: 0}
+    - target: {fileID: 145590, guid: 3bd9bf1970c90724abfc434628410087, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 413766, guid: 3bd9bf1970c90724abfc434628410087, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -874,6 +914,10 @@ PrefabInstance:
     - target: {fileID: 144072, guid: 6f0411e7f0c83a749a773e2f09b75d02, type: 3}
       propertyPath: m_Name
       value: Knight_RED_CC
+      objectReference: {fileID: 0}
+    - target: {fileID: 144072, guid: 6f0411e7f0c83a749a773e2f09b75d02, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 460030, guid: 6f0411e7f0c83a749a773e2f09b75d02, type: 3}
       propertyPath: m_LocalPosition.x
@@ -932,6 +976,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: LanceKnight_GREEN_CC
       objectReference: {fileID: 0}
+    - target: {fileID: 169396, guid: 02fd906ba0fef0d46b9070c243f97702, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 499866, guid: 02fd906ba0fef0d46b9070c243f97702, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -988,6 +1036,10 @@ PrefabInstance:
     - target: {fileID: 180014, guid: faf8ae6ac8075844a8c6feed0a681c04, type: 3}
       propertyPath: m_Name
       value: Knight_BLUE_CC
+      objectReference: {fileID: 0}
+    - target: {fileID: 180014, guid: faf8ae6ac8075844a8c6feed0a681c04, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 455496, guid: faf8ae6ac8075844a8c6feed0a681c04, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1046,6 +1098,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Knight_GREEN_CC
       objectReference: {fileID: 0}
+    - target: {fileID: 193964, guid: dc3ca83751eeba84783f738541472117, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 473922, guid: dc3ca83751eeba84783f738541472117, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1102,6 +1158,10 @@ PrefabInstance:
     - target: {fileID: 195806, guid: a79517ab1f2dd5c42b56511b7882599b, type: 3}
       propertyPath: m_Name
       value: Knight_YELLOW_CC
+      objectReference: {fileID: 0}
+    - target: {fileID: 195806, guid: a79517ab1f2dd5c42b56511b7882599b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 414522, guid: a79517ab1f2dd5c42b56511b7882599b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1160,6 +1220,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Leader_GREEN_CC
       objectReference: {fileID: 0}
+    - target: {fileID: 184650, guid: c014a10d4dc473e4290608957f6b7108, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 479644, guid: c014a10d4dc473e4290608957f6b7108, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1216,6 +1280,10 @@ PrefabInstance:
     - target: {fileID: 101928, guid: 8a8be95026d44674f8157794bd702868, type: 3}
       propertyPath: m_Name
       value: Leader_RED_CC
+      objectReference: {fileID: 0}
+    - target: {fileID: 101928, guid: 8a8be95026d44674f8157794bd702868, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 413034, guid: 8a8be95026d44674f8157794bd702868, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1274,6 +1342,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Leader_YELLOW_CC
       objectReference: {fileID: 0}
+    - target: {fileID: 141556, guid: 3087cff764405064ba84e13ddf2a5a5d, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 443908, guid: 3087cff764405064ba84e13ddf2a5a5d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1330,6 +1402,10 @@ PrefabInstance:
     - target: {fileID: 102046, guid: 9f972dd55fad98f458b6bbf5624d438a, type: 3}
       propertyPath: m_Name
       value: Hunter_YELLOW_CC
+      objectReference: {fileID: 0}
+    - target: {fileID: 102046, guid: 9f972dd55fad98f458b6bbf5624d438a, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 470738, guid: 9f972dd55fad98f458b6bbf5624d438a, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1388,6 +1464,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Horse_GREEN_CC
       objectReference: {fileID: 0}
+    - target: {fileID: 145308, guid: dd4b7ad25485f064382bb61165a0f1c9, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 488726, guid: dd4b7ad25485f064382bb61165a0f1c9, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1444,6 +1524,10 @@ PrefabInstance:
     - target: {fileID: 169762, guid: 25ab971c40684994aa1ff569ac9dc864, type: 3}
       propertyPath: m_Name
       value: LanceKnight_BLUE_CC
+      objectReference: {fileID: 0}
+    - target: {fileID: 169762, guid: 25ab971c40684994aa1ff569ac9dc864, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 454980, guid: 25ab971c40684994aa1ff569ac9dc864, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1546,8 +1630,40 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2293268266135387090, guid: 8fe8b1951f57edd4e812f97b725efa44,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 163358, guid: 8fe8b1951f57edd4e812f97b725efa44, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8fe8b1951f57edd4e812f97b725efa44, type: 3}
+--- !u!1 &8569675652322236575 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 116630, guid: 8fe8b1951f57edd4e812f97b725efa44,
+    type: 3}
+  m_PrefabInstance: {fileID: 8569675652322236574}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8569675652322236576
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8569675652322236575}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e26fb15ddf025347a7070eb0b897e2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dinoStates:
+  - stateName: Die
+    animationBool: isDying
+  - stateName: Vanish
+    animationBool: isVanishing
 --- !u!1001 &8640671498560739976
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1558,6 +1674,10 @@ PrefabInstance:
     - target: {fileID: 195802, guid: 6ca0c8baea6d2ff4c877529f390fc7e2, type: 3}
       propertyPath: m_Name
       value: Hunter_GREEN_CC
+      objectReference: {fileID: 0}
+    - target: {fileID: 195802, guid: 6ca0c8baea6d2ff4c877529f390fc7e2, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 492334, guid: 6ca0c8baea6d2ff4c877529f390fc7e2, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1615,6 +1735,10 @@ PrefabInstance:
     - target: {fileID: 126062, guid: 3dbbb65ba6d0acd4b96d98d2c8ad6954, type: 3}
       propertyPath: m_Name
       value: SwordsMan_GREEN_CC
+      objectReference: {fileID: 0}
+    - target: {fileID: 126062, guid: 3dbbb65ba6d0acd4b96d98d2c8ad6954, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 422766, guid: 3dbbb65ba6d0acd4b96d98d2c8ad6954, type: 3}
       propertyPath: m_LocalPosition.x

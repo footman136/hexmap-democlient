@@ -2040,7 +2040,15 @@ ModelImporter:
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
-      events: []
+      events:
+      - time: 1
+        functionName: OnDiePlayFinished
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: 66a8c737e7bbcf74bbc09cf971a344c2,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
       transformMask:
       - path: 
         weight: 1
@@ -2200,7 +2208,15 @@ ModelImporter:
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
-      events: []
+      events:
+      - time: 1
+        functionName: OnDiePlayFinished
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: 66a8c737e7bbcf74bbc09cf971a344c2,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
       transformMask:
       - path: 
         weight: 1
@@ -3601,6 +3617,14 @@ ModelImporter:
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
+      - time: 1
+        functionName: OnDiePlayFinished
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: 66a8c737e7bbcf74bbc09cf971a344c2,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
       transformMask:
       - path: 
         weight: 1
@@ -4916,8 +4940,8 @@ ModelImporter:
       name: Die_Hold
       takeName: Die
       internalID: 3543139392908695724
-      firstFrame: 30
-      lastFrame: 30
+      firstFrame: 29
+      lastFrame: 29
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -5032,15 +5056,15 @@ ModelImporter:
       name: Horse_Die_Hold
       takeName: Horse_Die
       internalID: -5073154158697124156
-      firstFrame: 26
-      lastFrame: 26
+      firstFrame: 25
+      lastFrame: 25
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
+      loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 0
       loopBlendPositionY: 0
@@ -5148,15 +5172,15 @@ ModelImporter:
       name: Die_Shield_Hold
       takeName: Die_Shield
       internalID: 659651121004856021
-      firstFrame: 30
-      lastFrame: 30
+      firstFrame: 29
+      lastFrame: 29
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
+      loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 0
       loopBlendPositionY: 0

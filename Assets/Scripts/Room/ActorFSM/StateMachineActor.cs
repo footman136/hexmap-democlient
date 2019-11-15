@@ -63,10 +63,11 @@ using static FSMStateActor;
                 StateEnum.IDLE,
                 StateEnum.DIE,
                 StateEnum.HARVEST,
-                StateEnum.FIGHT, // 敌人如果在附近,直接可以进入战斗状态
                 StateEnum.WALK,
                 StateEnum.WALKFIGHT,
                 StateEnum.WALKGUARD,
+                StateEnum.FIGHT, // 敌人如果在附近,直接可以进入战斗状态
+                StateEnum.GUARD,
             });
             allowedTransitions.Add(StateEnum.DIE, new List<StateEnum>
             {
@@ -84,14 +85,18 @@ using static FSMStateActor;
                 StateEnum.WALK,
                 StateEnum.WALKFIGHT,
                 StateEnum.WALKGUARD,
+                StateEnum.FIGHT,
+                StateEnum.GUARD,
             });
             allowedTransitions.Add(StateEnum.WALK, new List<StateEnum>
             {
                 StateEnum.IDLE,
-                StateEnum.WALK,
                 StateEnum.DIE,
+                StateEnum.WALK,
                 StateEnum.WALKFIGHT,
                 StateEnum.WALKGUARD,
+                StateEnum.FIGHT,
+                StateEnum.GUARD,
             });
             allowedTransitions.Add(StateEnum.WALKFIGHT, new List<StateEnum>
             {
@@ -99,6 +104,7 @@ using static FSMStateActor;
                 StateEnum.DIE,
                 StateEnum.WALK,
                 StateEnum.WALKFIGHT,
+                StateEnum.WALKGUARD,
                 StateEnum.FIGHT,
                 StateEnum.GUARD,
             });
@@ -108,8 +114,8 @@ using static FSMStateActor;
                 StateEnum.DIE,
                 StateEnum.WALK,
                 StateEnum.WALKFIGHT,
-                StateEnum.FIGHT,
                 StateEnum.WALKGUARD,
+                StateEnum.FIGHT,
                 StateEnum.GUARD,
             });
             allowedTransitions.Add(StateEnum.WALKGUARD, new List<StateEnum>
@@ -117,8 +123,9 @@ using static FSMStateActor;
                 StateEnum.IDLE,
                 StateEnum.DIE,
                 StateEnum.WALK,
-                StateEnum.FIGHT,
+                StateEnum.WALKFIGHT,
                 StateEnum.WALKGUARD,
+                StateEnum.FIGHT,
                 StateEnum.GUARD,
             });
             allowedTransitions.Add(StateEnum.GUARD, new List<StateEnum>
@@ -127,8 +134,8 @@ using static FSMStateActor;
                 StateEnum.DIE,
                 StateEnum.WALK,
                 StateEnum.WALKFIGHT,
-                StateEnum.FIGHT,
                 StateEnum.WALKGUARD,
+                StateEnum.FIGHT,
                 StateEnum.GUARD,
             });
             SetTransitions(allowedTransitions);
@@ -145,14 +152,10 @@ using static FSMStateActor;
                     RoomId = ab.RoomId,
                     OwnerId = ab.OwnerId,
                     ActorId = ab.ActorId,
+                    TargetId = TargetActorId,
                     State = (int) newState,
-                    PosXFrom = ab.PosX,
-                    PosZFrom = ab.PosZ,
-                    PosXTo = TargetPosX,
-                    PosZTo = TargetPosZ,
                     CellIndexFrom = ab.CellIndex,
                     CellIndexTo = TargetCellIndex,
-                    TargetId = TargetActorId,
                     Orientation = ab.Orientation,
                     Speed = ab.Speed,
                 };

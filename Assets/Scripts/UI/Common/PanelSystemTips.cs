@@ -14,7 +14,7 @@ public class PanelSystemTips : MonoBehaviour
     [SerializeField] private Text _lbMsg;
     [SerializeField] private CanvasGroup _group;
 
-    private const float _FLY_HEIGHT = 100f; // 飞行高度
+    private const float _FLY_HEIGHT = 200f; // 飞行高度
     private const float _SPEED = 1.0f; // 移动速度
     private const float _BG_BORDER = 22f; // 背景比文字高度多多少
     

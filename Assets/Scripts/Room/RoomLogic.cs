@@ -112,7 +112,7 @@ public class RoomLogic : MonoBehaviour
             { // 战斗致死, 这时候先不删除该单元,而是要等动画结束以后再删除
                 var ab = ActorManager.GetActor(input.ActorId);
                 if (ab == null) return;
-                ab.StateMachine.TriggerTransition(FSMStateActor.StateEnum.DIE, 0, 3f);
+                ab.StateMachine.TriggerTransition(FSMStateActor.StateEnum.DIE);
             }
         }
     }
