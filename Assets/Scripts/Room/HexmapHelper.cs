@@ -251,26 +251,26 @@ public class HexmapHelper : MonoBehaviour
     /// <param name="from"></param>
     /// <param name="current"></param>
     /// <returns></returns>
-    public HexCell TryFindADest(HexCell from, HexCell current)
+    public HexCell TryFindADest(HexCell from, HexCell to)
     {
-        if (current.Unit == null)// 如果这个目标点上没有单位，则直接返回该点
-            return current;
+        if (to.Unit == null)// 如果当前目标点上没有单位，则直接返回该点
+            return to;
         List<HexCell> Neighbors = new List<HexCell>();
         for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
         {
-            HexCell neighbor = current.GetNeighbor(d);
+            HexCell neighbor = to.GetNeighbor(d);
             if (!neighbor) continue;
             Neighbors.Add(neighbor);
         }
         Neighbors.Sort((a, b) => sortByCellDistance(a, b, from));
         foreach (var cell in Neighbors)
         {
-            var findCell = TryFindADest(from, cell);
-            if (findCell != null)
-                return findCell;
+            if (cell.Unit == null) // 邻居如果有空位,就是找到了
+                return cell;
         }
 
-        return null;
+        // 从最近的位置继续往下找
+        return TryFindADest(from, Neighbors[0]);
     }
     
     #endregion
@@ -460,9 +460,12 @@ public class HexmapHelper : MonoBehaviour
                 }
 
                 // 关闭预制件上没用的东西，看以后这东西能否用得上，如果没用，就完全干掉
-                hu.GetComponentInChildren<ThirdPersonUserControl>().enabled = false;
-                hu.GetComponentInChildren<ThirdPersonCharacter>().enabled = false;
-                hu.GetComponentInChildren<CapsuleCollider>().enabled = false;
+                if(hu.GetComponentInChildren<ThirdPersonUserControl>())
+                    hu.GetComponentInChildren<ThirdPersonUserControl>().enabled = false;
+                if(hu.GetComponentInChildren<ThirdPersonCharacter>())
+                    hu.GetComponentInChildren<ThirdPersonCharacter>().enabled = false;
+                if(hu.GetComponentInChildren<CapsuleCollider>())
+                    hu.GetComponentInChildren<CapsuleCollider>().enabled = false;
                 EnableFollowCamera(av, false);
 
                 if (!GameRoomManager.Instance.RoomLogic.ActorManager.AllActors.ContainsKey(actorId))

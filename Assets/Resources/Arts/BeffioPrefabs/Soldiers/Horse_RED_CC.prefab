@@ -92,8 +92,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_Children:
-  - {fileID: 436170}
   - {fileID: 475196}
+  - {fileID: 436170}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -132,43 +132,29 @@ MonoBehaviour:
   ActorInfoId: 0
   Name: 
   Hp: 0
+  HpMax: 0
   AttackPower: 0
   DefencePower: 0
   Speed: 0
   FieldOfVision: 0
   ShootingRange: 0
-  idleStates:
-  - stateName: Idle
-    animationBool: isIdling
-    minStateTime: 0
-    maxStateTime: 0
-    stateWeight: 0
-  movementStates:
-  - stateName: Walk
-    animationBool: isWalking
-    maxStateTime: 0
-    moveSpeed: 0
-    turnSpeed: 0
-  runningStates:
-  - stateName: Run
-    animationBool: isRunning
-    maxStateTime: 0
-    moveSpeed: 0
-    turnSpeed: 0
-  attackingStates:
-  - stateName: Attack
-    animationBool: isAttacking
-  harvestStates:
-  - stateName: Idle
-    animationBool: IsIdling
-  deathStates:
-  - stateName: Die
-    animationBool: isDying
+  AttackDuration: 0
+  AttackInterval: 0
+  AmmoBase: 0
+  idleStates: []
+  movementStates: []
+  runningStates: []
+  attackingStates: []
+  harvestStates: []
+  deathStates: []
+  vanishStates: []
   TargetPosition: {x: 0, y: 0, z: 0}
   CurrentPosition: {x: 0, y: 0, z: 0}
   CurrentAiState: 0
   HexUnit: {fileID: 0}
   _distance: 0
+  _sliderHarvest: {fileID: 0}
+  _sliderBlood: {fileID: 0}
   _logChanges: 0
 --- !u!1 &107050
 GameObject:
@@ -739,10 +725,7 @@ GameObject:
   m_Component:
   - component: {fileID: 475196}
   - component: {fileID: 9536272}
-  - component: {fileID: 5423830}
-  - component: {fileID: 13696748}
-  - component: {fileID: 11436080}
-  - component: {fileID: 11480262}
+  - component: {fileID: 1725290299162620049}
   m_Layer: 8
   m_Name: Horse_RED
   m_TagString: Untagged
@@ -766,7 +749,7 @@ Transform:
   - {fileID: 411686}
   - {fileID: 441450}
   m_Father: {fileID: 489344}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &9536272
 Animator:
@@ -787,37 +770,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!54 &5423830
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 150498}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 84
-  m_CollisionDetection: 0
---- !u!136 &13696748
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 150498}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.72275156
-  m_Height: 2.0067635
-  m_Direction: 1
-  m_Center: {x: 0.13, y: 1, z: 0.05}
---- !u!114 &11436080
+--- !u!114 &1725290299162620049
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -826,29 +779,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 150498}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 521b611700410be45810047f0a74e899, type: 3}
+  m_Script: {fileID: 11500000, guid: 66a8c737e7bbcf74bbc09cf971a344c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &11480262
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 150498}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ce7a80d520cacc042b5fe14f373d8173, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_MovingTurnSpeed: 500
-  m_StationaryTurnSpeed: 180
-  m_JumpPower: 6
-  m_GravityMultiplier: 2
-  m_RunCycleLegOffset: 0.2
-  m_MoveSpeedMultiplier: 1.5
-  m_AnimSpeedMultiplier: 1.5
-  m_GroundCheckDistance: 0.3
 --- !u!1 &151320
 GameObject:
   m_ObjectHideFlags: 0
@@ -1223,7 +1156,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 489344}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!20 &2029508
 Camera:

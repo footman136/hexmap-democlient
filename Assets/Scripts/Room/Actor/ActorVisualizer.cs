@@ -57,6 +57,8 @@ namespace Animation
         private AnimationState[] harvestStates;
         [SerializeField]
         private AnimationState[] deathStates;
+        [SerializeField]
+        private AnimationState[] vanishStates;
 
         [Space(), Header("AI"), Space(5)] 
         [SerializeField, Tooltip("This specific animal stats asset, create a new one from the asset menu under (LowPolyAnimals/NewAnimalStats)")]
@@ -71,6 +73,7 @@ namespace Animation
 
         [Space(), Header("UI显示"), Space(5)] 
         [SerializeField] private PanelSliderHarvest _sliderHarvest;
+        [SerializeField] private PanelSliderBlood _sliderBlood;
 
         [Space(), Header("Debug"), Space(5)]
         [SerializeField, Tooltip("If true, AI changes to this animal will be logged in the console.")]
@@ -91,7 +94,8 @@ namespace Animation
         {
             animator = GetComponentInChildren<Animator>();
             animator.applyRootMotion = false;
-            _inner = UIManager.Instance.Root.Find("Inner");
+            if(UIManager.Instance)
+                _inner = UIManager.Instance.Root.Find("Inner");
         }
         // Start is called before the first frame update
         void Start()
@@ -101,6 +105,7 @@ namespace Animation
             CurrentPosition = HexUnit.Location.Position;
             TargetPosition = HexUnit.Location.Position;
             Orientation = HexUnit.Orientation;
+            PrepareAllAnimations();
             PlayAnimation(idleStates);
         }
 
@@ -183,14 +188,63 @@ namespace Animation
         #endregion
         #region 播放动画
 
+        private void PrepareAllAnimations()
+        {
+            const int stateCount = 7; 
+            var stateNames = new string[stateCount] {"Idle", "Walk", "run", "Attack", "Attack", "Die", "DieEnd"};
+            var animationBools = new string[stateCount] {"isIdling", "isWalking", "isRunning", "isAttacking", "isAttacking", "isDying", "isVanishing"};
+            idleStates = new IdleState[1];
+            idleStates[0] = new IdleState()
+            {
+                stateName = stateNames[0],
+                animationBool = animationBools[0],
+            };
+            movementStates = new MovementState[1];
+            movementStates[0] = new MovementState()
+            {
+                stateName = stateNames[1],
+                animationBool = animationBools[1],
+            };
+            runningStates = new MovementState[1];
+            runningStates[0] = new MovementState()
+            {
+                stateName = stateNames[2],
+                animationBool = animationBools[2],
+            };
+            attackingStates = new AnimationState[1];
+            attackingStates[0] = new AnimationState()
+            {
+                stateName = stateNames[3],
+                animationBool = animationBools[3],
+            };
+            harvestStates = new AnimationState[1];
+            harvestStates[0] = new AnimationState()
+            {
+                stateName = stateNames[4],
+                animationBool = animationBools[4],
+            };
+            deathStates = new AnimationState[1];
+            deathStates[0] = new AnimationState()
+            {
+                stateName = stateNames[5],
+                animationBool = animationBools[5],
+            };
+            vanishStates = new AnimationState[1];
+            vanishStates[0] = new AnimationState()
+            {
+                stateName = stateNames[6],
+                animationBool = animationBools[6],
+            };
+        }
         private void StopAllAnimations()
         {
             animator.SetBool(idleStates[0].animationBool, false);
             animator.SetBool(movementStates[0].animationBool, false);
+            animator.SetBool(runningStates[0].animationBool, false);
             animator.SetBool(attackingStates[0].animationBool, false);
             animator.SetBool(harvestStates[0].animationBool, false);
             animator.SetBool(deathStates[0].animationBool, false);
-            animator.SetBool(runningStates[0].animationBool, false);
+            animator.SetBool(vanishStates[0].animationBool, false);
         }
         
         private void PlayAnimation([NotNull] AnimationState[] animationState)
@@ -264,6 +318,7 @@ namespace Animation
                     aniState = idleStates;
                     break;
                 case StateEnum.VANISH:
+                    aniState = vanishStates;
                     break;
                 case StateEnum.DIE:
                     aniState = deathStates;
@@ -374,9 +429,13 @@ namespace Animation
 
         private void ShowSliderBlood()
         {
-            var sliderBlood = GameRoomManager.Instance.FightManager.SliderBlood.Spawn(_inner, Vector3.zero);
-            if (!sliderBlood) return;
-            sliderBlood.Init(this);
+            if (!_sliderBlood.gameObject.activeSelf)
+            {
+                _sliderBlood = GameRoomManager.Instance.FightManager.SliderBlood.Spawn(_inner, Vector3.zero);
+            }
+
+            if (!_sliderBlood) return;
+            _sliderBlood.Init(this);
         }
 
         private void OnFightStopReply(byte[] bytes)

@@ -24,4 +24,9 @@ public class ActorAnimatorEvents : MonoBehaviour
     {
         Debug.LogError("OnHit ...");
     }
+
+    public void OnDiePlayFinished()
+    {
+        
+    }
 }
