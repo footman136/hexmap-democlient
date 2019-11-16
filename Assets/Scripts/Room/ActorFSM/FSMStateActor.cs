@@ -17,6 +17,7 @@
             GUARD = 6,
             WALKFIGHT = 7,
             WALKGUARD = 8,
-            NONE = 10,
+            DELAYFIGHT = 9,
+            NONE = 20,
         }
     }

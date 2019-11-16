@@ -43,7 +43,7 @@ namespace Animation
         public float AttackDuration; // 攻击持续时间
         public float AttackInterval; // 攻击间隔
         public int AmmoBase; // 弹药基数
-
+        public int AmmoBaseMax; // 最大弹药基数
         
         [Header("Animation States"), Space(5)]
         [SerializeField]
@@ -126,6 +126,8 @@ namespace Animation
             MsgDispatcher.RegisterMsg((int)ROOM_REPLY.FightStopReply, OnFightStopReply);
             MsgDispatcher.RegisterMsg((int)ROOM_REPLY.SprayBloodReply, OnSprayBloodReply);
             MsgDispatcher.RegisterMsg((int)ROOM_REPLY.UpdateActorInfoReply, OnUpdateActorInfoReply);
+            MsgDispatcher.RegisterMsg((int)ROOM_REPLY.TroopPlayAniReply, OnTroopPlayAniReply);
+            MsgDispatcher.RegisterMsg((int)ROOM_REPLY.AmmoSupplyReply, OnAmmoSupplyReply);
         }
 
         void OnDisable()
@@ -137,6 +139,8 @@ namespace Animation
             MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.FightStopReply, OnFightStopReply);
             MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.SprayBloodReply, OnSprayBloodReply);
             MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.UpdateActorInfoReply, OnUpdateActorInfoReply);
+            MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.TroopPlayAniReply, OnTroopPlayAniReply);
+            MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.AmmoSupplyReply, OnAmmoSupplyReply);
         }
 
         // Update is called once per frame
@@ -266,9 +270,12 @@ namespace Animation
             }
         }
 
-        public void SetAiState(StateEnum aiState)
+        /// <summary>
+        /// 仅播放动画,但是不修改AI状态机
+        /// </summary>
+        /// <param name="aiState"></param>
+        public void PlayAnimation(StateEnum aiState)
         {
-            CurrentAiState = aiState;
             switch (aiState)
             {
                 case StateEnum.IDLE:
@@ -290,6 +297,16 @@ namespace Animation
                     PlayAnimation(null); // vanishStates这个状态的动画不知道为什么不正确,这里只能继续沿用Die的最后一帧了
                     break;
             }
+        }
+
+        /// <summary>
+        /// 修改AI状态机
+        /// </summary>
+        /// <param name="aiState"></param>
+        public void SetAiState(StateEnum aiState)
+        {
+            CurrentAiState = aiState;
+            PlayAnimation(aiState);
         }
         
         private IEnumerator Vanishing()
@@ -366,6 +383,9 @@ namespace Animation
                     GameRoomManager.Instance.HexmapHelper.LookAt(input.ActorId, TargetPosition);
                     aniState = attackingStates;
                     break;
+                case StateEnum.DELAYFIGHT:
+                    aniState = idleStates; // 先不播放战斗动画,过了AttackInternal的时间以后再通过TroopPlayAni消息来播
+                    break;
                 case StateEnum.GUARD:
                     GameRoomManager.Instance.HexmapHelper.Stop(input.ActorId);
                     aniState = idleStates;
@@ -439,8 +459,12 @@ namespace Animation
             if (input.ActorId != ActorId)
                 return; // 不是自己，略过
             if (!input.Ret)
+            {
+                UIManager.Instance.SystemTips(input.ErrMsg, PanelSystemTips.MessageType.Error);
+                GameRoomManager.Instance.Log($"ActorVisualizer OnFightStartReply Error - {input.ErrMsg}");
                 return;
-            
+            }
+
             // 显示自己的血条
             ShowSliderBlood();
             
@@ -449,7 +473,7 @@ namespace Animation
             if (!avTarget) return;
             avTarget.ShowSliderBlood();
             
-            GameRoomManager.Instance.Log("ActorVisualizer OnFightStart ...");
+            GameRoomManager.Instance.Log("ActorVisualizer OnFightStartReply OK ...");
         }
 
         public void ShowSliderBlood(bool show = true)
@@ -478,11 +502,23 @@ namespace Animation
                 return; // 不是自己，略过
             if (!input.Ret)
             {
+                UIManager.Instance.SystemTips(input.ErrMsg, PanelSystemTips.MessageType.Error);
                 GameRoomManager.Instance.Log($"ActorVisualizer OnFightStopReply Error - {input.ErrMsg}");
                 return;
             }
 
-            GameRoomManager.Instance.Log("ActorVisualizer OnFightStop ...");
+            if (input.FightAgain)
+            {
+                // 显示自己的血条
+                ShowSliderBlood();
+            
+                // 显示对方的血条
+                var avTarget = GameRoomManager.Instance.GetActorVisualizer(input.TargetId);
+                if (!avTarget) return;
+                avTarget.ShowSliderBlood();
+            }
+
+            GameRoomManager.Instance.Log("ActorVisualizer OnFightStopReply OK ...");
         }
 
         private void OnSprayBloodReply(byte[] bytes)
@@ -496,7 +532,7 @@ namespace Animation
             if (spray == null) return;
             spray.Play(this, input.Damage);
 
-            GameRoomManager.Instance.Log($"Spraying Blood ...");
+            GameRoomManager.Instance.Log($"Spraying Blood ... {ActorId}");
         }
         
         #endregion
@@ -511,6 +547,27 @@ namespace Animation
 
             // 客户端
             Hp = input.Hp;
+            AmmoBase = input.AmmoBase;
+        }
+
+        private void OnTroopPlayAniReply(byte[] bytes)
+        {
+            TroopPlayAniReply input = TroopPlayAniReply.Parser.ParseFrom(bytes);
+            if (input.ActorId != ActorId)
+                return; // 不是自己，略过
+            
+            PlayAnimation((StateEnum)input.AiState);            
+        }
+        
+        private void OnAmmoSupplyReply(byte[] bytes)
+        {
+            AmmoSupplyReply input = AmmoSupplyReply.Parser.ParseFrom(bytes);
+            if (input.ActorId != ActorId)
+                return; // 不是自己，略过
+
+            AmmoBase = input.AmmoBase;
+            string msg = $"恢复弹药:{AmmoBase}/{AmmoBaseMax}";
+            UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Success);
         }
         
         #endregion

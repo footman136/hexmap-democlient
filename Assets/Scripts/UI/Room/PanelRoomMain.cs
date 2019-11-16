@@ -207,6 +207,8 @@ public class PanelRoomMain : MonoBehaviour
 
     private void ShowSelector( ActorVisualizer av, bool bShow)
     {
+        if (!_selectObj)
+            return;
         _selectObj.SetActive(bShow);
         if(av)
         {

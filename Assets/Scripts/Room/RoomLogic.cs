@@ -88,7 +88,7 @@ public class RoomLogic : MonoBehaviour
         GameRoomManager.Instance.HexmapHelper.CreateUnit(input.RoomId, input.OwnerId, input.ActorId,   
             input.PosX, input.PosZ, input.Orientation, input.Species, input.CellIndex, input.ActorInfoId, 
             input.Name, input.Hp, input.HpMax, input.AttackPower, input.DefencePower, input.Speed, input.FieldOfVision, 
-            input.ShootingRange, input.AttackDuration, input.AttackInterval, input.AmmoBase);
+            input.ShootingRange, input.AttackDuration, input.AttackInterval, input.AmmoBase, input.AmmoBaseMax);
     }
 
     private void OnActorRemoveReply(byte[] bytes)

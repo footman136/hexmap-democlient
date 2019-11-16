@@ -36,30 +36,39 @@ public class CmdGuard : MonoBehaviour, ICommand
     
     private void OnCommandTargetSelected(PickInfo piTarget)
     {
-        var av = CommandManager.Instance.CurrentExecuter.CurrentActor;
-        if (!av)
+        var avMe = CommandManager.Instance.CurrentExecuter.CurrentActor;
+        if (!avMe)
             return;
+        var avTarget = piTarget.CurrentActor;
         
         HexCell cellTarget = piTarget.CurrentCell;
         if (!cellTarget)
             return;
         
-        var ab = GameRoomManager.Instance.RoomLogic.ActorManager.GetActor(av.ActorId);
-        if (ab == null)
+        var abMe = GameRoomManager.Instance.RoomLogic.ActorManager.GetActor(avMe.ActorId);
+        if (abMe == null)
             return;
         
+        // 如果目标点就是现在的位置,直接进入驻守(警戒)状态
+        if (cellTarget == CommandManager.Instance.CurrentExecuter.CurrentCell)
+        {
+            abMe.StateMachine.TriggerTransition(FSMStateActor.StateEnum.GUARD);
+            Stop();
+            return;
+        }
+        
         var hexmapHelper = GameRoomManager.Instance.HexmapHelper;
-        var currentCell = av.HexUnit.Location;
-        cellTarget = hexmapHelper.TryFindADest(av.HexUnit.Location, cellTarget);
-        GameRoomManager.Instance.HexmapHelper.hexGrid.FindPath(currentCell, cellTarget, av.HexUnit);
+        var currentCell = avMe.HexUnit.Location;
+        cellTarget = hexmapHelper.TryFindADest(avMe.HexUnit.Location, cellTarget);
+        GameRoomManager.Instance.HexmapHelper.hexGrid.FindPath(currentCell, cellTarget, avMe.HexUnit);
         if (!hexmapHelper.hexGrid.HasPath)
         {// 如果选中的是一个单位，则需要走到该单位的相邻点上去
             Debug.Log($"CmdAttack OnCommandTargetSelected Error - Cannot go to target position:<{currentCell.coordinates.X},{currentCell.coordinates.Z}> ");
             return;
         }
 
-        Debug.Log($"CmdAttack - From<{av.PosX},{av.PosZ}> - Dest Pos<{cellTarget.coordinates.X},{cellTarget.coordinates.Z}>");
-        ab.StateMachine.TriggerTransition(FSMStateActor.StateEnum.WALKGUARD, cellTarget.Index, 30f);
+        Debug.Log($"CmdAttack - From<{avMe.PosX},{avMe.PosZ}> - Dest Pos<{cellTarget.coordinates.X},{cellTarget.coordinates.Z}>");
+        abMe.StateMachine.TriggerTransition(FSMStateActor.StateEnum.WALKGUARD, cellTarget.Index, 30f);
         
         Stop();
     }

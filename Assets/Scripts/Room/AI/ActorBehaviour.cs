@@ -11,7 +11,7 @@ using Protobuf.Room;
 using UnityEngine;
 using UnityEngine.Experimental.PlayerLoop;
 using Random = UnityEngine.Random;
-
+using static FSMStateActor;
 namespace AI
 {
     /// <summary>
@@ -45,6 +45,7 @@ namespace AI
         public float AttackDuration; // 攻击持续时间
         public float AttackInterval; // 攻击间隔
         public int AmmoBase; // 弹药基数
+        public int AmmoBaseMax; // 最大弹药基数
 
         //This specific animal stats asset, create a new one from the asset menu under (LowPolyAnimals/NewAnimalStats)
         private ActorStats ScriptableActorStats;
@@ -80,14 +81,18 @@ namespace AI
         private void AddListener()
         {
             MsgDispatcher.RegisterMsg((int)ROOM_REPLY.UpdateActorInfoReply, OnUpdateActorInfoReply);
+            MsgDispatcher.RegisterMsg((int)ROOM_REPLY.FightStartReply, OnFightStartReply);
             MsgDispatcher.RegisterMsg((int)ROOM_REPLY.FightStopReply, OnFightStopReply);
+            MsgDispatcher.RegisterMsg((int)ROOM_REPLY.AmmoSupplyReply, OnAmmoSupplyReply);
 
         }
 
         private void RemoveListener()
         {
             MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.UpdateActorInfoReply, OnUpdateActorInfoReply);
+            MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.FightStartReply, OnFightStartReply);
             MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.FightStopReply, OnFightStopReply);
+            MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.AmmoSupplyReply, OnAmmoSupplyReply);
         }
 
 
@@ -199,8 +204,23 @@ namespace AI
             
             // AI
             Hp = input.Hp;
+            AmmoBase = input.AmmoBase;
         }
         
+        private void OnFightStartReply(byte[] bytes)
+        {
+            FightStartReply input = FightStartReply.Parser.ParseFrom(bytes);
+            if (input.ActorId != ActorId)
+                return; // 不是自己，略过
+            if (!input.Ret)
+            {
+                GameRoomManager.Instance.Log($"ActorBehaviour OnFightStartReply Error - {input.ErrMsg}");
+                StateMachine.TriggerTransition(StateEnum.IDLE);
+                return;
+            }
+
+            GameRoomManager.Instance.Log("ActorBehaviour OnFightStartReply OK ...");
+        }
         private void OnFightStopReply(byte[] bytes)
         {
             FightStopReply input = FightStopReply.Parser.ParseFrom(bytes);
@@ -214,14 +234,28 @@ namespace AI
 
             if (input.IsEnemyDead)
             { // 杀死了敌人以后, 要走到对方的位置去
-                var abTarget = GameRoomManager.Instance.RoomLogic.ActorManager.GetActor(input.TargetId);
-                if (abTarget != null)
-                {
-                    StateMachine.TriggerTransition(FSMStateActor.StateEnum.WALK, abTarget.CellIndex);
-                }
+//                var abTarget = GameRoomManager.Instance.RoomLogic.ActorManager.GetActor(input.TargetId);
+//                if (abTarget != null)
+//                {
+//                    StateMachine.TriggerTransition(StateEnum.WALK, abTarget.CellIndex);
+//                }
             }
 
-            GameRoomManager.Instance.Log("ActorBehaviour OnFightStop ...");
+            if (input.FightAgain)
+            { // 弹药基数足够, 可以再打一轮, 要用 [延迟攻击] 的状态, 时间也要把 [攻击持续时间] & [攻击间隔] 算在一起
+                StateMachine.TriggerTransition(StateEnum.DELAYFIGHT, 0, AttackDuration + AttackInterval, input.TargetId);
+            }
+            GameRoomManager.Instance.Log($"ActorBehaviour OnFightStop - Ammo:{AmmoBase}/{AmmoBaseMax}");
+        }
+
+        private void OnAmmoSupplyReply(byte[] bytes)
+        {
+            AmmoSupplyReply input = AmmoSupplyReply.Parser.ParseFrom(bytes);
+            if (input.ActorId != ActorId)
+                return; // 不是自己，略过
+
+            AmmoBase = input.AmmoBase;
+            
         }
         
         #endregion

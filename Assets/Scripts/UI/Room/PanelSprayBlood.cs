@@ -55,6 +55,7 @@ public class PanelSprayBlood : MonoBehaviour
     {
         _actor = av;
         _blood.text = blood.ToString();
+        _blood.color = new Color(_blood.color.r, _blood.color.g, _blood.color.b, 1f);
         _startTime = 0;
         
         _pos = _actor.CurrentPosition;

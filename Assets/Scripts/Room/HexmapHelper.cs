@@ -366,11 +366,12 @@ public class HexmapHelper : MonoBehaviour
     /// <param name="attackDuration"></param>
     /// <param name="attackInterval"></param>
     /// <param name="ammoBase"></param>
+    /// <param name="ammoBaseMax"></param>
     /// <returns></returns>
     public bool CreateUnit (long roomId, long ownerId, long actorId, int posX, int posZ, float orientation, 
         string unitName, int cellIndex, int actorInfoId,
         string name, int hp, int hpMax, float attackPower, float defencePower, float speed, float filedOfVision, float shootingRange,
-        float attackDuration, float attackInterval, int ammoBase)
+        float attackDuration, float attackInterval, int ammoBase, int ammoBaseMax)
     {
         HexCell cell = GetCell(cellIndex);
         if (!cell)
@@ -457,6 +458,7 @@ public class HexmapHelper : MonoBehaviour
                     av.AttackDuration = attackDuration;
                     av.AttackInterval = attackInterval;
                     av.AmmoBase = ammoBase;
+                    av.AmmoBaseMax = ammoBaseMax;
                 }
 
                 // 关闭预制件上没用的东西，看以后这东西能否用得上，如果没用，就完全干掉
@@ -494,6 +496,7 @@ public class HexmapHelper : MonoBehaviour
                         AttackDuration = attackDuration,
                         AttackInterval = attackInterval,
                         AmmoBase = ammoBase,
+                        AmmoBaseMax = ammoBaseMax,
                     };
                     GameRoomManager.Instance.RoomLogic.ActorManager.AddActor(ab, hu);
                 }

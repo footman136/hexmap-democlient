@@ -37,8 +37,9 @@ using static FSMStateActor;
             var harvestState = new ActorHarvestState(this, _actorBehaviour);
             var walkState = new ActorWalkState(this, _actorBehaviour);
             var walkFightState = new ActorWalkFightState(this, _actorBehaviour);
-            var fightState = new ActorFightState(this, _actorBehaviour);
             var walkGuardState = new ActorWalkGuardState(this, _actorBehaviour);
+            var fightState = new ActorFightState(this, _actorBehaviour);
+            var delayFightState = new ActorDelayFightState(this, _actorBehaviour);
             var guardState = new ActorGuardState(this, _actorBehaviour);
 
             var stateList = new Dictionary<StateEnum, IFsmState>
@@ -49,8 +50,9 @@ using static FSMStateActor;
                 {StateEnum.HARVEST, harvestState},
                 {StateEnum.WALK, walkState},
                 {StateEnum.WALKFIGHT, walkFightState},
-                {StateEnum.FIGHT, fightState},
                 {StateEnum.WALKGUARD, walkGuardState},
+                {StateEnum.FIGHT, fightState},
+                {StateEnum.DELAYFIGHT, delayFightState},
                 {StateEnum.GUARD, guardState},
             };
 
@@ -67,10 +69,12 @@ using static FSMStateActor;
                 StateEnum.WALKFIGHT,
                 StateEnum.WALKGUARD,
                 StateEnum.FIGHT, // 敌人如果在附近,直接可以进入战斗状态
+                StateEnum.DELAYFIGHT, // 间隔一定的时间再攻击, 弹药基数足够的情况下,第二次攻击都用此方式
                 StateEnum.GUARD,
             });
             allowedTransitions.Add(StateEnum.DIE, new List<StateEnum>
             {
+                StateEnum.DIE,
                 StateEnum.VANISH,
             });
             allowedTransitions.Add(StateEnum.VANISH, new List<StateEnum>
@@ -108,6 +112,16 @@ using static FSMStateActor;
                 StateEnum.FIGHT,
                 StateEnum.GUARD,
             });
+            allowedTransitions.Add(StateEnum.WALKGUARD, new List<StateEnum>
+            {
+                StateEnum.IDLE,
+                StateEnum.DIE,
+                StateEnum.WALK,
+                StateEnum.WALKFIGHT,
+                StateEnum.WALKGUARD,
+                StateEnum.FIGHT,
+                StateEnum.GUARD,
+            });
             allowedTransitions.Add(StateEnum.FIGHT, new List<StateEnum>
             {
                 StateEnum.IDLE,
@@ -118,7 +132,7 @@ using static FSMStateActor;
                 StateEnum.FIGHT,
                 StateEnum.GUARD,
             });
-            allowedTransitions.Add(StateEnum.WALKGUARD, new List<StateEnum>
+            allowedTransitions.Add(StateEnum.DELAYFIGHT, new List<StateEnum>
             {
                 StateEnum.IDLE,
                 StateEnum.DIE,
