@@ -12,6 +12,8 @@ public class CommandManager : MonoBehaviour
     private CommandID _runningCommandId;
     public CommandID RunningCommandId => _runningCommandId;
     private ICommand _runningCommand;
+    private int _runningCommand_ActionPointCost;
+    public int RunningCommandActionPoint => _runningCommand_ActionPointCost;
     
     private const int COMMAND_ID_NONE = 0;
     public PickInfo CurrentExecuter; // 目前仅支持单选
@@ -54,6 +56,7 @@ public class CommandManager : MonoBehaviour
         public string Name;
         public string Icon;
         public int Order;
+        public int ActionPointCost;
         public ICommand Func;
     }
     public Dictionary<CommandID, CommandInfo> Commands;
@@ -128,6 +131,7 @@ public class CommandManager : MonoBehaviour
         {
             // Disable command bar refereshing
             MonitingSelectionChange(false);
+            _runningCommand_ActionPointCost = Commands[cmdId].ActionPointCost; // 本指令消耗的行动点
             _runningCommand = Commands[cmdId].Func;
         }
         else
@@ -164,132 +168,174 @@ public class CommandManager : MonoBehaviour
         CsvStreamReader csv = CsvDataManager.Instance.GetTable("command_id");
 
         CommandID cmdId = CommandID.BuildCity;
-        string cmdName = csv.GetValue((int)cmdId, "Name");
+        string cmdName = cmdName = csv.GetValue((int)cmdId, "Name");
+        int actionPointCost = csv.GetValueInt((int) cmdId, "ActionPointCost");
+        if (actionPointCost > 0)    cmdName += $"({actionPointCost})";
         int order = csv.GetValueInt((int)cmdId, "Order");
-        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, Func = obj.AddComponent<CmdBuildCity>(),};
+        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, ActionPointCost = actionPointCost, Func = obj.AddComponent<CmdBuildCity>(),};
         Commands.Add(cmdId, ci);
         
         cmdId = CommandID.AbandonCity;
         cmdName = csv.GetValue((int)cmdId, "Name");
+        actionPointCost = csv.GetValueInt((int) cmdId, "ActionPointCost");
+        if (actionPointCost > 0)    cmdName += $"({actionPointCost})";
         order = csv.GetValueInt((int)cmdId, "Order");
-        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, Func = obj.AddComponent<CmdAbandonCity>(),};
+        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, ActionPointCost = actionPointCost, Func = obj.AddComponent<CmdAbandonCity>(),};
         Commands.Add(cmdId, ci);
         
         cmdId = CommandID.AbandonBuilding;
         cmdName = csv.GetValue((int)cmdId, "Name");
+        actionPointCost = csv.GetValueInt((int) cmdId, "ActionPointCost");
+        if (actionPointCost > 0)    cmdName += $"({actionPointCost})";
         order = csv.GetValueInt((int)cmdId, "Order");
-        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, Func = obj.AddComponent<CmdAbandonBuilding>(),};
+        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, ActionPointCost = actionPointCost, Func = obj.AddComponent<CmdAbandonBuilding>(),};
         Commands.Add(cmdId, ci);
         
         
         cmdId = CommandID.CreateFarmer;
         cmdName = csv.GetValue((int)cmdId, "Name");
+        actionPointCost = csv.GetValueInt((int) cmdId, "ActionPointCost");
+        if (actionPointCost > 0)    cmdName += $"({actionPointCost})";
         order = csv.GetValueInt((int)cmdId, "Order");
-        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, Func = obj.AddComponent<CmdCreateFarmer>(),};
+        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, ActionPointCost = actionPointCost, Func = obj.AddComponent<CmdCreateFarmer>(),};
         Commands.Add(cmdId, ci);
         
         cmdId = CommandID.CreateSettler;
         cmdName = csv.GetValue((int)cmdId, "Name");
+        actionPointCost = csv.GetValueInt((int) cmdId, "ActionPointCost");
+        if (actionPointCost > 0)    cmdName += $"({actionPointCost})";
         order = csv.GetValueInt((int)cmdId, "Order");
-        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, Func = obj.AddComponent<CmdCreateSettler>(),};
+        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, ActionPointCost = actionPointCost, Func = obj.AddComponent<CmdCreateSettler>(),};
         Commands.Add(cmdId, ci);
         
         cmdId = CommandID.CreateSoldier1;
         cmdName = csv.GetValue((int)cmdId, "Name");
+        actionPointCost = csv.GetValueInt((int) cmdId, "ActionPointCost");
+        if (actionPointCost > 0)    cmdName += $"({actionPointCost})";
         order = csv.GetValueInt((int)cmdId, "Order");
-        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, Func = obj.AddComponent<CmdCreateSoldier1>(),};
+        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, ActionPointCost = actionPointCost, Func = obj.AddComponent<CmdCreateSoldier1>(),};
         Commands.Add(cmdId, ci);
         
         cmdId = CommandID.CreateSoldier2;
         cmdName = csv.GetValue((int)cmdId, "Name");
+        actionPointCost = csv.GetValueInt((int) cmdId, "ActionPointCost");
+        if (actionPointCost > 0)    cmdName += $"({actionPointCost})";
         order = csv.GetValueInt((int)cmdId, "Order");
-        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, Func = obj.AddComponent<CmdCreateSoldier2>(),};
+        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, ActionPointCost = actionPointCost, Func = obj.AddComponent<CmdCreateSoldier2>(),};
         Commands.Add(cmdId, ci);
         
         cmdId = CommandID.CreateSoldier3;
         cmdName = csv.GetValue((int)cmdId, "Name");
+        actionPointCost = csv.GetValueInt((int) cmdId, "ActionPointCost");
+        if (actionPointCost > 0)    cmdName += $"({actionPointCost})";
         order = csv.GetValueInt((int)cmdId, "Order");
-        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, Func = obj.AddComponent<CmdCreateSoldier3>(),};
+        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, ActionPointCost = actionPointCost, Func = obj.AddComponent<CmdCreateSoldier3>(),};
         Commands.Add(cmdId, ci);
         
         cmdId = CommandID.CreateSoldier4;
         cmdName = csv.GetValue((int)cmdId, "Name");
+        actionPointCost = csv.GetValueInt((int) cmdId, "ActionPointCost");
+        if (actionPointCost > 0)    cmdName += $"({actionPointCost})";
         order = csv.GetValueInt((int)cmdId, "Order");
-        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, Func = obj.AddComponent<CmdCreateSoldier4>(),};
+        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, ActionPointCost = actionPointCost, Func = obj.AddComponent<CmdCreateSoldier4>(),};
         Commands.Add(cmdId, ci);
         
         
         cmdId = CommandID.Lumberjack;
         cmdName = csv.GetValue((int)cmdId, "Name");
+        actionPointCost = csv.GetValueInt((int) cmdId, "ActionPointCost");
+        if (actionPointCost > 0)    cmdName += $"({actionPointCost})";
         order = csv.GetValueInt((int)cmdId, "Order");
-        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, Func = obj.AddComponent<CmdLumberjack>(),};
+        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, ActionPointCost = actionPointCost, Func = obj.AddComponent<CmdLumberjack>(),};
         Commands.Add(cmdId, ci);
         
         cmdId = CommandID.Harvest;
         cmdName = csv.GetValue((int)cmdId, "Name");
+        actionPointCost = csv.GetValueInt((int) cmdId, "ActionPointCost");
+        if (actionPointCost > 0)    cmdName += $"({actionPointCost})";
         order = csv.GetValueInt((int)cmdId, "Order");
-        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, Func = obj.AddComponent<CmdHarvest>(),};
+        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, ActionPointCost = actionPointCost, Func = obj.AddComponent<CmdHarvest>(),};
         Commands.Add(cmdId, ci);
         
         cmdId = CommandID.Mining;
         cmdName = csv.GetValue((int)cmdId, "Name");
+        actionPointCost = csv.GetValueInt((int) cmdId, "ActionPointCost");
+        if (actionPointCost > 0)    cmdName += $"({actionPointCost})";
         order = csv.GetValueInt((int)cmdId, "Order");
-        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, Func = obj.AddComponent<CmdMining>(),};
+        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, ActionPointCost = actionPointCost, Func = obj.AddComponent<CmdMining>(),};
         Commands.Add(cmdId, ci);
         
         cmdId = CommandID.BuildRoad;
         cmdName = csv.GetValue((int)cmdId, "Name");
+        actionPointCost = csv.GetValueInt((int) cmdId, "ActionPointCost");
+        if (actionPointCost > 0)    cmdName += $"({actionPointCost})";
         order = csv.GetValueInt((int)cmdId, "Order");
-        ci = new CommandInfo(){CmdId = cmdId, Name =cmdName, Order = order, Func = obj.AddComponent<CmdBuildRoad>(),};
+        ci = new CommandInfo(){CmdId = cmdId, Name =cmdName, Order = order, ActionPointCost = actionPointCost, Func = obj.AddComponent<CmdBuildRoad>(),};
         Commands.Add(cmdId, ci);
         
         cmdId = CommandID.BuildBridge;
         cmdName = csv.GetValue((int)cmdId, "Name");
+        actionPointCost = csv.GetValueInt((int) cmdId, "ActionPointCost");
+        if (actionPointCost > 0)    cmdName += $"({actionPointCost})";
         order = csv.GetValueInt((int)cmdId, "Order");
-        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, Func = obj.AddComponent<CmdBuildBridge>(),};
+        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, ActionPointCost = actionPointCost, Func = obj.AddComponent<CmdBuildBridge>(),};
         Commands.Add(cmdId, ci);
         
         cmdId = CommandID.DismissTroop;
         cmdName = csv.GetValue((int)cmdId, "Name");
+        actionPointCost = csv.GetValueInt((int) cmdId, "ActionPointCost");
+        if (actionPointCost > 0)    cmdName += $"({actionPointCost})";
         order = csv.GetValueInt((int)cmdId, "Order");
-        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, Func = obj.AddComponent<CmdDismissTroop>(),};
+        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, ActionPointCost = actionPointCost, Func = obj.AddComponent<CmdDismissTroop>(),};
         Commands.Add(cmdId, ci);
         
 
         cmdId = CommandID.March;
         cmdName = csv.GetValue((int)cmdId, "Name");
+        actionPointCost = csv.GetValueInt((int) cmdId, "ActionPointCost");
+        if (actionPointCost > 0)    cmdName += $"({actionPointCost})";
         order = csv.GetValueInt((int)cmdId, "Order");
-        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, Func = obj.AddComponent<CmdMarch>(),};
+        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, ActionPointCost = actionPointCost, Func = obj.AddComponent<CmdMarch>(),};
         Commands.Add(cmdId, ci);
         
         cmdId = CommandID.Attack;
         cmdName = csv.GetValue((int)cmdId, "Name");
+        actionPointCost = csv.GetValueInt((int) cmdId, "ActionPointCost");
+        if (actionPointCost > 0)    cmdName += $"({actionPointCost})";
         order = csv.GetValueInt((int)cmdId, "Order");
-        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, Func = obj.AddComponent<CmdAttack>(),};
+        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, ActionPointCost = actionPointCost, Func = obj.AddComponent<CmdAttack>(),};
         Commands.Add(cmdId, ci);
         
         cmdId = CommandID.Guard;
         cmdName = csv.GetValue((int)cmdId, "Name");
+        actionPointCost = csv.GetValueInt((int) cmdId, "ActionPointCost");
+        if (actionPointCost > 0)    cmdName += $"({actionPointCost})";
         order = csv.GetValueInt((int)cmdId, "Order");
-        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, Func = obj.AddComponent<CmdGuard>(),};
+        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, ActionPointCost = actionPointCost, Func = obj.AddComponent<CmdGuard>(),};
         Commands.Add(cmdId, ci);
         
         cmdId = CommandID.RapidMarch;
         cmdName = csv.GetValue((int)cmdId, "Name");
+        actionPointCost = csv.GetValueInt((int) cmdId, "ActionPointCost");
+        if (actionPointCost > 0)    cmdName += $"({actionPointCost})";
         order = csv.GetValueInt((int)cmdId, "Order");
-        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, Func = obj.AddComponent<CmdRapidMarch>(),};
+        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, ActionPointCost = actionPointCost, Func = obj.AddComponent<CmdRapidMarch>(),};
         Commands.Add(cmdId, ci);
         
         cmdId = CommandID.Charge;
         cmdName = csv.GetValue((int)cmdId, "Name");
+        actionPointCost = csv.GetValueInt((int) cmdId, "ActionPointCost");
+        if (actionPointCost > 0)    cmdName += $"({actionPointCost})";
         order = csv.GetValueInt((int)cmdId, "Order");
-        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, Func = obj.AddComponent<CmdCharge>(),};
+        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, ActionPointCost = actionPointCost, Func = obj.AddComponent<CmdCharge>(),};
         Commands.Add(cmdId, ci);
         
         cmdId = CommandID.Halt;
         cmdName = csv.GetValue((int)cmdId, "Name");
+        actionPointCost = csv.GetValueInt((int) cmdId, "ActionPointCost");
+        if (actionPointCost > 0)    cmdName += $"({actionPointCost})";
         order = csv.GetValueInt((int)cmdId, "Order");
-        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, Func = obj.AddComponent<CmdHalt>(),};
+        ci = new CommandInfo(){CmdId = cmdId, Name = cmdName, Order = order, ActionPointCost = actionPointCost, Func = obj.AddComponent<CmdHalt>(),};
         Commands.Add(cmdId, ci);
         
     }

@@ -43,20 +43,20 @@ public class RoomLogic : MonoBehaviour
     {
         MsgDispatcher.RegisterMsg((int)ROOM_REPLY.ActorAddReply, OnActorAddReply);
         MsgDispatcher.RegisterMsg((int)ROOM_REPLY.ActorRemoveReply, OnActorRemoveReply);
-        MsgDispatcher.RegisterMsg((int)ROOM_REPLY.TroopMoveReply, OnTroopMoveReply);
+        MsgDispatcher.RegisterMsg((int)ROOM_REPLY.ActorMoveReply, OnActorMoveReply);
         MsgDispatcher.RegisterMsg((int)ROOM_REPLY.CityAddReply, OnCityAddReply);
         MsgDispatcher.RegisterMsg((int)ROOM_REPLY.CityRemoveReply, OnCityRemoveReply);
-        MsgDispatcher.RegisterMsg((int)ROOM_REPLY.UpdateResReply, OnUpdateResReply);
+        MsgDispatcher.RegisterMsg((int)ROOM_REPLY.TryCommandReply, OnTryCommandReply);
     }
 
     private void RemoveListener()
     {
         MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.ActorAddReply, OnActorAddReply);
         MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.ActorRemoveReply, OnActorRemoveReply);
-        MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.TroopMoveReply, OnTroopMoveReply);
+        MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.ActorMoveReply, OnActorMoveReply);
         MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.CityAddReply, OnCityAddReply);
         MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.CityRemoveReply, OnCityRemoveReply);
-        MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.UpdateResReply, OnUpdateResReply);
+        MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.TryCommandReply, OnTryCommandReply);
     }
     
     #endregion
@@ -117,13 +117,13 @@ public class RoomLogic : MonoBehaviour
         }
     }
 
-    private void OnTroopMoveReply(byte[] bytes)
+    private void OnActorMoveReply(byte[] bytes)
     {
-        TroopMoveReply input = TroopMoveReply.Parser.ParseFrom(bytes);
+        ActorMoveReply input = ActorMoveReply.Parser.ParseFrom(bytes);
         if (!input.Ret)
         {
             string msg = "移动Actor失败！";
-            GameRoomManager.Instance.Log("MSG: OnTroopMoveReply - " + msg);
+            GameRoomManager.Instance.Log("MSG: OnActorMoveReply - " + msg);
             return;
         }
 
@@ -178,17 +178,22 @@ public class RoomLogic : MonoBehaviour
         }
     }
 
-    private void OnUpdateResReply(byte[] bytes)
+    private void OnTryCommandReply(byte[] bytes)
     {
-        UpdateResReply input = UpdateResReply.Parser.ParseFrom(bytes);
+        TryCommandReply input = TryCommandReply.Parser.ParseFrom(bytes);
         if (!input.Ret)
         {
-            string msg = $"获取资源信息失败！";
-            GameRoomManager.Instance.Log("MSG: OnUpdateResReply Error - " + msg);
+            UIManager.Instance.SystemTips(input.ErrMsg, PanelSystemTips.MessageType.Error);
+            GameRoomManager.Instance.Log($"CmdAttack OnTryCommandReply Error - " + input.ErrMsg);
+            var ab = ActorManager.GetActor(input.ActorId);
+            if (ab != null)
+            {
+                ab.StateMachine.TriggerTransition(FSMStateActor.StateEnum.IDLE);
+            }
             return;
         }
-        GameRoomManager.Instance.CurrentPlayer.SetRes(input.Wood, input.Food, input.Iron);        
-    }
 
+        // 该指令可以执行,虽然是马后炮
+    }
     #endregion
 }

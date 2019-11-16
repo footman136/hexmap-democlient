@@ -10,6 +10,8 @@ public class RoomPlayerInfo : MonoBehaviour
     [SerializeField] private int _wood;
     [SerializeField] private int _food;
     [SerializeField] private int _iron;
+    [SerializeField] private int _actionPoint;
+    [SerializeField] private int _actionPointMax;
 
     public string Account => _account;
     public long TokenId => _tokenId;
@@ -17,7 +19,9 @@ public class RoomPlayerInfo : MonoBehaviour
     public int Wood => _wood;
     public int Food => _food;
     public int Iron => _iron;
-    
+    public int ActionPoint => _actionPoint;
+    public int ActionPointMax => _actionPointMax;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -41,5 +45,11 @@ public class RoomPlayerInfo : MonoBehaviour
         _wood = wood;
         _food = food;
         _iron = iron;
+    }
+
+    public void SetActionPoint(int actionPoint, int actionPointMax)
+    {
+        _actionPoint = actionPoint;
+        _actionPointMax = actionPointMax;
     }
 }

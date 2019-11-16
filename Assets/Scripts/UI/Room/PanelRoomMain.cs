@@ -30,6 +30,9 @@ public class PanelRoomMain : MonoBehaviour
     
     [SerializeField] private Material terrainMaterial;
     [SerializeField] private PanelCommands _commands;
+
+    [SerializeField] private Slider _sliderActionPoint;
+    [SerializeField] private Text _txtActionPoint;
     
     public Transform CommandContainer => _commands.Container;
     
@@ -86,13 +89,13 @@ public class PanelRoomMain : MonoBehaviour
     void AddListener()
     {
         MsgDispatcher.RegisterMsg((int)ROOM_REPLY.UpdateResReply, OnUpdateResReply);
-        
+        MsgDispatcher.RegisterMsg((int)ROOM_REPLY.UpdateActionPointReply, OnUpdateActionPointReply);
     }
 
     void RemoveListener()
     {
         MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.UpdateResReply, OnUpdateResReply);
-        
+        MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.UpdateActionPointReply, OnUpdateActionPointReply);
     }
     
     #endregion
@@ -637,8 +640,20 @@ public class PanelRoomMain : MonoBehaviour
         _txtWood.text = input.Wood.ToString();
         _txtFood.text = input.Food.ToString();
         _txtIron.text = input.Iron.ToString();
+        
+        GameRoomManager.Instance.CurrentPlayer.SetRes(input.Wood, input.Food, input.Iron);
     }
 
+    private void OnUpdateActionPointReply(byte[] bytes)
+    {
+        UpdateActionPointReply input = UpdateActionPointReply.Parser.ParseFrom(bytes);
+        _txtActionPoint.text = $"{input.ActionPoint}/{input.ActionPointMax}";
+        _sliderActionPoint.minValue = 0;
+        _sliderActionPoint.maxValue = input.ActionPointMax;
+        _sliderActionPoint.value = input.ActionPoint;
+
+        GameRoomManager.Instance.CurrentPlayer.SetActionPoint(input.ActionPoint, input.ActionPointMax);        
+    }
     
     #endregion
 }

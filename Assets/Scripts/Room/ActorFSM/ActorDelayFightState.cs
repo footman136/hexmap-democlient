@@ -39,14 +39,14 @@ namespace AI
             if (!hasPlayFight && Owner.GetLastedTime() > _actorBehaviour.AttackInterval)
             { // 战斗动画播放结束, 休息一会儿
                 hasPlayFight = true;
-                TroopPlayAni output = new TroopPlayAni()
+                ActorPlayAni output = new ActorPlayAni()
                 {
                     RoomId = _actorBehaviour.RoomId,
                     OwnerId = _actorBehaviour.OwnerId,
                     ActorId = _actorBehaviour.ActorId,
                     AiState = 2, // FSMStateActor.StateEnum
                 };              
-                GameRoomManager.Instance.SendMsg(ROOM.TroopPlayAni, output.ToByteArray());
+                GameRoomManager.Instance.SendMsg(ROOM.ActorPlayAni, output.ToByteArray());
             }
 
             if (Owner.TimeIsUp())

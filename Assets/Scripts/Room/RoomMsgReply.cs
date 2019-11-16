@@ -205,6 +205,14 @@ public class RoomMsgReply
                 OwnerId = GameRoomManager.Instance.CurrentPlayer.TokenId,
             };
             GameRoomManager.Instance.SendMsg(ROOM.UpdateRes, output3.ToByteArray());
+            
+            // 5-刷新玩家身上的行动点
+            UpdateActionPoint output4 = new UpdateActionPoint()
+            {
+                RoomId = input.RoomId,
+                OwnerId = GameRoomManager.Instance.CurrentPlayer.TokenId,
+            };
+            GameRoomManager.Instance.SendMsg(ROOM.UpdateActionPoint, output4.ToByteArray());
         }
     }
 

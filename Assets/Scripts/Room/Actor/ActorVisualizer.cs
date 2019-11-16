@@ -76,6 +76,7 @@ namespace Animation
         [Space(), Header("UI显示"), Space(5)] 
         [SerializeField] private PanelSliderHarvest _sliderHarvest;
         [SerializeField] private PanelSliderBlood _sliderBlood;
+        [SerializeField] private PanelShield _shield;
 
         [Space(), Header("Debug"), Space(5)]
         [SerializeField, Tooltip("If true, AI changes to this animal will be logged in the console.")]
@@ -98,6 +99,7 @@ namespace Animation
             animator.applyRootMotion = false;
             if(UIManager.Instance)
                 _inner = UIManager.Instance.Root.Find("Inner");
+            PrepareAllAnimations();
         }
         // Start is called before the first frame update
         void Start()
@@ -107,7 +109,6 @@ namespace Animation
             CurrentPosition = HexUnit.Location.Position;
             TargetPosition = HexUnit.Location.Position;
             Orientation = HexUnit.Orientation;
-            PrepareAllAnimations();
             PlayAnimation(idleStates);
         }
 
@@ -119,27 +120,27 @@ namespace Animation
 
         void OnEnable()
         {
-            MsgDispatcher.RegisterMsg((int)ROOM_REPLY.TroopAiStateReply, OnAiStateChanged);
+            MsgDispatcher.RegisterMsg((int)ROOM_REPLY.ActorAiStateReply, OnAiStateChanged);
             MsgDispatcher.RegisterMsg((int)ROOM_REPLY.HarvestStartReply, OnHarvestStartReply);
             MsgDispatcher.RegisterMsg((int)ROOM_REPLY.HarvestStopReply, OnHarvestStopReply);
             MsgDispatcher.RegisterMsg((int)ROOM_REPLY.FightStartReply, OnFightStartReply);
             MsgDispatcher.RegisterMsg((int)ROOM_REPLY.FightStopReply, OnFightStopReply);
             MsgDispatcher.RegisterMsg((int)ROOM_REPLY.SprayBloodReply, OnSprayBloodReply);
             MsgDispatcher.RegisterMsg((int)ROOM_REPLY.UpdateActorInfoReply, OnUpdateActorInfoReply);
-            MsgDispatcher.RegisterMsg((int)ROOM_REPLY.TroopPlayAniReply, OnTroopPlayAniReply);
+            MsgDispatcher.RegisterMsg((int)ROOM_REPLY.ActorPlayAniReply, OnActorPlayAniReply);
             MsgDispatcher.RegisterMsg((int)ROOM_REPLY.AmmoSupplyReply, OnAmmoSupplyReply);
         }
 
         void OnDisable()
         {
-            MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.TroopAiStateReply, OnAiStateChanged);
+            MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.ActorAiStateReply, OnAiStateChanged);
             MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.HarvestStartReply, OnHarvestStartReply);
             MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.HarvestStopReply, OnHarvestStopReply);
             MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.FightStartReply, OnFightStartReply);
             MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.FightStopReply, OnFightStopReply);
             MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.SprayBloodReply, OnSprayBloodReply);
             MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.UpdateActorInfoReply, OnUpdateActorInfoReply);
-            MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.TroopPlayAniReply, OnTroopPlayAniReply);
+            MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.ActorPlayAniReply, OnActorPlayAniReply);
             MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.AmmoSupplyReply, OnAmmoSupplyReply);
         }
 
@@ -192,6 +193,7 @@ namespace Animation
         }
 
         #endregion
+        
         #region 播放动画
 
         private void PrepareAllAnimations()
@@ -271,7 +273,7 @@ namespace Animation
         }
 
         /// <summary>
-        /// 仅播放动画,但是不修改AI状态机
+        /// 仅播放动画,但是不修改AI状态机CurrentAiState
         /// </summary>
         /// <param name="aiState"></param>
         public void PlayAnimation(StateEnum aiState)
@@ -328,11 +330,35 @@ namespace Animation
         
         #endregion
         
+        #region 盾牌效果(驻守警戒)
+        
+        public void ShowShield(bool show = true)
+        {
+            if (show)
+            {
+                if (!_shield)
+                {
+                    _shield = GameRoomManager.Instance.FightManager.Shield.Spawn(_inner, Vector3.zero);
+                    _shield.Init(this);
+                }
+            }
+            else
+            {
+                if (_shield)
+                {
+                    _shield.Recycle();
+                    _shield = null;
+                }
+            }
+        }
+        
+        #endregion
+        
         #region 状态改变
         
         private void OnAiStateChanged(byte[] bytes)
         {
-            TroopAiStateReply input = TroopAiStateReply.Parser.ParseFrom(bytes);
+            ActorAiStateReply input = ActorAiStateReply.Parser.ParseFrom(bytes);
             if (input.ActorId != ActorId)
                 return; // 不是自己，略过
             if (!input.Ret)
@@ -355,6 +381,8 @@ namespace Animation
             TargetPosition = newPosition;
             TargetActorId = input.TargetId;
             TargetCellIndex = input.CellIndexTo;
+            
+            ShowShield(false);
 
             AnimationState[] aniState = null;
             switch (CurrentAiState)
@@ -372,9 +400,8 @@ namespace Animation
                     break;
                 case StateEnum.WALK:
                 case StateEnum.WALKFIGHT:
-                case StateEnum.WALKGUARD:
                     GameRoomManager.Instance.HexmapHelper.DoMove(input.ActorId, input.CellIndexFrom, input.CellIndexTo);
-                    Debug.Log($"MSG: TroopAiState - {CurrentAiState} - From<{fromCell.coordinates.X},{fromCell.coordinates.X}> - To<{targetCell.coordinates.X},{targetCell.coordinates.Z}>");
+                    Debug.Log($"MSG: ActorAiState - {CurrentAiState} - From<{fromCell.coordinates.X},{fromCell.coordinates.X}> - To<{targetCell.coordinates.X},{targetCell.coordinates.Z}>");
                     //aniState = movementStates;
                     aniState = runningStates;
                     break;
@@ -384,9 +411,10 @@ namespace Animation
                     aniState = attackingStates;
                     break;
                 case StateEnum.DELAYFIGHT:
-                    aniState = idleStates; // 先不播放战斗动画,过了AttackInternal的时间以后再通过TroopPlayAni消息来播
+                    aniState = idleStates; // 先不播放战斗动画,过了AttackInternal的时间以后再通过ActorPlayAni消息来播
                     break;
                 case StateEnum.GUARD:
+                    ShowShield();
                     GameRoomManager.Instance.HexmapHelper.Stop(input.ActorId);
                     aniState = idleStates;
                     break;
@@ -550,9 +578,9 @@ namespace Animation
             AmmoBase = input.AmmoBase;
         }
 
-        private void OnTroopPlayAniReply(byte[] bytes)
+        private void OnActorPlayAniReply(byte[] bytes)
         {
-            TroopPlayAniReply input = TroopPlayAniReply.Parser.ParseFrom(bytes);
+            ActorPlayAniReply input = ActorPlayAniReply.Parser.ParseFrom(bytes);
             if (input.ActorId != ActorId)
                 return; // 不是自己，略过
             
@@ -571,7 +599,7 @@ namespace Animation
         }
         
         #endregion
-
+        
     }
 
 }

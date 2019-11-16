@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using AI;
+using GameUtils;
+using Google.Protobuf;
 using Protobuf.Room;
 using UnityEngine;
 using static FSMStateActor;
@@ -36,15 +38,48 @@ public class CmdAttack : MonoBehaviour, ICommand
         if (ci)
             ci.Select(false);
     }
-    
+
+    private PickInfo _piTarget;
     private void OnCommandTargetSelected(PickInfo piTarget)
+    {
+        // 看看行动点够不够
+        if (GameRoomManager.Instance.CurrentPlayer.ActionPoint < CommandManager.Instance.RunningCommandActionPoint)
+        {
+            string msg = "行动点数不够, 本操作无法执行! ";
+            UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
+            Debug.Log("CmdAttack OnCommandTargetSelected Error - " + msg);
+            Stop();
+            return;
+        }
+        
+        // 执行
+        _piTarget = piTarget;
+        DoAttack();
+        Stop();
+        
+        // 正规流程,应该是先向服务器申请行动点是否足够,等待服务器确认以后再真正地执行
+        // 但是这样会导致服务器反应较为迟钝,而且客户端逻辑相对复杂,所有指令都要经过这样"申请/确认"的流程
+        // 所以,这里先再客户端自己确认行动点是否足够以后,就先执行了,然后再发送执行消耗行动点
+        // 如果服务器返回失败,则停止刚才的行为. 当然,这样做可能会导致之前的行动被打断,但是理论上服务器被驳回的几率较小,可以忽略
+        TryCommand output = new TryCommand()
+        {
+            RoomId = GameRoomManager.Instance.RoomId,
+            OwnerId = GameRoomManager.Instance.CurrentPlayer.TokenId,
+            ActorId = CommandManager.Instance.CurrentExecuter.CurrentActor.ActorId,
+            CommandId = (int)CommandManager.Instance.RunningCommandId,
+            ActionPointCost = CommandManager.Instance.RunningCommandActionPoint,
+        };
+        GameRoomManager.Instance.SendMsg(ROOM.TryCommand, output.ToByteArray());
+    }
+
+    private void DoAttack()
     {
         var avMe = CommandManager.Instance.CurrentExecuter.CurrentActor;
         if (!avMe)
             return;
-        var avTarget = piTarget.CurrentActor;
+        var avTarget = _piTarget.CurrentActor;
         
-        HexCell cellTarget = piTarget.CurrentCell;
+        HexCell cellTarget = _piTarget.CurrentCell;
         if (!cellTarget)
             return;
         
@@ -59,8 +94,7 @@ public class CmdAttack : MonoBehaviour, ICommand
             if (avMe.IsEnemyInRange(avTarget) && avMe.OwnerId != avTarget.OwnerId)
             {
                 // 这里其实应该发送TroopAiState消息到服务器,而不是直接操作状态机,但是因为状态机目前均行在本地,所以就直接调用了
-                abMe.StateMachine.TriggerTransition(StateEnum.FIGHT, cellTarget.Index, abMe.AttackDuration, piTarget.CurrentActor.ActorId);
-                Stop();
+                abMe.StateMachine.TriggerTransition(StateEnum.FIGHT, cellTarget.Index, abMe.AttackDuration, _piTarget.CurrentActor.ActorId);
                 return;
             }
         }
@@ -88,7 +122,5 @@ public class CmdAttack : MonoBehaviour, ICommand
         {// 目标点仅仅是一个位置坐标,则在行军过程中,搜索进攻,发现任意敌人就停下来打它
             abMe.StateMachine.TriggerTransition(FSMStateActor.StateEnum.WALKFIGHT, cellTarget.Index);
         }
-
-        Stop();
     }
 }

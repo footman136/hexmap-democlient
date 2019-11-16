@@ -8,6 +8,7 @@ public class FightManager : MonoBehaviour
     public PanelSliderHarvest SliderHarvest;
     public PanelSliderBlood SliderBlood;
     public PanelSprayBlood SprayBlood;
+    public PanelShield Shield;
     
     
     

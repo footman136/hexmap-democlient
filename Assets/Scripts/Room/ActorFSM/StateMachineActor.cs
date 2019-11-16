@@ -37,7 +37,6 @@ using static FSMStateActor;
             var harvestState = new ActorHarvestState(this, _actorBehaviour);
             var walkState = new ActorWalkState(this, _actorBehaviour);
             var walkFightState = new ActorWalkFightState(this, _actorBehaviour);
-            var walkGuardState = new ActorWalkGuardState(this, _actorBehaviour);
             var fightState = new ActorFightState(this, _actorBehaviour);
             var delayFightState = new ActorDelayFightState(this, _actorBehaviour);
             var guardState = new ActorGuardState(this, _actorBehaviour);
@@ -50,7 +49,6 @@ using static FSMStateActor;
                 {StateEnum.HARVEST, harvestState},
                 {StateEnum.WALK, walkState},
                 {StateEnum.WALKFIGHT, walkFightState},
-                {StateEnum.WALKGUARD, walkGuardState},
                 {StateEnum.FIGHT, fightState},
                 {StateEnum.DELAYFIGHT, delayFightState},
                 {StateEnum.GUARD, guardState},
@@ -67,7 +65,6 @@ using static FSMStateActor;
                 StateEnum.HARVEST,
                 StateEnum.WALK,
                 StateEnum.WALKFIGHT,
-                StateEnum.WALKGUARD,
                 StateEnum.FIGHT, // 敌人如果在附近,直接可以进入战斗状态
                 StateEnum.DELAYFIGHT, // 间隔一定的时间再攻击, 弹药基数足够的情况下,第二次攻击都用此方式
                 StateEnum.GUARD,
@@ -88,7 +85,6 @@ using static FSMStateActor;
                 StateEnum.DIE,
                 StateEnum.WALK,
                 StateEnum.WALKFIGHT,
-                StateEnum.WALKGUARD,
                 StateEnum.FIGHT,
                 StateEnum.GUARD,
             });
@@ -98,7 +94,6 @@ using static FSMStateActor;
                 StateEnum.DIE,
                 StateEnum.WALK,
                 StateEnum.WALKFIGHT,
-                StateEnum.WALKGUARD,
                 StateEnum.FIGHT,
                 StateEnum.GUARD,
             });
@@ -108,17 +103,6 @@ using static FSMStateActor;
                 StateEnum.DIE,
                 StateEnum.WALK,
                 StateEnum.WALKFIGHT,
-                StateEnum.WALKGUARD,
-                StateEnum.FIGHT,
-                StateEnum.GUARD,
-            });
-            allowedTransitions.Add(StateEnum.WALKGUARD, new List<StateEnum>
-            {
-                StateEnum.IDLE,
-                StateEnum.DIE,
-                StateEnum.WALK,
-                StateEnum.WALKFIGHT,
-                StateEnum.WALKGUARD,
                 StateEnum.FIGHT,
                 StateEnum.GUARD,
             });
@@ -128,7 +112,6 @@ using static FSMStateActor;
                 StateEnum.DIE,
                 StateEnum.WALK,
                 StateEnum.WALKFIGHT,
-                StateEnum.WALKGUARD,
                 StateEnum.FIGHT,
                 StateEnum.GUARD,
             });
@@ -138,7 +121,6 @@ using static FSMStateActor;
                 StateEnum.DIE,
                 StateEnum.WALK,
                 StateEnum.WALKFIGHT,
-                StateEnum.WALKGUARD,
                 StateEnum.FIGHT,
                 StateEnum.GUARD,
             });
@@ -148,7 +130,6 @@ using static FSMStateActor;
                 StateEnum.DIE,
                 StateEnum.WALK,
                 StateEnum.WALKFIGHT,
-                StateEnum.WALKGUARD,
                 StateEnum.FIGHT,
                 StateEnum.GUARD,
             });
@@ -161,7 +142,7 @@ using static FSMStateActor;
             {
                 SetTarget(cellIndex, actorId);
                 var ab = _actorBehaviour;
-                TroopAiState output = new TroopAiState()
+                ActorAiState output = new ActorAiState()
                 {
                     RoomId = ab.RoomId,
                     OwnerId = ab.OwnerId,
@@ -173,7 +154,7 @@ using static FSMStateActor;
                     Orientation = ab.Orientation,
                     Speed = ab.Speed,
                 };
-                GameRoomManager.Instance.SendMsg(ROOM.TroopAiState, output.ToByteArray());
+                GameRoomManager.Instance.SendMsg(ROOM.ActorAiState, output.ToByteArray());
 
                 var oldState = CurrentAiState;
                 CurrentAiState = newState;

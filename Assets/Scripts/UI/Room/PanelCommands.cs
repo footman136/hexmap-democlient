@@ -35,20 +35,6 @@ public class PanelCommands : MonoBehaviour
         timeDelay = 0;
         
         TickFunc();
-
-//        for(int i = 0; i < _container.childCount; ++i)
-//        {
-//            var child = _container.GetChild(i);
-//            var ci = child.GetComponent<CommandItem>();
-//            if (ci != null)
-//            {
-//                var cmdId = ci.CmdId;
-//                if (CommandManager.Instance.Commands.ContainsKey(cmdId))
-//                {
-//                    CommandManager.Instance.Commands[cmdId].Func.Tick();
-//                }
-//            }
-//        }
     }
 
     public void SetSelector(PickInfo pickInfo)

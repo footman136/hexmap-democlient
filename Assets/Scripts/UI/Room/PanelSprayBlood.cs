@@ -32,6 +32,11 @@ public class PanelSprayBlood : MonoBehaviour
     {
         _startTime += Time.deltaTime;
         
+        _pos = _actor.CurrentPosition;
+        _pos.y += 16;
+        _posScreen = Camera.main.WorldToScreenPoint(_pos);
+        transform.position = _posScreen;
+
         // 移动动画
         if (Mathf.Abs(transform.localPosition.y - _posEnd.y) > 0.01f)
         {

@@ -113,7 +113,7 @@ public class UIManager : MonoBehaviour
     
     #region SystemTips
 
-    public List<SystemTipsParam> SystemTipsList
+    private List<SystemTipsParam> SystemTipsList
     {
         get { return _systemTipsList; }
         set { _systemTipsList = value; }

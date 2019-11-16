@@ -16,8 +16,7 @@
             HARVEST = 5,
             GUARD = 6,
             WALKFIGHT = 7,
-            WALKGUARD = 8,
-            DELAYFIGHT = 9,
+            DELAYFIGHT = 8,
             NONE = 20,
         }
     }
