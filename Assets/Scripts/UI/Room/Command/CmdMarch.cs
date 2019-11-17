@@ -82,5 +82,7 @@ public class CmdMarch : MonoBehaviour, ICommand
             ab.StateMachine.TriggerTransition(FSMStateActor.StateEnum.WALK, cellTarget.Index);
         }
         Stop();
+        // 消耗行动点 
+        CmdAttack.TryCommand();
     }
 }

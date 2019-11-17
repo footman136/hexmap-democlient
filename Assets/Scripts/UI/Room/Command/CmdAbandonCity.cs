@@ -43,6 +43,8 @@ public class CmdAbandonCity : MonoBehaviour, ICommand
                     }; 
                     GameRoomManager.Instance.SendMsg(ROOM.CityRemove, output.ToByteArray());
                 }
+                // 消耗行动点 
+                CmdAttack.TryCommand();
             }
                 break;
             case PanelMessageBox.BUTTON.NO:

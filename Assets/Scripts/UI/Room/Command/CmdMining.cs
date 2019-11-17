@@ -40,6 +40,8 @@ public class CmdMining : MonoBehaviour, ICommand
             GameRoomManager.Instance.SendMsg(ROOM.HarvestStart, output.ToByteArray());
 
             ab.StateMachine.TriggerTransition(FSMStateActor.StateEnum.HARVEST, 0, durationTime);
+            // 消耗行动点 
+            CmdAttack.TryCommand();
         }
         else
         {

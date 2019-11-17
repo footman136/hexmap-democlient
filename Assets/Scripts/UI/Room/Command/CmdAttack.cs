@@ -9,12 +9,13 @@ using static FSMStateActor;
 
 public class CmdAttack : MonoBehaviour, ICommand
 {
-    public GameObject Cmd{set;get;}
+    public GameObject Cmd { set; get; }
 
-    public int CanRun ()
+    public int CanRun()
     {
         return 1;
     }
+
     public void Run()
     {
         CursorManager.Instance.ShowCursor(CursorManager.CURSOR_TYPE.ATTACK);
@@ -26,9 +27,11 @@ public class CmdAttack : MonoBehaviour, ICommand
                 ci.Select(true);
         }
     }
+
     public void Tick()
     {
     }
+
     public void Stop()
     {
         CursorManager.Instance.ShowCursor(CursorManager.CURSOR_TYPE.NONE);
@@ -40,6 +43,7 @@ public class CmdAttack : MonoBehaviour, ICommand
     }
 
     private PickInfo _piTarget;
+
     private void OnCommandTargetSelected(PickInfo piTarget)
     {
         // 看看行动点够不够
@@ -51,12 +55,23 @@ public class CmdAttack : MonoBehaviour, ICommand
             Stop();
             return;
         }
-        
+
         // 执行
         _piTarget = piTarget;
         DoAttack();
         Stop();
-        
+
+        TryCommand();
+    }
+
+    public static void TryCommand()
+    {
+        var av = CommandManager.Instance.CurrentExecuter.CurrentActor;
+        long actorId = 0;
+        if (av != null)
+        {
+            actorId = av.ActorId;
+        }
         // 正规流程,应该是先向服务器申请行动点是否足够,等待服务器确认以后再真正地执行
         // 但是这样会导致服务器反应较为迟钝,而且客户端逻辑相对复杂,所有指令都要经过这样"申请/确认"的流程
         // 所以,这里先再客户端自己确认行动点是否足够以后,就先执行了,然后再发送执行消耗行动点
@@ -65,10 +80,11 @@ public class CmdAttack : MonoBehaviour, ICommand
         {
             RoomId = GameRoomManager.Instance.RoomId,
             OwnerId = GameRoomManager.Instance.CurrentPlayer.TokenId,
-            ActorId = CommandManager.Instance.CurrentExecuter.CurrentActor.ActorId,
-            CommandId = (int)CommandManager.Instance.RunningCommandId,
+            ActorId = actorId,
+            CommandId = (int) CommandManager.Instance.RunningCommandId,
             ActionPointCost = CommandManager.Instance.RunningCommandActionPoint,
         };
+    
         GameRoomManager.Instance.SendMsg(ROOM.TryCommand, output.ToByteArray());
     }
 
