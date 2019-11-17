@@ -365,14 +365,20 @@ namespace Animation
                 return;
 
             HexCell fromCell = GameRoomManager.Instance.HexmapHelper.GetCell(input.CellIndexFrom);
-            
-            HexCell targetCell = GameRoomManager.Instance.HexmapHelper.GetCell(input.CellIndexTo);
-            Vector3 newPosition = targetCell.Position;
+
+            Vector3 newPosition = Vector3.zero;
+            HexCell targetCell = null;
             ActorVisualizer avTarget = null;
             if (AllActors.ContainsKey(input.TargetId))
             { //如果目标是单位,优先用单位的坐标作为目标点
                 avTarget = AllActors[input.TargetId];
                 newPosition = avTarget.CurrentPosition;
+                targetCell = avTarget.HexUnit.Location;
+            }
+            else
+            {
+                targetCell = GameRoomManager.Instance.HexmapHelper.GetCell(input.CellIndexTo);
+                newPosition = targetCell.Position;
             }
 
             StateEnum newAiState = (StateEnum)input.State;

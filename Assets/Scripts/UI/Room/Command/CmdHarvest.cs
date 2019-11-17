@@ -25,7 +25,23 @@ public class CmdHarvest : MonoBehaviour, ICommand
         var resType = currentCell.Res.ResType;
         int resAmount = currentCell.Res.GetAmount(resType);
         float durationTime = resAmount * 0.1f;
-        if (resAmount > 0)
+        if (resAmount <= 0)
+        {
+            string msg = $"本地没有任何资源,请去其他地方采集!";
+            UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Warning);
+            return;
+        }
+
+        // 看看行动点够不够
+        if (!CmdAttack.IsActionPointGranted())
+        {
+            string msg = "行动点数不够, 本操作无法执行! ";
+            UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
+            Debug.Log("CmdHarvest Run Error - " + msg);
+            Stop();
+            return;
+        }
+
         {
             HarvestStart output = new HarvestStart()
             {
@@ -42,11 +58,6 @@ public class CmdHarvest : MonoBehaviour, ICommand
             ab.StateMachine.TriggerTransition(FSMStateActor.StateEnum.HARVEST, 0, durationTime);
             // 消耗行动点 
             CmdAttack.TryCommand();
-        }
-        else
-        {
-            string msg = $"本地没有任何资源,请去其他地方采集!";
-            UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Warning);
         }
     }
     public void Tick()

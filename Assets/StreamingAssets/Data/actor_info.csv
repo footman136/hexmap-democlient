@@ -13,6 +13,6 @@ Id,Name,ArtPrefab,Hp,AttackPower,DefencePower,Speed,FieldOfVision,ShootingRange,
 10001,农民,Leader_BLUE_CC,100,30,30,0.2,2,1,,,
 10002,开拓者,Leader_GREEN_CC,150,50,40,0.2,3,1,,,
 10010,刀兵,Knight_BLUE_CC,200,100,50,0.2,1,1,10,3,3
-10011,长枪兵,LanceKnight_BLUE_CC,300,100,70,0.25,1,1,12,3,5
-10012,弓箭手,Hunter_BLUE_CC,150,150,60,0.15,3,3,8,3,7
-10013,骑兵,Horse_BLUE_CC,500,250,80,0.4,2,1,5,2,10
+10011,长枪兵,LanceKnight_BLUE_CC,300,120,70,0.25,1,2,12,3,5
+10012,弓箭手,Hunter_BLUE_CC,150,80,60,0.15,3,3,8,3,7
+10013,骑兵,Horse_BLUE_CC,500,180,80,0.4,2,1,5,2,10

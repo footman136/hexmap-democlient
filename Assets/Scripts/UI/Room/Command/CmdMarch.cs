@@ -36,6 +36,16 @@ public class CmdMarch : MonoBehaviour, ICommand
 
     private void OnCommandTargetSelected(PickInfo piTarget)
     {
+        // 看看行动点够不够
+        if (!CmdAttack.IsActionPointGranted())
+        {
+            string msg = "行动点数不够, 本操作无法执行! ";
+            UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
+            Debug.Log("CmdMarch OnCommandTargetSelected Error - " + msg);
+            Stop();
+            return;
+        }
+        
         var av = CommandManager.Instance.CurrentExecuter.CurrentActor;
         if (!av)
             return;

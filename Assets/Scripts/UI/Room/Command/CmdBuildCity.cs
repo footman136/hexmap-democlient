@@ -46,7 +46,16 @@ public class CmdBuildCity : MonoBehaviour, ICommand
             GameRoomManager.Instance.Log("CmdBuildCity Error - " + msg);
             return;
         }
-        else
+        // 看看行动点够不够
+        if (!CmdAttack.IsActionPointGranted())
+        {
+            string msg = "行动点数不够, 本操作无法执行! ";
+            UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
+            Debug.Log("CmdBuildCity Run Error - " + msg);
+            Stop();
+            return;
+        }
+        
         {
             CityAdd output = new CityAdd()
             {

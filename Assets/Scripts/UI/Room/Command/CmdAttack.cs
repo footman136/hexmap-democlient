@@ -47,7 +47,7 @@ public class CmdAttack : MonoBehaviour, ICommand
     private void OnCommandTargetSelected(PickInfo piTarget)
     {
         // 看看行动点够不够
-        if (GameRoomManager.Instance.CurrentPlayer.ActionPoint < CommandManager.Instance.RunningCommandActionPoint)
+        if (!IsActionPointGranted())
         {
             string msg = "行动点数不够, 本操作无法执行! ";
             UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
@@ -62,6 +62,11 @@ public class CmdAttack : MonoBehaviour, ICommand
         Stop();
 
         TryCommand();
+    }
+
+    public static bool IsActionPointGranted()
+    {
+        return GameRoomManager.Instance.CurrentPlayer.ActionPoint >= CommandManager.Instance.RunningCommandActionPoint;
     }
 
     public static void TryCommand()

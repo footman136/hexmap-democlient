@@ -55,11 +55,14 @@ namespace AI
             }
             
             // 2-寻找附近的敌人, 如果有, 且有弹药, 就干他
-//            var abEnemy = _actorBehaviour.FindEnemyInRange();
-//            if (abEnemy != null && _actorBehaviour.AmmoBase > 0)
-//            {
-//                _actorBehaviour.StateMachine.TriggerTransition(StateEnum.FIGHT, 0, 0, abEnemy.ActorId);
-//            }
+            var abEnemy = _actorBehaviour.FindEnemyInRange();
+            if (abEnemy != null && _actorBehaviour.AmmoBase > 0)
+            {
+                if (CmdAttack.IsActionPointGranted()) // 弹药足够
+                {
+                    _actorBehaviour.StateMachine.TriggerTransition(StateEnum.FIGHT, 0, 0, abEnemy.ActorId);
+                }
+            }
         }
 
         public override void Exit(bool disabled)

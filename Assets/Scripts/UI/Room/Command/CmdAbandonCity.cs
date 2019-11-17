@@ -14,6 +14,15 @@ public class CmdAbandonCity : MonoBehaviour, ICommand
     }
     public void Run()
     {
+        // 看看行动点够不够
+        if (!CmdAttack.IsActionPointGranted())
+        {
+            string msg = "行动点数不够, 本操作无法执行! ";
+            UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
+            Debug.Log("CmdAbandonCity Run Error - " + msg);
+            Stop();
+            return;
+        }
         string title = "提示";
         string content = "你要废弃这座城市吗?"; 
         UIManager.Instance.MessageBox(title, content, (int)PanelMessageBox.BUTTON.YES|(int)PanelMessageBox.BUTTON.NO, OnConfirm);

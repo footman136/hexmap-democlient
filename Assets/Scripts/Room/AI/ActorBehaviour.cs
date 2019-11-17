@@ -166,7 +166,7 @@ namespace AI
                 if (cell.Unit != null)
                 {
                     var av = cell.Unit.GetComponent<ActorVisualizer>();
-                    if (av != null && av.OwnerId != OwnerId)
+                    if (av != null && av.OwnerId != OwnerId && av.CurrentAiState != StateEnum.DIE && av.CurrentAiState != StateEnum.VANISH)
                     { // 绕这么大一圈子,将来移植到服务器的话,需要考虑应该如何做
                         var ab = GameRoomManager.Instance.RoomLogic.ActorManager.GetActor(av.ActorId);
                         return ab;

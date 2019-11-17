@@ -17,7 +17,7 @@ public class PanelShield : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
         _pos = _actor.CurrentPosition;
         _pos.y += 16;
@@ -27,5 +27,9 @@ public class PanelShield : MonoBehaviour
     public void Init(ActorVisualizer av)
     {
         _actor = av;
+        _pos = _actor.CurrentPosition;
+        _pos.y += 16;
+        _posScreen = Camera.main.WorldToScreenPoint(_pos);
+        transform.position = _posScreen;
     }
 }

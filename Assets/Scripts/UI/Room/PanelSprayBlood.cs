@@ -27,22 +27,11 @@ public class PanelSprayBlood : MonoBehaviour
     {
     }
 
+    private float _posY, _posEndY;
     // Update is called once per frame
     void Update()
     {
         _startTime += Time.deltaTime;
-        
-        _pos = _actor.CurrentPosition;
-        _pos.y += 16;
-        _posScreen = Camera.main.WorldToScreenPoint(_pos);
-        transform.position = _posScreen;
-
-        // 移动动画
-        if (Mathf.Abs(transform.localPosition.y - _posEnd.y) > 0.01f)
-        {
-            Vector3 posNow = Vector3.Lerp(transform.localPosition, _posEnd, Time.deltaTime * _SPEED);
-            transform.localPosition = posNow;
-        }
         
         if (_startTime >= _FLY_TIME)
         {
@@ -54,6 +43,20 @@ public class PanelSprayBlood : MonoBehaviour
             gameObject.Recycle();
             _startTime = 0;
         }
+    }
+
+    private void LateUpdate()
+    {
+        // 移动动画, 放在LateUpdate()里, 防止抖动
+        _pos = _actor.CurrentPosition;
+        _pos.y += 16;
+        _posScreen = Camera.main.WorldToScreenPoint(_pos);
+        if (Mathf.Abs(_posY - _posEndY) > 0.01f)
+        {
+            _posY = Mathf.Lerp(_posY, _posEndY, Time.deltaTime * _SPEED);
+            transform.position = new Vector3(_posScreen.x, _posScreen.y + _posY, _posScreen.z);
+        }
+        
     }
 
     public void Play(ActorVisualizer av, int blood)
@@ -68,8 +71,12 @@ public class PanelSprayBlood : MonoBehaviour
         _posScreen = Camera.main.WorldToScreenPoint(_pos);
         transform.position = _posScreen;
         
-        _posSaved = transform.localPosition;
+//        _posSaved = transform.localPosition;
+//        _posEnd = _posSaved + new Vector3(0,_FLY_HEIGHT,0);
+        _posSaved = transform.position;
         _posEnd = _posSaved + new Vector3(0,_FLY_HEIGHT,0);
+        _posY = 0;
+        _posEndY = _FLY_HEIGHT;
     }
 
 }

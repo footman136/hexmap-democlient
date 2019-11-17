@@ -409,7 +409,7 @@ public class PanelRoomMain : MonoBehaviour
         }
         
         var actorInfoTable = CsvDataManager.Instance.GetTable("actor_info");
-        string artPrefab = actorInfoTable.GetValue(10001, "ArtPrefab");
+        string artPrefab = actorInfoTable.GetValue(actorInfoId, "ArtPrefab");
         
         ActorAdd output = new ActorAdd()
         {
