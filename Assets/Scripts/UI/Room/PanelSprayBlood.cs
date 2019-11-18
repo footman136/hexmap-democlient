@@ -50,7 +50,7 @@ public class PanelSprayBlood : MonoBehaviour
         // 移动动画, 放在LateUpdate()里, 防止抖动
         _pos = _actor.CurrentPosition;
         _pos.y += 16;
-        _posScreen = Camera.main.WorldToScreenPoint(_pos);
+        _posScreen = HexGameUI.CurrentCamera.WorldToScreenPoint(_pos);
         if (Mathf.Abs(_posY - _posEndY) > 0.01f)
         {
             _posY = Mathf.Lerp(_posY, _posEndY, Time.deltaTime * _SPEED);
@@ -68,7 +68,7 @@ public class PanelSprayBlood : MonoBehaviour
         
         _pos = _actor.CurrentPosition;
         _pos.y += 16;
-        _posScreen = Camera.main.WorldToScreenPoint(_pos);
+        _posScreen = HexGameUI.CurrentCamera.WorldToScreenPoint(_pos);
         transform.position = _posScreen;
         
 //        _posSaved = transform.localPosition;

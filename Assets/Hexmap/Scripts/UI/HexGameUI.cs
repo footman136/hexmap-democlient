@@ -9,6 +9,8 @@ public class HexGameUI : MonoBehaviour {
 
 	HexUnit selectedUnit;
 
+	public static Camera CurrentCamera;
+
 	public void SetEditMode (bool toggle) {
 		enabled = !toggle;
 		grid.ShowUI(!toggle);
@@ -65,7 +67,7 @@ public class HexGameUI : MonoBehaviour {
 
 	bool UpdateCurrentCell () {
 		HexCell cell =
-			grid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
+			grid.GetCell(CurrentCamera.ScreenPointToRay(Input.mousePosition));
 		if (cell != currentCell) {
 			currentCell = cell;
 			return true;

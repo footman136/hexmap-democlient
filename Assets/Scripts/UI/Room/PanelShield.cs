@@ -21,7 +21,7 @@ public class PanelShield : MonoBehaviour
     {
         _pos = _actor.CurrentPosition;
         _pos.y += 16;
-        _posScreen = Camera.main.WorldToScreenPoint(_pos);
+        _posScreen = HexGameUI.CurrentCamera.WorldToScreenPoint(_pos);
         transform.position = _posScreen;
     }
     public void Init(ActorVisualizer av)
@@ -29,7 +29,7 @@ public class PanelShield : MonoBehaviour
         _actor = av;
         _pos = _actor.CurrentPosition;
         _pos.y += 16;
-        _posScreen = Camera.main.WorldToScreenPoint(_pos);
+        _posScreen = HexGameUI.CurrentCamera.WorldToScreenPoint(_pos);
         transform.position = _posScreen;
     }
 }

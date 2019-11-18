@@ -140,7 +140,7 @@ public class HexMapEditor : MonoBehaviour {
 
 	HexCell GetCellUnderCursor () {
 		return
-			hexGrid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
+			hexGrid.GetCell(HexGameUI.CurrentCamera.ScreenPointToRay(Input.mousePosition));
 	}
 
 	void CreateUnit () {

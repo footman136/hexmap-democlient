@@ -26,6 +26,7 @@ public class HexmapHelper : MonoBehaviour
         // 这一行，查了两个小时。。。如果没有，打包客户端后，地表看不到任何颜色，都是灰色。
         Shader.EnableKeyword("HEX_MAP_EDIT_MODE");
         terrainMaterial.DisableKeyword("GRID_ON");
+        HexGameUI.CurrentCamera = Camera.main;
     }
     // Start is called before the first frame update
     void Start()
@@ -168,7 +169,7 @@ public class HexmapHelper : MonoBehaviour
     
     HexCell GetCellUnderCursor () {
         return
-            hexGrid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
+            hexGrid.GetCell(HexGameUI.CurrentCamera.ScreenPointToRay(Input.mousePosition));
     }
 
     public HexCell GetCell(Vector3 position)
@@ -189,7 +190,7 @@ public class HexmapHelper : MonoBehaviour
     HexUnit selectedUnit;
     bool UpdateCurrentCell () {
         HexCell cell =
-            hexGrid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
+            hexGrid.GetCell(HexGameUI.CurrentCamera.ScreenPointToRay(Input.mousePosition));
         if (cell != currentCell) {
             currentCell = cell;
             return true;

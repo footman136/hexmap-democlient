@@ -39,6 +39,7 @@ public class PanelRoomMain : MonoBehaviour
     private HexCell currentCell;
 
     private bool _isFollowCamera;
+    
     [SerializeField] private GameObject _selectObjTemplate;
     private GameObject _selectObj;
     [SerializeField] private GameObject _hitGroundTemplate;
@@ -78,6 +79,7 @@ public class PanelRoomMain : MonoBehaviour
 
         _btnCreateActor.transform.Find("Select").gameObject.SetActive(false);
         _btnRangeTest.transform.Find("Select").gameObject.SetActive(false);
+
         AddListener();
     }
 
@@ -177,26 +179,26 @@ public class PanelRoomMain : MonoBehaviour
 
     HexCell GetCellUnderCursor () {
         return
-            hexmapHelper.hexGrid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
+            hexmapHelper.hexGrid.GetCell(HexGameUI.CurrentCamera.ScreenPointToRay(Input.mousePosition));
     }
 
     bool UpdateCurrentCell () {
         HexCell cell =
-            hexmapHelper.hexGrid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
+            hexmapHelper.hexGrid.GetCell(HexGameUI.CurrentCamera.ScreenPointToRay(Input.mousePosition));
         if (cell != currentCell) {
             currentCell = cell;
             return true;
         }
         return false;
     }
-    
+
     #endregion;
     
     #region 选中特效
 
     private void ShowHitGround(Vector3 position)
     {
-        var ray = Camera.main.ScreenPointToRay(position);
+        var ray = HexGameUI.CurrentCamera.ScreenPointToRay(position);
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit))
         {
@@ -218,7 +220,7 @@ public class PanelRoomMain : MonoBehaviour
             bShow = bShow & _isFollowCamera;
             _selectObj.transform.parent = av.transform;
             _selectObj.transform.localPosition = Vector3.up * 0.2f;
-            hexmapHelper.EnableFollowCamera(av, bShow);
+            ToggleFollowCamera();
             SelectCircle sc = _selectObj.GetComponent<SelectCircle>();
             if (sc)
             {
@@ -535,29 +537,29 @@ public class PanelRoomMain : MonoBehaviour
     public void ToggleFollowCamera()
     {
         bool bFollow = _togFollowCamera.isOn;
+        if (_followedActorID != 0)
+        {
+            var av = GameRoomManager.Instance.GetActorVisualizer(_followedActorID);
+            if (av != null)
+            {
+                hexmapHelper.EnableFollowCamera(av, false);
+            }
+
+            HexGameUI.CurrentCamera = Camera.main;
+            _followedActorID = 0;
+        }
         if (bFollow)
         {
             if (_pickInfoMaster.CurrentActor)
             {
                 hexmapHelper.EnableFollowCamera(_pickInfoMaster.CurrentActor, bFollow);
+
                 _followedActorID = _pickInfoMaster.CurrentActor.ActorId;
+                HexGameUI.CurrentCamera = _pickInfoMaster.CurrentActor.GetComponentInChildren<Camera>();
             }
         }
-        else
-        {
-            if (_followedActorID != 0)
-            {
-                var av = GameRoomManager.Instance.GetActorVisualizer(_followedActorID);
-                if (av != null)
-                {
-                    hexmapHelper.EnableFollowCamera(av, bFollow);
-                }
-
-                _followedActorID = 0;
-            }
-        }
-
         _isFollowCamera = bFollow;
+
     }
 
     public void ToggleShowRes()
