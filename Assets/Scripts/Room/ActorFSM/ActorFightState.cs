@@ -77,6 +77,7 @@ namespace AI
                 OwnerId = _actorBehaviour.OwnerId,
                 ActorId = _actorBehaviour.ActorId,
                 TargetId = _enemyActorId,
+                IsCounterAttack = _actorBehaviour.IsCounterAttack,
             };
             GameRoomManager.Instance.SendMsg(ROOM.FightStop, output.ToByteArray());
         }

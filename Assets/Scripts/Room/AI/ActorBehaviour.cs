@@ -58,6 +58,7 @@ namespace AI
         public float Distance => _distance;
         
         private float TIME_DELAY;
+        public bool IsCounterAttack; // 我是否处于反击状态
 
         //If true, AI changes to this animal will be logged in the console.
         private bool _logChanges = false;
@@ -245,6 +246,29 @@ namespace AI
             { // 弹药基数足够, 可以再打一轮, 要用 [延迟攻击] 的状态, 时间也要把 [攻击持续时间] & [攻击间隔] 算在一起
                 StateMachine.TriggerTransition(StateEnum.DELAYFIGHT, 0, AttackDuration + AttackInterval, input.TargetId);
             }
+            else if(!input.IsEnemyDead && !IsCounterAttack)
+            { // 我方战斗结束, 如果这时候敌人没死, (我不是处于反击状态), 敌人反击一次
+                var abTarget = GameRoomManager.Instance.RoomLogic.ActorManager.GetActor(input.TargetId);
+                if (abTarget != null)
+                {
+                    abTarget.IsCounterAttack = true; // 这是反击, 不是主动攻击, 记录在自己身上, Stop的时候用
+//                    FightStart output = new FightStart()
+//                    {
+//                        RoomId = abTarget.RoomId,
+//                        OwnerId = abTarget.OwnerId,
+//                        ActorId = input.TargetId,
+//                        TargetId = input.ActorId,
+//                        SkillId = 1,
+//                    };
+//                    GameRoomManager.Instance.SendMsg(ROOM.FightStart, output.ToByteArray());
+                    
+                    // 反击的时候, 不需要行动点的允许, 直接就可以打
+                    abTarget.IsCounterAttack = true; // 这是反击, 不是主动攻击, 记录在自己身上, Stop的时候用
+                    abTarget.StateMachine.TriggerTransition(StateEnum.FIGHT, 0, abTarget.AttackDuration, input.ActorId);
+                    GameRoomManager.Instance.Log("ActorBehaviour OnFightStopReply - 敌人反击");
+                }
+            }
+
             GameRoomManager.Instance.Log($"ActorBehaviour OnFightStop - Ammo:{AmmoBase}/{AmmoBaseMax}");
         }
 
