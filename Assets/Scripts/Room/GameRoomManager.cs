@@ -204,6 +204,7 @@ public class GameRoomManager : ClientScript
                 UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
                 break;
             case SocketAction.Error:
+                UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
                 break;
         }
         Log(msg);
