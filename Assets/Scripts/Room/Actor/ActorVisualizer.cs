@@ -116,6 +116,24 @@ namespace Animation
         {
             _allActors.Remove(ActorId);
             HexUnit = null;
+            if (_sliderHarvest != null)
+            {
+                _sliderHarvest.Recycle();
+                _sliderHarvest = null;
+            }
+
+            if (_sliderBlood != null)
+            {
+                _sliderBlood.Recycle();
+                _sliderBlood = null;
+            }
+
+            if (_shield != null)
+            {
+                _shield.Recycle();
+                _shield = null;
+            }
+                
         }
 
         void OnEnable()
