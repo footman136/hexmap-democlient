@@ -531,12 +531,30 @@ public class PanelRoomMain : MonoBehaviour
         }
     }
 
+    private long _followedActorID;
     public void ToggleFollowCamera()
     {
         bool bFollow = _togFollowCamera.isOn;
-        if (_pickInfoMaster.CurrentActor)
+        if (bFollow)
         {
-            hexmapHelper.EnableFollowCamera(_pickInfoMaster.CurrentActor, bFollow);
+            if (_pickInfoMaster.CurrentActor)
+            {
+                hexmapHelper.EnableFollowCamera(_pickInfoMaster.CurrentActor, bFollow);
+                _followedActorID = _pickInfoMaster.CurrentActor.ActorId;
+            }
+        }
+        else
+        {
+            if (_followedActorID != 0)
+            {
+                var av = GameRoomManager.Instance.GetActorVisualizer(_followedActorID);
+                if (av != null)
+                {
+                    hexmapHelper.EnableFollowCamera(av, bFollow);
+                }
+
+                _followedActorID = 0;
+            }
         }
 
         _isFollowCamera = bFollow;
