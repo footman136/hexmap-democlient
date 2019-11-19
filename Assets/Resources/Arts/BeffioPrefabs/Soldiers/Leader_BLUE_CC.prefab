@@ -134,6 +134,7 @@ GameObject:
   - component: {fileID: 481222}
   - component: {fileID: 9583250}
   - component: {fileID: 1891482545}
+  - component: {fileID: 8569675652322236576}
   m_Layer: 8
   m_Name: Leader_BLUE
   m_TagString: Untagged
@@ -189,6 +190,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66a8c737e7bbcf74bbc09cf971a344c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &8569675652322236576
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 116630}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e26fb15ddf025347a7070eb0b897e2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dinoStates:
+  - stateName: Die
+    animationBool: isDying
+  - stateName: Vanish
+    animationBool: isVanishing
 --- !u!1 &118204
 GameObject:
   m_ObjectHideFlags: 0
@@ -892,7 +910,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &499616
 Transform:
   m_ObjectHideFlags: 0
@@ -1078,7 +1096,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 173550}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e3d7216739453984cbce541f65c4b07d, type: 3}
   m_Name: 
@@ -1103,6 +1121,7 @@ MonoBehaviour:
   AttackDuration: 0
   AttackInterval: 0
   AmmoBase: 0
+  AmmoBaseMax: 0
   idleStates: []
   movementStates: []
   runningStates: []
@@ -1113,10 +1132,13 @@ MonoBehaviour:
   TargetPosition: {x: 0, y: 0, z: 0}
   CurrentPosition: {x: 0, y: 0, z: 0}
   CurrentAiState: 0
+  TargetActorId: 0
+  TargetCellIndex: 0
   HexUnit: {fileID: 0}
   _distance: 0
   _sliderHarvest: {fileID: 0}
   _sliderBlood: {fileID: 0}
+  _shield: {fileID: 0}
   _logChanges: 0
 --- !u!1 &175748
 GameObject:

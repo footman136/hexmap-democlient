@@ -140,7 +140,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &413034
 Transform:
   m_ObjectHideFlags: 0
@@ -201,6 +201,7 @@ MonoBehaviour:
   AttackDuration: 0
   AttackInterval: 0
   AmmoBase: 0
+  AmmoBaseMax: 0
   idleStates: []
   movementStates: []
   runningStates: []
@@ -211,10 +212,13 @@ MonoBehaviour:
   TargetPosition: {x: 0, y: 0, z: 0}
   CurrentPosition: {x: 0, y: 0, z: 0}
   CurrentAiState: 0
+  TargetActorId: 0
+  TargetCellIndex: 0
   HexUnit: {fileID: 0}
   _distance: 0
   _sliderHarvest: {fileID: 0}
   _sliderBlood: {fileID: 0}
+  _shield: {fileID: 0}
   _logChanges: 0
 --- !u!1 &110486
 GameObject:
