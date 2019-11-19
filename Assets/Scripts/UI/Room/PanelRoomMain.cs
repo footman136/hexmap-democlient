@@ -133,6 +133,11 @@ public class PanelRoomMain : MonoBehaviour
         {
             _isMouseDown = true;
             _downMousePos = Input.mousePosition;
+            if (Input.touchCount > 1)
+            { // 如果多于一个手指触摸到屏幕上,就等于是缩放屏幕了, 不算按下状态
+                _isMouseDown = false;
+                return;
+            }
         }
 
         vecLastMousePosition = Input.mousePosition;

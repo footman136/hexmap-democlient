@@ -109,6 +109,7 @@ public class LobbyMsgReply
         foreach (var roomInfo in input.Rooms)
         {
             PanelLobbyMain.Instance.AddRoomInfo(roomInfo);
+            ClientManager.Instance.LobbyManager.Log($"MSG: ASK_ROOM_LIST_REPLY - {roomInfo}");
         }
     }
 

@@ -146,6 +146,11 @@ public class HexMapCamera : MonoBehaviour {
 	{
 		if (Input.GetMouseButton(0))
 		{
+			if (Input.touchCount > 1)
+			{ // 如果多于一个手指触摸到屏幕上,就等于是缩放屏幕了, 不算按下状态
+				_leftMouseDown = false;
+				return;
+			}
 			Vector3 mousePos = Input.mousePosition;
 			if (!_leftMouseDown)
 			{

@@ -46,6 +46,9 @@ public class GameRoomManager : ClientScript
         { // CsvDataManager这个实例在游戏一开始已经被ClientManager初始化过
             CsvDataManager = ClientManager.Instance.CsvDataManager;
             CommandManager.LoadCommands();
+            roomData = ClientManager.Instance.EnterRoom;
+            _address = roomData.Address;
+            _port = roomData.Port;
         }
         else
         { // CsvDataManager尚未被初始化过
@@ -66,10 +69,10 @@ public class GameRoomManager : ClientScript
         Completed += OnComplete;
         Received += OnReceiveMsg;
         RoomLogic.Init();
-        Log($"GameRoomManager.Start()! 开始链接RoomServer - {_address}:{_port}");
 
         if (ClientManager.Instance != null)
         { // 数据都有了,可以直连房间服务器
+            Log($"GameRoomManager.Start()! 开始链接RoomServer - {_address}:{_port}");
             Connect();
         }
     }
@@ -89,22 +92,18 @@ public class GameRoomManager : ClientScript
     
     IEnumerator DownloadDataFiles()
     {
+        // 这个函数仅在单独调试房间服务器的时候才被调用, 所以做如下判定
+        // 单独运行本场景的时候，CliengtManager不存在
+        if (ClientManager.Instance != null)
+            yield break; 
         yield return StartCoroutine(CsvDataManager.LoadDataAllAndroid());
         CommandManager.LoadCommands();
         
         roomData = new EnterRoomData();
-        if (ClientManager.Instance != null)
         {
-            roomData = ClientManager.Instance.EnterRoom;
-            _address = roomData.Address;
-            _port = roomData.Port;
-        }
-        else
-        {// 单独运行本场景的时候，CliengtManager不存在
-
             long defaultRoomId = 0;
             // 从[server_config]表里读取服务器地址和端口
-            var csv = CsvDataManager.Instance.GetTable("server_config");
+            var csv = CsvDataManager.Instance.GetTable("server_config_client");
             if (csv != null)
             {
                 _address = csv.GetValue(1, "RoomServerAddress");
@@ -120,6 +119,7 @@ public class GameRoomManager : ClientScript
         }
         
         // 读取了数据表才能开始连接房间服务器
+        Log($"GameRoomManager.Start()! 开始链接RoomServer - {_address}:{_port}");
         Connect();
         
         //初始化结束

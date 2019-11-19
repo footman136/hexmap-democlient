@@ -18,7 +18,7 @@ public class GameLobbyManager : ClientScript
     void Start()
     {
         // 从[server_config]表里读取服务器地址和端口
-        var csv = CsvDataManager.Instance.GetTable("server_config");
+        var csv = CsvDataManager.Instance.GetTable("server_config_client");
         if (csv != null)
         {
             _address = csv.GetValue(1, "LobbyServerAddress");

@@ -75,7 +75,7 @@ public class CsvDataManager : MonoBehaviour
         string dataPath = Application.streamingAssetsPath + "/Data";
         //List<string> lstDataFiles = new List<string>();
         //Utils.GetDir(dataPath, "*.csv", ref lstDataFiles);
-        string[] files = {"server_config","actor_info","command_id","command_set" };
+        string[] files = {"server_config_client","actor_info","command_id","command_set" };
         List<string> lstDataFiles = files.Select(file => dataPath + "/" + file + ".csv").ToList();
 
         Debug.Log($"ScvDataManager LoadDataAllAndroid Info - {lstDataFiles.Count} data file found! directory:{dataPath}");
