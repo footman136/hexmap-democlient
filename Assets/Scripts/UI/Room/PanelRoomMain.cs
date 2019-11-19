@@ -104,7 +104,9 @@ public class PanelRoomMain : MonoBehaviour
 
     #region 鼠标操作
 
-    private bool isMouseDown = false;
+    private bool _isMouseDown = false;
+    private Vector3 _downMousePos;
+    
     private Vector3 vecLastMousePosition = Vector3.zero;
     
     // Update is called once per frame
@@ -129,14 +131,20 @@ public class PanelRoomMain : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            isMouseDown = true;
+            _isMouseDown = true;
+            _downMousePos = Input.mousePosition;
         }
 
         vecLastMousePosition = Input.mousePosition;
 
-        if (Input.GetMouseButtonUp(0) && isMouseDown)
+        if (Input.GetMouseButtonUp(0) && _isMouseDown)
         {
-            isMouseDown = false;
+            _isMouseDown = false;
+            if (Vector3.Distance(Input.mousePosition, _downMousePos) > 0.5f)
+            {
+                // 在移动屏幕, 所以不处理鼠标抬起的消息
+                return;
+            }
             vecLastMousePosition = Vector3.zero;
             
             if (_isCreatingActor)
