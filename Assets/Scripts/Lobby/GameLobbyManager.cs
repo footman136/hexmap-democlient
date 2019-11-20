@@ -9,10 +9,11 @@ using Main;
 
 // https://blog.csdn.net/u014308482/article/details/52958148
 using Protobuf.Lobby;
+using UnityEngine.SceneManagement;
 
 public class GameLobbyManager : ClientScript
 {
-    private const float _heartBeatInterval = 15f; // 心跳间隔(秒) 
+    private const float _HEART_BEAT_INTERVAL = 15f; // 心跳间隔(秒) 
     
     // Start is called before the first frame update
     void Start()
@@ -50,7 +51,7 @@ public class GameLobbyManager : ClientScript
     
     private void StartHeartBeat()
     {
-        InvokeRepeating(nameof(HeartBeat), 0, _heartBeatInterval);
+        InvokeRepeating(nameof(HeartBeat), 0, _HEART_BEAT_INTERVAL);
     }
 
     private void StopHeartBeat()
@@ -97,6 +98,7 @@ public class GameLobbyManager : ClientScript
                 };
                 SendMsg(LOBBY.PlayerEnter, data.ToByteArray());
                 StartHeartBeat(); // 连接上以后开始心跳
+                Debug.Log(msg);
             }
                 break;
             case SocketAction.Send:
@@ -106,12 +108,24 @@ public class GameLobbyManager : ClientScript
             case SocketAction.Close:
                 StopHeartBeat();
                 UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
+                UIManager.Instance.MessageBox("错误", msg, (int)PanelMessageBox.BUTTON.OK, OnClickMessageBox);
+                Debug.LogWarning(msg);
                 break;
             case SocketAction.Error:
                 UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
+                UIManager.Instance.MessageBox("错误", msg, (int)PanelMessageBox.BUTTON.OK, OnClickMessageBox);
+                Debug.LogWarning(msg);
                 break;
         }
-        Debug.Log(msg);
+    }
+
+    void OnClickMessageBox(int index)
+    {
+        if (ClientManager.Instance != null)
+        {
+            ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.START);
+            SceneManager.LoadScene("logo");
+        }
     }
     
     void OnReceiveMsg(byte[] data)

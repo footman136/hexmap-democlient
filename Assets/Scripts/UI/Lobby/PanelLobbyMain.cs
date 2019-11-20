@@ -65,6 +65,7 @@ public class PanelLobbyMain : MonoBehaviour
         _btnJoinRoom.SetActive(false);
         AskRoomList output = new AskRoomList();
         ClientManager.Instance.LobbyManager.SendMsg(LOBBY.AskRoomList, output.ToByteArray());
+        ClientManager.Instance.LobbyManager.Log("PanelLobbyMain OnClickRoomList.");
     }
 
     public void OnClickJoinRoom()
@@ -79,6 +80,7 @@ public class PanelLobbyMain : MonoBehaviour
                 MaxPlayerCount = maxPlayerCount,
             };
             ClientManager.Instance.LobbyManager.SendMsg(LOBBY.AskJoinRoom, output.ToByteArray());
+            ClientManager.Instance.LobbyManager.Log("PanelLobbyMain OnClickJoinRoom.");
         }
     }
 

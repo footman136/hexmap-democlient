@@ -13,7 +13,7 @@ public class GameRoomManager : ClientScript
 {
     public static GameRoomManager Instance;
 
-    private const float _heartBeatInterval = 15f; // 心跳间隔(秒)
+    private const float _HEART_BEAT_INTERVAL = 15f; // 心跳间隔(秒)
     
     public HexmapHelper HexmapHelper;
     public RoomLogic RoomLogic;
@@ -138,7 +138,7 @@ public class GameRoomManager : ClientScript
     
     public void StartHeartBeat()
     {
-        InvokeRepeating(nameof(HeartBeat), 0, _heartBeatInterval);
+        InvokeRepeating(nameof(HeartBeat), 0, _HEART_BEAT_INTERVAL);
     }
 
     private void StopHeartBeat()
@@ -193,6 +193,7 @@ public class GameRoomManager : ClientScript
                 CurrentPlayer.Init(enter.Account, enter.TokenId);
                 SendMsg(ROOM.PlayerEnter, enter.ToByteArray());
                 StartHeartBeat(); // 开始心跳
+                Log(msg);
             }
                 break;
             case SocketAction.Send:
@@ -202,12 +203,23 @@ public class GameRoomManager : ClientScript
             case SocketAction.Close:
                 StopHeartBeat();
                 UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
+                UIManager.Instance.MessageBox("错误", msg, (int)PanelMessageBox.BUTTON.OK, OnClickMessageBox);
+                Debug.LogWarning(msg);
                 break;
             case SocketAction.Error:
                 UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
+                UIManager.Instance.MessageBox("错误", msg, (int)PanelMessageBox.BUTTON.OK, OnClickMessageBox);
+                Debug.LogWarning(msg);
                 break;
         }
-        Log(msg);
+    }
+    
+    void OnClickMessageBox(int index)
+    {
+        if (ClientManager.Instance != null)
+        {
+            ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.LOBBY);
+        }
     }
     
     void OnReceiveMsg(byte[] data)

@@ -4,6 +4,7 @@ using System.Linq;
 using Animation;
 using GameUtils;
 using Google.Protobuf;
+using Main;
 using Protobuf.Room;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -509,6 +510,10 @@ public class PanelRoomMain : MonoBehaviour
         };
         if(GameRoomManager.Instance)
             GameRoomManager.Instance.SendMsg(ROOM.LeaveRoom, output.ToByteArray());
+        if (ClientManager.Instance != null)
+        {
+            ClientManager.Instance.StateMachine.TriggerTransition(ConnectionFSMStateEnum.StateEnum.RESULT);
+        }
     }
 
     public void ToggleShowGrid()

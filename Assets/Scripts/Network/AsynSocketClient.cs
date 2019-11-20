@@ -78,7 +78,7 @@ public class AsynSocketClient
             }
             catch (Exception e)
             {
-                string err = $"Exception - ConnectAsync() - ip地址格式不正确，请使用正确的ip地址！- {e}";
+                string err = $"AsynSocketClient ConnectAsync Exception - ip adress format is incorrect!- {e}"; // 地址格式不正确，请使用正确的ip地址！
                 OnComplete(tcpClient, SocketAction.Error, err);
             }
             try
@@ -94,7 +94,7 @@ public class AsynSocketClient
             }
             catch (Exception e)
             {
-                string err = $"Exception - ConnectAsync() - {e}";
+                string err = $"AsynSocketClient ConnectAsync Exception - {e}";
                 OnComplete(tcpClient, SocketAction.Error, err);
             }           
         }
@@ -116,7 +116,7 @@ public class AsynSocketClient
             }
             catch (Exception e)
             {
-                string err = $"Exception - ConnectCallBack() - {e}";
+                string err = $"AsynSocketClient ConnectCallBack - Exception - {e}";
                 OnComplete(client, SocketAction.Error, err);
             }           
         }
@@ -158,7 +158,7 @@ public class AsynSocketClient
             {
                 //如果发生异常，说明客户端失去连接，触发关闭事件
                 Stop();
-                string err = $"Exception - ReceiveCallBack() - {ex}";
+                string err = $"AsynSocketClient ReceiveCallBack Exception (EndReceive) - {ex}";
                 OnComplete(state.TcpClient, SocketAction.Close, err);
             }
 
@@ -219,7 +219,7 @@ public class AsynSocketClient
             catch (Exception ex)
             {
                 //如果发生异常，说明客户端失去连接，触发关闭事件
-                string err = $"Exception - ReceiveCallBack() - {ex}";
+                string err = $"AsynSocketClient ReceiveCallBack Exception (2) - {ex}";
                 OnComplete(state.TcpClient, SocketAction.Error, err);
             }
 
@@ -229,6 +229,7 @@ public class AsynSocketClient
         #endregion
  
         #region 发送数据
+        
         /// <summary>
         /// 异步发送消息
         /// </summary>
@@ -245,15 +246,17 @@ public class AsynSocketClient
             {
                 if (tcpClient.Client == null)
                 {
-                    throw new Exception("连接已经断开");
+                    string err = $"连接已经断开!"; // 这个文字, 断线以后, 客户端会看到,所以中文
+                    OnComplete(tcpClient, SocketAction.Error, err);
                 }
+
                 if (isStopWork)
                 {
                     return;
                 }
 
                 // 真正的互联网环境下会有消息包被截断的情况，所以发送的时候必须在开始定义4个字节的包长度，目前是测试阶段，暂时不开放。
-                byte[] bytesRealSend = new byte[bytes.Length+4];
+                byte[] bytesRealSend = new byte[bytes.Length + 4];
                 byte[] bytesHeader = System.BitConverter.GetBytes(bytes.Length);
                 Array.Copy(bytesHeader, 0, bytesRealSend, 0, 4);
                 Array.Copy(bytes, 0, bytesRealSend, 4, bytes.Length);
@@ -262,23 +265,31 @@ public class AsynSocketClient
                     TcpClient = tcpClient,
                     ListData = bytesRealSend,
                 };
-                tcpClient.Client.BeginSend(bytesRealSend, 0, bytesRealSend.Length, SocketFlags.None, SendCallBack, state);
+                tcpClient.Client.BeginSend(bytesRealSend, 0, bytesRealSend.Length, SocketFlags.None, SendCallBack,
+                    state);
                 //tcpClient.Client.BeginSend(bytes, 0, bytes.Length, SocketFlags.None, SendCallBack, state);
             }
             catch (SocketException ex)
             {
-                if (ex.ErrorCode == (int)SocketError.ConnectionAborted)
+                if (ex.ErrorCode == (int) SocketError.ConnectionAborted)
                 {
+                    Stop();
                     string err = $"Exceptioin - SendAsync() - 连接已经放弃! - {ex}";
                     OnComplete(tcpClient, SocketAction.Error, err);
                 }
                 else
                 {
+                    Stop();
                     string err = $"Exceptioin - SendAsync() - {ex}";
                     OnComplete(tcpClient, SocketAction.Error, err);
                 }
             }
-          
+            catch (ObjectDisposedException ex)
+            {
+                Stop();
+                string err = $"Exceptioin - SendAsync() - {ex}";
+                OnComplete(tcpClient, SocketAction.Error, err);
+            }
         }
  
         private void SendCallBack(IAsyncResult ar)
@@ -293,6 +304,18 @@ public class AsynSocketClient
                 string msg = $"Send a message : {stateObj.ListData.Length} bytes";
                 OnComplete(client, SocketAction.Send, msg);
             }
+            catch (SocketException ex)
+            {
+                Stop();
+                string err = $"Exception - SendCallBack() - {ex}";
+                OnComplete(client, SocketAction.Error, err);
+            }
+            catch (ObjectDisposedException ex)
+            {
+                Stop();
+                string err = $"Exception - SendCallBack() - {ex}";
+                OnComplete(client, SocketAction.Error, err);
+            }
             catch (Exception ex)
             {
                 //如果发生异常，说明客户端失去连接，触发关闭事件
@@ -301,11 +324,16 @@ public class AsynSocketClient
                 OnComplete(client, SocketAction.Error, err);
             }
         }
+        
         #endregion
  
         #region OnComoplete
         public virtual void OnComplete(TcpClient client, SocketAction action, string msg)
         {
+            if (Completed == null)
+            {
+                Log("AsynSocketClient OnComplete Error - Completed() function not found!");
+            }
             Completed?.Invoke(client, action, msg);
             if (action == SocketAction.Connect)
             {
@@ -317,13 +345,13 @@ public class AsynSocketClient
                         try
                         {
                             ReceiveAsync();
-                            Log("OnComplete connect - "+msg);
+                            Log("AsynsocketClient OnComplete connect - "+msg);
                             //Thread.Sleep(20);
                         }
                         catch (Exception ex)
                         {
                             Stop();
-                            string err = $"Exception - OnComplete() - {ex}";
+                            string err = $"AsynsocketClient OnComplete Exception (Connect) - {ex}";
                             OnComplete(client, SocketAction.Error, err);
                         }
                     }
@@ -345,7 +373,7 @@ public class AsynSocketClient
                 }
                 catch(Exception e)
                 {
-                    string err = $"Exception - OnComplete() - {e}";
+                    string err = $"AsynSocketClient OnComplete Exception (Close) - {e}";
                     OnComplete(client, SocketAction.Error, err);
                 }
             }

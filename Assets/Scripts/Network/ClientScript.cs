@@ -19,6 +19,7 @@ public class ClientScript : MonoBehaviour
 
     private object _lockObj;
     private List<byte[]> _recvMsgList;
+
     private List<SocketEvent> _socketEventList;
 
     protected void Start()
@@ -27,7 +28,7 @@ public class ClientScript : MonoBehaviour
         _client.Received += OnReceiveMsg;
         _client.Completed += OnComplete;
 
-        _lockObj = new object();
+        _lockObj = new System.Object();
         lock (_lockObj)
         {
             _recvMsgList = new List<byte[]>();
@@ -40,9 +41,9 @@ public class ClientScript : MonoBehaviour
     {
         if (_client != null)
         {
-            _client.Close();
             _client.Received -= OnReceiveMsg;
             _client.Completed -= OnComplete;
+            _client.Close();
         }
 
         Log("Client closed!");

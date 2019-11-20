@@ -105,6 +105,8 @@ public class LobbyMsgReply
             ClientManager.Instance.LobbyManager.Log("MSG: ASK_ROOM_LIST_REPLY Error - " + msg);
             return;
         }
+        ClientManager.Instance.LobbyManager.Log($"MSG: ASK_ROOM_LIST_REPLY - Room Count:{input.Rooms.Count}");
+        
         PanelLobbyMain.Instance.ClearRoomList();
         foreach (var roomInfo in input.Rooms)
         {
