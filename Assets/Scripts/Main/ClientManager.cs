@@ -50,6 +50,9 @@ namespace Main
             // 初始化数据表
             CsvDataManager = gameObject.AddComponent<CsvDataManager>();
             StartCoroutine(DownloadDataFiles());
+            
+            // 限制帧速率
+            Application.targetFrameRate = 30;
         }
 
         // Start is called before the first frame update
