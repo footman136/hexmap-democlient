@@ -40,9 +40,9 @@ public class ClientScript : MonoBehaviour
     {
         if (_client != null)
         {
+            _client.Close();
             _client.Received -= OnReceiveMsg;
             _client.Completed -= OnComplete;
-            _client.Close();
         }
 
         Log("Client closed!");
@@ -74,6 +74,12 @@ public class ClientScript : MonoBehaviour
         _client.Log(msg);
     }
 
+    public void Connect()
+    {
+        Log($"Begin connecting server - {_address}:{_port} ...");
+        _client.ConnectAsync(_address, _port);
+    }
+
     public void SendMsg(byte[] data)
     {
         _client.SendAsync(data);
@@ -82,12 +88,6 @@ public class ClientScript : MonoBehaviour
     public void SendMsg(string data)
     {
         _client.SendAsync(data);
-    }
-
-    public void Connect()
-    {
-        Log($"Begin connecting server - {_address}:{_port} ...");
-        _client.ConnectAsync(_address, _port);
     }
 
     void OnReceiveMsg(DataEventArgs args)

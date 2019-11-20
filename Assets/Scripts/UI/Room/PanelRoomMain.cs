@@ -133,11 +133,6 @@ public class PanelRoomMain : MonoBehaviour
         {
             _isMouseDown = true;
             _downMousePos = Input.mousePosition;
-            if (Input.touchCount > 1)
-            { // 如果多于一个手指触摸到屏幕上,就等于是缩放屏幕了, 不算按下状态
-                _isMouseDown = false;
-                return;
-            }
         }
 
         vecLastMousePosition = Input.mousePosition;
@@ -145,7 +140,7 @@ public class PanelRoomMain : MonoBehaviour
         if (Input.GetMouseButtonUp(0) && _isMouseDown)
         {
             _isMouseDown = false;
-            if (Vector3.Distance(Input.mousePosition, _downMousePos) > 0.5f)
+            if (Vector3.Distance(Input.mousePosition, _downMousePos) > 50f)
             {
                 // 在移动屏幕, 所以不处理鼠标抬起的消息
                 return;

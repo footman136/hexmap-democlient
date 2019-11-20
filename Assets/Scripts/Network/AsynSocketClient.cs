@@ -317,6 +317,7 @@ public class AsynSocketClient
                         try
                         {
                             ReceiveAsync();
+                            Log("OnComplete connect - "+msg);
                             //Thread.Sleep(20);
                         }
                         catch (Exception ex)
@@ -338,7 +339,7 @@ public class AsynSocketClient
             {
                 try
                 {
-                    Log("socket closed.");
+                    Log("Socket closed.");
                     this.Received = null;
                     tcpClient.Close();
                 }
