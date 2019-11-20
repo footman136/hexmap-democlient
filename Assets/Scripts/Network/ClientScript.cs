@@ -19,6 +19,7 @@ public class ClientScript : MonoBehaviour
 
     private object _lockObj;
     private List<byte[]> _recvMsgList;
+
     private List<SocketEvent> _socketEventList;
 
     protected void Start()
@@ -27,7 +28,7 @@ public class ClientScript : MonoBehaviour
         _client.Received += OnReceiveMsg;
         _client.Completed += OnComplete;
 
-        _lockObj = new object();
+        _lockObj = new System.Object();
         lock (_lockObj)
         {
             _recvMsgList = new List<byte[]>();
@@ -74,6 +75,12 @@ public class ClientScript : MonoBehaviour
         _client.Log(msg);
     }
 
+    public void Connect()
+    {
+        Log($"Begin connecting server - {_address}:{_port} ...");
+        _client.ConnectAsync(_address, _port);
+    }
+
     public void SendMsg(byte[] data)
     {
         _client.SendAsync(data);
@@ -82,12 +89,6 @@ public class ClientScript : MonoBehaviour
     public void SendMsg(string data)
     {
         _client.SendAsync(data);
-    }
-
-    public void Connect()
-    {
-        Log($"Begin connecting server - {_address}:{_port} ...");
-        _client.ConnectAsync(_address, _port);
     }
 
     void OnReceiveMsg(DataEventArgs args)
