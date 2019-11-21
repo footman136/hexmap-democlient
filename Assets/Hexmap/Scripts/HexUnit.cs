@@ -62,9 +62,11 @@ public class HexUnit : MonoBehaviour {
 	}
 
 	public bool IsValidDestination (HexCell cell) {
+		// 去掉视野范围, 所有地方都可以走到...Nov.21.2019. Liu Gang.
 //		if(cell.Unit)
 //			Debug.LogWarning($"HexUnit - IsValidDestination - cell is ocuppied! - {cell.coordinates}");
-		return cell.IsExplored && !cell.IsUnderwater && !cell.Unit;
+		//return cell.IsExplored && !cell.IsUnderwater && !cell.Unit;
+		return !cell.IsUnderwater && !cell.Unit;
 	}
 
 	public void Stop()
@@ -271,12 +273,12 @@ public class HexUnit : MonoBehaviour {
 		else if (fromCell.Walled != toCell.Walled) {
 			//return -1;
 			// 现在改为城墙没有阻挡作用
-			return 1;
+			return 2;
 		}
 		else {
 			moveCost = edgeType == HexEdgeType.Flat ? 5 : 10;
 			moveCost +=
-				toCell.UrbanLevel + toCell.FarmLevel + toCell.PlantLevel;
+				toCell.UrbanLevel + toCell.FarmLevel + toCell.PlantLevel + toCell.MineLevel;
 		}
 		return moveCost;
 	}

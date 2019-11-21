@@ -462,7 +462,9 @@ public class HexCell : MonoBehaviour {
 	}
 	
 	public bool IsValidDestination () {
-		return IsExplored && !IsUnderwater && !Unit;
+		// 去掉视野范围, 所有地方都可以走到...Nov.21.2019. Liu Gang.
+		//return IsExplored && !IsUnderwater && !Unit;
+		return !IsUnderwater && !Unit;
 	}
 	
 

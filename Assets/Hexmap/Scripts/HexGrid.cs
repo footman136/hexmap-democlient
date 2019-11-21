@@ -423,19 +423,40 @@ public class HexGrid : MonoBehaviour {
 		currentPathFrom = currentPathTo = null;
 	}
 
-	void ShowPath (int speed) {
-		if (currentPathExists) {
-			HexCell current = currentPathTo;
-			while (current != currentPathFrom) {
-				int turn = (current.Distance - 1) / speed;
-				
-				string label = $"{turn}";
-				if(current.Unit)
-					label = $"{turn}-<color=#FF0000FF>T</color>";
-				current.SetLabel(label);
-				current.EnableHighlight(Color.white);
-				current = current.PathFrom;
-			}
+	// 老算法建议留着, 可以了解原来的思路. Nov.21.2019. Liu Gang.
+//	void ShowPath (int speed) {
+//		if (currentPathExists) {
+//			HexCell current = currentPathTo;
+//			while (current != currentPathFrom) {
+//				int turn = (current.Distance - 1) / speed;
+//				
+//				string label = $"{turn}";
+//				if(current.Unit)
+//					label = $"{turn}-<color=#FF0000FF>T</color>";
+//				current.SetLabel(label);
+//				current.EnableHighlight(Color.white);
+//				current = current.PathFrom;
+//			}
+//		}
+//		currentPathFrom.EnableHighlight(Color.blue);
+//		currentPathTo.EnableHighlight(Color.red);
+//	}
+	/// <summary>
+	/// 新算法比较费, 以后有空再优化吧. Nov.21.2019. Liu Gang.
+	/// </summary>
+	/// <param name="speed"></param>
+	void ShowPath (int speed)
+	{
+		List<HexCell> path = GetPath();
+		for (int i = 0; i < path.Count; ++i)
+		{
+			HexCell current = path[i];
+			string label = $"{i}";
+			if(current.Unit)
+				label = $"{i}-<color=#FF0000FF>T</color>";
+			current.SetLabel(label);
+			current.EnableHighlight(Color.white);
+			current = current.PathFrom;
 		}
 		currentPathFrom.EnableHighlight(Color.blue);
 		currentPathTo.EnableHighlight(Color.red);
@@ -475,8 +496,8 @@ public class HexGrid : MonoBehaviour {
 			for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++) {
 				HexCell neighbor = current.GetNeighbor(d);
 				if (
-					neighbor == null ||
-					neighbor.SearchPhase > searchFrontierPhase
+					neighbor == null 
+					|| neighbor.SearchPhase > searchFrontierPhase
 				) {
 					continue;
 				}
