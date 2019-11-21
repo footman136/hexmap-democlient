@@ -217,8 +217,8 @@ namespace Animation
         private void PrepareAllAnimations()
         {
             const int stateCount = 7; 
-            var stateNames = new string[stateCount] {"Idle", "Walk", "run", "Attack", "Attack", "Die", "DieEnd"};
-            var animationBools = new string[stateCount] {"isIdling", "isWalking", "isRunning", "isAttacking", "isAttacking", "isDying", "isVanishing"};
+            var stateNames = new string[stateCount] {"Idle", "Walk", "run", "Attack", "Harvest", "Die", "DieEnd"};
+            var animationBools = new string[stateCount] {"isIdling", "isWalking", "isRunning", "isAttacking", "isHarvesting", "isDying", "isVanishing"};
             idleStates = new IdleState[1];
             idleStates[0] = new IdleState()
             {
@@ -499,6 +499,9 @@ namespace Animation
             string msg = $"获取了 {input.ResHarvest} 的 {resTypes[input.ResType]} 资源";
             UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Success);
             GameRoomManager.Instance.Log("MSG: HarvestStop OK - " + msg + $" - 剩余资源{input.ResRemain}");
+            
+            // 必要的时候, 刷新地面上的资源数字
+            PanelRoomMain.Instance.UpdateResInCell(currentCell.Index);
         }
         
         #endregion

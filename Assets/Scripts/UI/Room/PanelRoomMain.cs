@@ -141,7 +141,7 @@ public class PanelRoomMain : MonoBehaviour
         if (Input.GetMouseButtonUp(0) && _isMouseDown)
         {
             _isMouseDown = false;
-            if (Vector3.Distance(Input.mousePosition, _downMousePos) > 50f)
+            if (Vector3.Distance(Input.mousePosition, _downMousePos) > 100f)
             {
                 // 在移动屏幕, 所以不处理鼠标抬起的消息
                 return;
@@ -532,6 +532,7 @@ public class PanelRoomMain : MonoBehaviour
         hexmapHelper.hexGrid.showLabel = visible?1:0;
         hexmapHelper.hexGrid.OnShowLabels(visible?1:0);
     }
+    
     public void ToggleAI(bool isOnOn)
     {
         bool isOn = _togAi.isOn;
@@ -544,6 +545,8 @@ public class PanelRoomMain : MonoBehaviour
         {
             Debug.Log("AI is Off!!!");
         }
+
+        UIManager.Instance.SystemTips("本功能尚未开放!", PanelSystemTips.MessageType.Info);
     }
 
     private long _followedActorID;
@@ -580,6 +583,18 @@ public class PanelRoomMain : MonoBehaviour
         bool visible = _togShowRes.isOn;
         hexmapHelper.hexGrid.showLabel = visible?2:0;
         hexmapHelper.hexGrid.OnShowLabels(visible?2:0);
+    }
+
+    /// <summary>
+    /// 显示指定格子上的资源数量, 如果"显示资源"的开关打开的话
+    /// </summary>
+    /// <param name="cellIndex"></param>
+    public void UpdateResInCell(int cellIndex)
+    {
+        if (_togShowRes.isOn)
+        {
+            hexmapHelper.hexGrid.ShowLabel(cellIndex, 2);
+        }
     }
 
     private bool _isCreatingActor = false; 

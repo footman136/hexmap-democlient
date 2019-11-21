@@ -24,7 +24,7 @@ public class CmdLumberjack : MonoBehaviour, ICommand
         var currentCell = av.HexUnit.Location;
         var resType = currentCell.Res.ResType;
         int resAmount = currentCell.Res.GetAmount(resType);
-        float durationTime = resAmount * 0.1f;
+        float durationTime = resAmount * 3.0f;
         if (resAmount <= 0)
         {
             string msg = $"本地没有任何资源,请去其他地方采集!";

@@ -632,6 +632,11 @@ public class HexGrid : MonoBehaviour {
 		}
 	}
 
+	public void ShowLabel(int cellIndex, int showLabel)
+	{
+		cells[cellIndex].SetLabel(cells[cellIndex].GetLabelStr(showLabel));
+	}
+
 	/// <summary>
 	/// 得到指定地块的地表速度，地表类型的数据被保存在cellShaderData的alpha通道
 	/// Sand-0; Grass-1; Mud-2; Stone-3; Snow-4
