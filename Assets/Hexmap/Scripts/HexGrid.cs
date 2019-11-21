@@ -455,7 +455,7 @@ public class HexGrid : MonoBehaviour {
 			if(current.Unit)
 				label = $"{i}-<color=#FF0000FF>T</color>";
 			current.SetLabel(label);
-			current.EnableHighlight(Color.white);
+			current.EnableHighlight(Color.yellow);
 			current = current.PathFrom;
 		}
 		currentPathFrom.EnableHighlight(Color.blue);
@@ -491,7 +491,7 @@ public class HexGrid : MonoBehaviour {
 				return true;
 			}
 
-			int currentTurn = (current.Distance - 1) / speed;
+			//int currentTurn = (current.Distance - 1) / speed;
 
 			for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++) {
 				HexCell neighbor = current.GetNeighbor(d);
@@ -510,10 +510,10 @@ public class HexGrid : MonoBehaviour {
 				}
 
 				int distance = current.Distance + moveCost;
-				int turn = (distance - 1) / speed;
-				if (turn > currentTurn) {
-					distance = turn * speed + moveCost;
-				}
+//				int turn = (distance - 1) / speed;
+//				if (turn > currentTurn) {
+//					distance = turn * speed + moveCost;
+//				}
 
 				if (neighbor.SearchPhase < searchFrontierPhase) {
 					neighbor.SearchPhase = searchFrontierPhase;
