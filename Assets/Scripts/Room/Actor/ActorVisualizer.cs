@@ -138,7 +138,7 @@ namespace Animation
 
         void OnEnable()
         {
-            MsgDispatcher.RegisterMsg((int)ROOM_REPLY.ActorAiStateReply, OnAiStateChanged);
+            MsgDispatcher.RegisterMsg((int)ROOM_REPLY.ActorAiStateReply, OnActorAiStateReply);
             MsgDispatcher.RegisterMsg((int)ROOM_REPLY.HarvestStartReply, OnHarvestStartReply);
             MsgDispatcher.RegisterMsg((int)ROOM_REPLY.HarvestStopReply, OnHarvestStopReply);
             MsgDispatcher.RegisterMsg((int)ROOM_REPLY.FightStartReply, OnFightStartReply);
@@ -151,7 +151,7 @@ namespace Animation
 
         void OnDisable()
         {
-            MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.ActorAiStateReply, OnAiStateChanged);
+            MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.ActorAiStateReply, OnActorAiStateReply);
             MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.HarvestStartReply, OnHarvestStartReply);
             MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.HarvestStopReply, OnHarvestStopReply);
             MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.FightStartReply, OnFightStartReply);
@@ -374,7 +374,7 @@ namespace Animation
         
         #region 状态改变
         
-        private void OnAiStateChanged(byte[] bytes)
+        private void OnActorAiStateReply(byte[] bytes)
         {
             ActorAiStateReply input = ActorAiStateReply.Parser.ParseFrom(bytes);
             if (input.ActorId != ActorId)
@@ -405,6 +405,8 @@ namespace Animation
             TargetPosition = newPosition;
             TargetActorId = input.TargetId;
             TargetCellIndex = input.CellIndexTo;
+            
+            // 注: 在客户端: input.DurationTime是没有用的, 时间完全由 服务器端/AI端 控制
             
             ShowShield(false);
 

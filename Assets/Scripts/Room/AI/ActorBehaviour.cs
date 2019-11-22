@@ -59,6 +59,9 @@ namespace AI
         
         private float TIME_DELAY;
         public bool IsCounterAttack; // 我是否处于反击状态
+        
+        // AI - 代理权, True-本机拥有本单元的AI控制权 (接收并执行ActorAiStateReply函数)
+        public bool HasAiRights;
 
         //If true, AI changes to this animal will be logged in the console.
         private bool _logChanges = false;
@@ -72,6 +75,7 @@ namespace AI
             StateMachine = new StateMachineActor(this);
             HexUnit = hu;
             CurrentPosition = HexUnit.transform.localPosition;
+            HasAiRights = false;
             AddListener();
         }
         public void Fini()
@@ -81,6 +85,7 @@ namespace AI
 
         private void AddListener()
         {
+            MsgDispatcher.RegisterMsg((int)ROOM_REPLY.HighAiStateReply, OnHighAiStateReply);
             MsgDispatcher.RegisterMsg((int)ROOM_REPLY.UpdateActorInfoReply, OnUpdateActorInfoReply);
             MsgDispatcher.RegisterMsg((int)ROOM_REPLY.FightStartReply, OnFightStartReply);
             MsgDispatcher.RegisterMsg((int)ROOM_REPLY.FightStopReply, OnFightStopReply);
@@ -90,6 +95,7 @@ namespace AI
 
         private void RemoveListener()
         {
+            MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.HighAiStateReply, OnHighAiStateReply);
             MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.UpdateActorInfoReply, OnUpdateActorInfoReply);
             MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.FightStartReply, OnFightStartReply);
             MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.FightStopReply, OnFightStopReply);
@@ -180,8 +186,28 @@ namespace AI
 
         #endregion
         
-        #region 消息
+        #region AI - 代理权
 
+        /// <summary>
+        /// AI - 代理权: 如果我拥有了它的控制权, 则状态机要在这里运行, ActorVisualizer的同名函数会继续运行(接受本函数发送的消息)
+        /// </summary>
+        /// <param name="bytes"></param>
+        private void OnHighAiStateReply(byte[] bytes)
+        {
+            ActorAiStateReply input = ActorAiStateReply.Parser.ParseFrom(bytes);
+            if (input.ActorId != ActorId)
+                return; // 不是自己，略过
+            if (!input.Ret)
+                return;
+            if (!HasAiRights)
+                return; // 如果本地AI可以控制本单位, 则继续, 否则这里返回
+            
+            StateMachine.TriggerTransition((StateEnum)input.State, input.CellIndexTo, input.DurationTime, input.TargetId);
+        }
+
+        #endregion
+
+        #region 消息
         private void UpdateActorPos()
         {
             UpdateActorPos output = new UpdateActorPos()

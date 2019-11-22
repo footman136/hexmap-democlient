@@ -89,6 +89,13 @@ public class RoomLogic : MonoBehaviour
             input.PosX, input.PosZ, input.Orientation, input.Species, input.CellIndex, input.ActorInfoId, 
             input.Name, input.Hp, input.HpMax, input.AttackPower, input.DefencePower, input.Speed, input.FieldOfVision, 
             input.ShootingRange, input.AttackDuration, input.AttackInterval, input.AmmoBase, input.AmmoBaseMax);
+
+        // 每增加一个单位, 都要根据现有的AI-代理权情况来给这个单位设置一下, 批量处理在另外的地方
+        var ab = GameRoomManager.Instance.RoomLogic.ActorManager.GetActor(input.ActorId);
+        if (ab != null)
+        {
+            ab.HasAiRights = GameRoomManager.Instance.GetAiPlayer(input.OwnerId);
+        }
     }
 
     private void OnActorRemoveReply(byte[] bytes)

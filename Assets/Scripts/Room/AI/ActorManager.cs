@@ -46,5 +46,26 @@ namespace AI
                 keyValue.Value.Tick();
             }
         }
+        
+        #region AI - 代理权
+
+        /// <summary>
+        /// 遍历所有的单位, 设置他们是否可以由本地玩家控制进行AI计算
+        /// </summary>
+        /// <param name="aiPlayerId"></param>
+        /// <param name="set"></param>
+        public void SetAiRights(long aiPlayerId, bool set)
+        {
+            foreach (var keyValue in _allActors)
+            {
+                var ab = keyValue.Value;
+                if (ab.OwnerId == aiPlayerId)
+                {
+                    ab.HasAiRights = set;
+                }
+            }
+        }
+        
+        #endregion
     }
 }

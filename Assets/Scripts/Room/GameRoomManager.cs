@@ -188,10 +188,15 @@ public class GameRoomManager : ClientScript
 
     public void AddAiPlayer(long aiPlayerId, string account)
     {
+        if (_playersAi.ContainsKey(aiPlayerId))
+        {
+            Log($"GameRoomManager AddAiPlayer Error - Duplicated Ai Player! - {account} - {aiPlayerId}");
+        }
         RoomPlayerInfo rpi = gameObject.AddComponent<RoomPlayerInfo>();
         if (rpi)
         {
             rpi.Init(account, aiPlayerId);
+            RoomLogic.ActorManager.SetAiRights(aiPlayerId, true);
             _playersAi[aiPlayerId] = rpi;
         }
     }
@@ -200,7 +205,10 @@ public class GameRoomManager : ClientScript
     {
         if (_playersAi.ContainsKey(aiPlayerId))
         {
+            RoomLogic.ActorManager.SetAiRights(aiPlayerId, false);
+            RoomPlayerInfo rpi = GetAiPlayer(aiPlayerId);
             _playersAi.Remove(aiPlayerId);
+            Destroy(rpi);
         }
     }
     

@@ -1,3 +1,3 @@
 ﻿#,,,仅在RoomOnly模式下有效,,
 No.,LobbyServerAddress,LobbyServerPort,RoomServerAddress,RoomServerPort,DefaultRoomId
-1,107.150.103.157,9999,192.168.20.131,8889,4727935648655061390
+1,192.168.20.131,9999,192.168.20.131,8889,4727935648655061390

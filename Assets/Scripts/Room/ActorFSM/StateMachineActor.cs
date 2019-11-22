@@ -152,7 +152,7 @@ using static FSMStateActor;
                     CellIndexFrom = ab.CellIndex,
                     CellIndexTo = TargetCellIndex,
                     Orientation = ab.Orientation,
-                    Speed = ab.Speed,
+                    DurationTime = GetRemainedTime(),
                 };
                 GameRoomManager.Instance.SendMsg(ROOM.ActorAiState, output.ToByteArray());
 
@@ -167,7 +167,7 @@ using static FSMStateActor;
                 if (logChanges)
                 {
                     Debug.Log(
-                        $"ActorStateMachine: State changed from<{oldState}> to<{newState}> - TargetPosition:<{TargetPosX},{TargetPosZ}>");
+                        $"ActorStateMachine: State changed from<{oldState}> to<{newState}> - TargetPosition:<{TargetPosX},{TargetPosZ}> DurationTime:<{output.DurationTime}>");
                 }
             }
             else
@@ -215,5 +215,11 @@ using static FSMStateActor;
             return Time.time - _startTime;
         }
 
+        public float GetRemainedTime()
+        {
+            if (_durationTime == 0f)
+                return 0;
+            return _durationTime - GetLastedTime();
+        }
         #endregion
     }
