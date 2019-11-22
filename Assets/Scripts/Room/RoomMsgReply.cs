@@ -54,6 +54,9 @@ public class RoomMsgReply
             case ROOM_REPLY.DownloadResCellReply:
                 DOWNLOAD_RESCELL_REPLY(recvData);
                 break;
+            case ROOM_REPLY.ChangeAiRightsReply:
+                CHANGE_AI_RIGHTS_REPLY(recvData);
+                break;
             default:
                 // 通用消息处理器，别的地方要想响应找个消息，应该调用MsgDispatcher.RegisterMsg()来注册消息处理事件
                 MsgDispatcher.ProcessMsg(bytes, size);
@@ -373,6 +376,39 @@ public class RoomMsgReply
             resCount += input.InfoCount;
             string msg = "下载资源数据成功!";
             GameRoomManager.Instance.Log($"MSG: DOWNLOAD_RES_REPLY OK - " + msg + $"PackageCount:{input.PackageCount} - Res Count:{resCount}");
+        }
+    }
+
+    private static void CHANGE_AI_RIGHTS_REPLY(byte[] bytes)
+    {
+        ChangeAiRightsReply input = ChangeAiRightsReply.Parser.ParseFrom(bytes);
+        if (input.OwnerId != GameRoomManager.Instance.CurrentPlayer.TokenId)
+        {    // 校验, 此内容测试完毕以后, 可以去掉
+            GameRoomManager.Instance.Log($"RoomMsgReply CHANGE_AI_RIGHTS_REPLY Error - Id is not the same! - {input.OwnerId} : {GameRoomManager.Instance.CurrentPlayer.TokenId}");
+            return;
+        }
+        if (!input.Ret)
+        {
+            string msg = "AI代理权设置失败! - 实际代码永远不可能走到这里! 如果发现这个错误, 就让服务器去查吧! ";
+            UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
+            GameRoomManager.Instance.Log($"MSG: CHANGE_AI_RIGHTS_REPLY Error - " + msg);
+            return;
+        }
+
+        {
+            string msg = "";
+            if (input.ControlByMe)
+            {
+                msg = $"AI代理权修改: {input.AiAccount} 被我控制!";
+                GameRoomManager.Instance.AddAiPlayer(input.AiActorId, input.AiAccount);
+            }
+            else
+            {
+                msg = $"AI代理权修改: {input.AiAccount} 解除被我的控制!";
+                GameRoomManager.Instance.RemoveAiPlayer(input.AiActorId);
+            }
+
+            GameRoomManager.Instance.Log($"MSG: CHANGE_AI_RIGHTS_REPLY OK - " + msg);
         }
     }
 }

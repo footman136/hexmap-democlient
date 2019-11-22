@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class RoomPlayerInfo : MonoBehaviour
 {
-    [SerializeField] private string _account;
+    [SerializeField] private string _account; // 为了让UnityEditor可以看到具体数值, 所以不适用PlayerEnter类来存储
     [SerializeField] private long _tokenId;
     [SerializeField] private int _wood;
     [SerializeField] private int _food;

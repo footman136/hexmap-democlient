@@ -18,7 +18,11 @@ public class GameRoomManager : ClientScript
     public HexmapHelper HexmapHelper;
     public RoomLogic RoomLogic;
     public RoomPlayerInfo CurrentPlayer;
-    
+
+    // AI代理权: 专门存储其他玩家, 自己是CurrentPlayer, 不在这里
+    private Dictionary<long, RoomPlayerInfo> _playersAi = new Dictionary<long, RoomPlayerInfo>();
+    public Dictionary<long, RoomPlayerInfo> PlayersAi => _playersAi;
+
     [HideInInspector]
     public CsvDataManager CsvDataManager;
     public CommandManager CommandManager;
@@ -81,6 +85,14 @@ public class GameRoomManager : ClientScript
     {
         Completed -= OnComplete;
         Received -= OnReceiveMsg;
+
+        // 退出的时候, 最后尝试一下看消息能否发出
+        LeaveRoom output = new LeaveRoom()
+        {
+            RoomId = RoomId,
+            ReleaseIfNoUser = true,
+        };
+        SendMsg(ROOM.LeaveRoom, output.ToByteArray());
         RoomLogic.Fini();
     }
 
@@ -153,6 +165,58 @@ public class GameRoomManager : ClientScript
     
     #endregion
 
+    #region 得到角色
+
+//    public ActorBehaviour GetActorBehaviour(long actorId)
+//    {
+//        var ab = RoomLogic.ActorManager.GetActor(actorId);
+//        return ab;
+//    }
+
+    public ActorVisualizer GetActorVisualizer(long actorId)
+    {
+        var ab = RoomLogic.ActorManager.GetActor(actorId);
+        if (ab == null) return null;
+        var cell = HexmapHelper.GetCell(ab.CellIndex);
+        var av = cell.Unit.GetComponent<ActorVisualizer>();
+        return av;
+    }
+    
+    #endregion
+
+    #region AI Rights - AI 代理权
+
+    public void AddAiPlayer(long aiPlayerId, string account)
+    {
+        RoomPlayerInfo rpi = gameObject.AddComponent<RoomPlayerInfo>();
+        if (rpi)
+        {
+            rpi.Init(account, aiPlayerId);
+            _playersAi[aiPlayerId] = rpi;
+        }
+    }
+
+    public void RemoveAiPlayer(long aiPlayerId)
+    {
+        if (_playersAi.ContainsKey(aiPlayerId))
+        {
+            _playersAi.Remove(aiPlayerId);
+        }
+    }
+    
+
+    public RoomPlayerInfo GetAiPlayer(long aiPlayerId)
+    {
+        if (_playersAi.ContainsKey(aiPlayerId))
+        {
+            return _playersAi[aiPlayerId];
+        }
+
+        return null;
+    }
+
+    #endregion
+    
     #region 收发消息
     
     /// <summary>
@@ -285,23 +349,4 @@ public class GameRoomManager : ClientScript
 
     #endregion
     
-    #region 得到角色
-
-//    public ActorBehaviour GetActorBehaviour(long actorId)
-//    {
-//        var ab = RoomLogic.ActorManager.GetActor(actorId);
-//        return ab;
-//    }
-
-    public ActorVisualizer GetActorVisualizer(long actorId)
-    {
-        var ab = RoomLogic.ActorManager.GetActor(actorId);
-        if (ab == null) return null;
-        var cell = HexmapHelper.GetCell(ab.CellIndex);
-        var av = cell.Unit.GetComponent<ActorVisualizer>();
-        return av;
-    }
-    
-    
-    #endregion
 }
