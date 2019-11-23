@@ -116,7 +116,7 @@ public class CmdAttack : MonoBehaviour, ICommand
             {
                 // 这里其实应该发送TroopAiState消息到服务器,而不是直接操作状态机,但是因为状态机目前均行在本地,所以就直接调用了
                 abMe.IsCounterAttack = false; // 这是主动攻击, 不是反击, 记录在自己身上, Stop的时候用
-                abMe.StateMachine.TriggerTransition(StateEnum.FIGHT, cellTarget.Index, abMe.AttackDuration, _piTarget.CurrentActor.ActorId);
+                abMe.StateMachine.TriggerTransition(StateEnum.FIGHT, cellTarget.Index, _piTarget.CurrentActor.ActorId, abMe.AttackDuration);
                 return;
             }
         }
@@ -138,7 +138,7 @@ public class CmdAttack : MonoBehaviour, ICommand
 
         if ( avTarget && avTarget.OwnerId != avMe.OwnerId)
         {// 目标点是一支部队,且是敌人的部队,则盯住这支部队猛打
-            abMe.StateMachine.TriggerTransition(FSMStateActor.StateEnum.WALKFIGHT, cellTarget.Index, 0, avTarget.ActorId);
+            abMe.StateMachine.TriggerTransition(FSMStateActor.StateEnum.WALKFIGHT, cellTarget.Index, avTarget.ActorId);
         }
         else
         {// 目标点仅仅是一个位置坐标,则在行军过程中,搜索进攻,发现任意敌人就停下来打它

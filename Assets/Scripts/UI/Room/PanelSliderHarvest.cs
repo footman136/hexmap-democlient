@@ -14,7 +14,7 @@ public class PanelSliderHarvest : MonoBehaviour
     private ActorVisualizer _actor;
 
     private float _startTime;
-    private float _durationTime;
+    private float _totalTime;
     
     // Start is called before the first frame update
     void Start()
@@ -25,9 +25,9 @@ public class PanelSliderHarvest : MonoBehaviour
     void Update()
     {
         _startTime += Time.deltaTime;
-        if (_startTime >= _durationTime)
+        if (_startTime >= _totalTime)
         {
-            _startTime = _durationTime;
+            _startTime = _totalTime;
         }
         
         SetValue(_startTime);
@@ -41,13 +41,19 @@ public class PanelSliderHarvest : MonoBehaviour
         transform.position = _posScreen;
     }
 
-    public void Init(ActorVisualizer av, float durationTime)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="av"></param>
+    /// <param name="durationTime">剩余的时间</param>
+    /// <param name="totalTime">总时间</param>
+    public void Init(ActorVisualizer av, float durationTime, float totalTime)
     {
         _actor = av;
         _slider.minValue = 0;
-        _slider.maxValue = durationTime;
-        _startTime = 0;
-        _durationTime = durationTime;
+        _slider.maxValue = totalTime;
+        _startTime = totalTime - durationTime;
+        _totalTime = totalTime;
         SetValue(0);
     }
 

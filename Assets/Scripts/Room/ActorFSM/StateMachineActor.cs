@@ -15,8 +15,10 @@ using static FSMStateActor;
         // 状态机的参数
         // 时间相关的参数，这两个参数在Enter()的时候尚未生效（可能还是上一个数值），但在Tick()和Exit()的时候仍然有效
         [SerializeField] private float _startTime; // 本状态开始的时间
-        [SerializeField] private float _durationTime; // 状态的持续时间
+        [SerializeField] private float _durationTime; // 状态剩余的持续时间
         public float DurationTime => _durationTime;
+        [SerializeField] private float _totalTime; // 状态总的持续时间
+        public float TotalTime => _totalTime;
 
         // 目标点坐标的参数，这些参数在Enter()的就已经生效了，Tick()有效，但是在Exit()的时候就失效了（可能已经变成下一个目标点）
         public Vector3 TargetPosition; // 3D精确坐标，等同于transform.localPosition
@@ -136,7 +138,7 @@ using static FSMStateActor;
             SetTransitions(allowedTransitions);
         }
 
-        public void TriggerTransition(StateEnum newState, int cellIndex = 0, float durationTime = 0, long actorId = 0)
+        public void TriggerTransition(StateEnum newState, int cellIndex = 0, long actorId = 0, float durationTime = 0, float totalTime = 0)
         {
             if (IsValidTransition(newState))
             {
@@ -153,6 +155,7 @@ using static FSMStateActor;
                     CellIndexTo = TargetCellIndex,
                     Orientation = ab.Orientation,
                     DurationTime = durationTime,
+                    TotalTime = totalTime, 
                 };
                 GameRoomManager.Instance.SendMsg(ROOM.ActorAiState, output.ToByteArray());
 
@@ -163,6 +166,7 @@ using static FSMStateActor;
 
                 _startTime = Time.time; // 必须放在后面,因为这个数值大多在Tick()和Exit()里进行判定,而在Enter()里是没用的
                 _durationTime = durationTime;
+                _totalTime = totalTime; 
 
                 if (logChanges)
                 {
@@ -215,11 +219,5 @@ using static FSMStateActor;
             return Time.time - _startTime;
         }
 
-        public float GetRemainedTime()
-        {
-            if (_durationTime == 0f)
-                return 0;
-            return _durationTime - GetLastedTime();
-        }
         #endregion
     }

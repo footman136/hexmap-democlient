@@ -202,7 +202,7 @@ namespace AI
             if (!HasAiRights)
                 return; // 如果本地AI可以控制本单位, 则继续, 否则这里返回
             
-            StateMachine.TriggerTransition((StateEnum)input.State, input.CellIndexTo, input.DurationTime, input.TargetId);
+            StateMachine.TriggerTransition((StateEnum)input.State, input.CellIndexTo, input.TargetId, input.DurationTime, input.TotalTime);
         }
 
         #endregion
@@ -270,7 +270,7 @@ namespace AI
 
             if (input.FightAgain)
             { // 弹药基数足够, 可以再打一轮, 要用 [延迟攻击] 的状态, 时间也要把 [攻击持续时间] & [攻击间隔] 算在一起
-                StateMachine.TriggerTransition(StateEnum.DELAYFIGHT, 0, AttackDuration + AttackInterval, input.TargetId);
+                StateMachine.TriggerTransition(StateEnum.DELAYFIGHT, 0, input.TargetId, AttackDuration + AttackInterval);
             }
             else if(!input.IsEnemyDead && !IsCounterAttack)
             { // 我方战斗结束, 如果这时候敌人没死, (我不是处于反击状态), 敌人反击一次
@@ -290,7 +290,7 @@ namespace AI
                     
                     // 反击的时候, 不需要行动点的允许, 直接就可以打
                     abTarget.IsCounterAttack = true; // 这是反击, 不是主动攻击, 记录在自己身上, Stop的时候用
-                    abTarget.StateMachine.TriggerTransition(StateEnum.FIGHT, 0, abTarget.AttackDuration, input.ActorId);
+                    abTarget.StateMachine.TriggerTransition(StateEnum.FIGHT, 0, input.ActorId, abTarget.AttackDuration);
                     GameRoomManager.Instance.Log("ActorBehaviour OnFightStopReply - 敌人反击");
                 }
             }

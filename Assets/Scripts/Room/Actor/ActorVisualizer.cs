@@ -458,7 +458,7 @@ namespace Animation
                     aniState = idleStates;
                     break;
                 case StateEnum.HARVEST:
-                    ShowSliderHarvest(true, input.DurationTime);
+                    ShowSliderHarvest(true, input.DurationTime, input.TotalTime);
                     aniState = harvestStates;
                     break;
                 case StateEnum.NONE:
@@ -509,13 +509,13 @@ namespace Animation
             PanelRoomMain.Instance.UpdateResInCell(currentCell.Index);
         }
 
-        private void ShowSliderHarvest(bool show, float durationTime = 0)
+        private void ShowSliderHarvest(bool show, float durationTime = 0, float totalTime = 0)
         {
             if (show)
             {
                 // 显示进度条
                 _sliderHarvest = GameRoomManager.Instance.FightManager.SliderHarvest.Spawn(_inner, Vector3.zero);
-                _sliderHarvest.Init(this, durationTime);
+                _sliderHarvest.Init(this, durationTime, totalTime);
             }
             else
             {

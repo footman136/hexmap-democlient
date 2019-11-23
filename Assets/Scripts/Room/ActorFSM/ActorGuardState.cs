@@ -62,7 +62,7 @@ namespace AI
                 if (CmdAttack.IsActionPointGranted()) // 行动点足够
                 {
                     _actorBehaviour.IsCounterAttack = false; // 这是主动攻击, 不是反击, 记录在自己身上, Stop的时候用
-                    _actorBehaviour.StateMachine.TriggerTransition(StateEnum.FIGHT, 0, _actorBehaviour.AttackDuration, abEnemy.ActorId);
+                    _actorBehaviour.StateMachine.TriggerTransition(StateEnum.FIGHT, 0, abEnemy.ActorId, _actorBehaviour.AttackDuration);
                 }
             }
         }
