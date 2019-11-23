@@ -684,12 +684,23 @@ public class PanelRoomMain : MonoBehaviour
         UpdateResReply input = UpdateResReply.Parser.ParseFrom(bytes);
         if (!input.Ret)
             return;
-        _txtPlayerName.text = GameRoomManager.Instance.CurrentPlayer.Account;
-        _txtWood.text = input.Wood.ToString();
-        _txtFood.text = input.Food.ToString();
-        _txtIron.text = input.Iron.ToString();
+        if (input.OwnerId == GameRoomManager.Instance.CurrentPlayer.TokenId)
+        { // 是我自己
+            _txtPlayerName.text = GameRoomManager.Instance.CurrentPlayer.Account;
+            _txtWood.text = input.Wood.ToString();
+            _txtFood.text = input.Food.ToString();
+            _txtIron.text = input.Iron.ToString();
         
-        GameRoomManager.Instance.CurrentPlayer.SetRes(input.Wood, input.Food, input.Iron);
+            GameRoomManager.Instance.CurrentPlayer.SetRes(input.Wood, input.Food, input.Iron);
+        }
+        else
+        { // AI 代理权 - 是其他的AIPlayer
+            var pi = GameRoomManager.Instance.GetAiPlayer(input.OwnerId);
+            if (pi != null)
+            {
+                pi.SetRes(input.Wood, input.Food, input.Iron);
+            }
+        }
     }
 
     private void OnUpdateActionPointReply(byte[] bytes)

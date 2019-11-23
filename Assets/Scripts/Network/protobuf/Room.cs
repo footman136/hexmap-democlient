@@ -161,20 +161,20 @@ namespace Protobuf.Room {
             "ASgDEhAKCEFtbW9CYXNlGAQgASgFImIKD0FtbW9TdXBwbHlSZXBseRIOCgZS",
             "b29tSWQYASABKAMSDwoHT3duZXJJZBgCIAEoAxIPCgdBY3RvcklkGAMgASgD",
             "EhAKCEFtbW9CYXNlGAQgASgFEgsKA1JldBgFIAEoCCIxCg5DaGFuZ2VBaVJp",
-            "Z2h0cxIOCgZSb29tSWQYASABKAMSDwoHT3duZXJJZBgCIAEoAyJ+ChNDaGFu",
+            "Z2h0cxIOCgZSb29tSWQYASABKAMSDwoHT3duZXJJZBgCIAEoAyJ/ChNDaGFu",
             "Z2VBaVJpZ2h0c1JlcGx5Eg4KBlJvb21JZBgBIAEoAxIPCgdPd25lcklkGAIg",
-            "ASgDEgsKA1JldBgDIAEoCBIRCglBaUFjdG9ySWQYBCABKAMSEQoJQWlBY2Nv",
-            "dW50GAUgASgJEhMKC0NvbnRyb2xCeU1lGAYgASgIIsoBCgtIaWdoQWlTdGF0",
-            "ZRIOCgZSb29tSWQYASABKAMSDwoHT3duZXJJZBgCIAEoAxIPCgdBY3Rvcklk",
-            "GAMgASgDEg0KBVN0YXRlGAQgASgFEhUKDUNlbGxJbmRleEZyb20YBSABKAUS",
-            "EwoLQ2VsbEluZGV4VG8YBiABKAUSEAoIVGFyZ2V0SWQYByABKAMSEwoLT3Jp",
-            "ZW50YXRpb24YCCABKAISFAoMRHVyYXRpb25UaW1lGAkgASgCEhEKCVRvdGFs",
-            "VGltZRgKIAEoAiLcAQoQSGlnaEFpU3RhdGVSZXBseRIOCgZSb29tSWQYASAB",
-            "KAMSDwoHT3duZXJJZBgCIAEoAxIPCgdBY3RvcklkGAMgASgDEg0KBVN0YXRl",
-            "GAQgASgFEhUKDUNlbGxJbmRleEZyb20YBSABKAUSEwoLQ2VsbEluZGV4VG8Y",
-            "BiABKAUSEAoIVGFyZ2V0SWQYByABKAMSEwoLT3JpZW50YXRpb24YCCABKAIS",
-            "FAoMRHVyYXRpb25UaW1lGAkgASgCEhEKCVRvdGFsVGltZRgKIAEoAhILCgNS",
-            "ZXQYCyABKAhiBnByb3RvMw=="));
+            "ASgDEgsKA1JldBgDIAEoCBISCgpBaVBsYXllcklkGAQgASgDEhEKCUFpQWNj",
+            "b3VudBgFIAEoCRITCgtDb250cm9sQnlNZRgGIAEoCCLKAQoLSGlnaEFpU3Rh",
+            "dGUSDgoGUm9vbUlkGAEgASgDEg8KB093bmVySWQYAiABKAMSDwoHQWN0b3JJ",
+            "ZBgDIAEoAxINCgVTdGF0ZRgEIAEoBRIVCg1DZWxsSW5kZXhGcm9tGAUgASgF",
+            "EhMKC0NlbGxJbmRleFRvGAYgASgFEhAKCFRhcmdldElkGAcgASgDEhMKC09y",
+            "aWVudGF0aW9uGAggASgCEhQKDER1cmF0aW9uVGltZRgJIAEoAhIRCglUb3Rh",
+            "bFRpbWUYCiABKAIi3AEKEEhpZ2hBaVN0YXRlUmVwbHkSDgoGUm9vbUlkGAEg",
+            "ASgDEg8KB093bmVySWQYAiABKAMSDwoHQWN0b3JJZBgDIAEoAxINCgVTdGF0",
+            "ZRgEIAEoBRIVCg1DZWxsSW5kZXhGcm9tGAUgASgFEhMKC0NlbGxJbmRleFRv",
+            "GAYgASgFEhAKCFRhcmdldElkGAcgASgDEhMKC09yaWVudGF0aW9uGAggASgC",
+            "EhQKDER1cmF0aW9uVGltZRgJIAEoAhIRCglUb3RhbFRpbWUYCiABKAISCwoD",
+            "UmV0GAsgASgIYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -234,7 +234,7 @@ namespace Protobuf.Room {
             new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.AmmoSupply), global::Protobuf.Room.AmmoSupply.Parser, new[]{ "RoomId", "OwnerId", "ActorId", "AmmoBase" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.AmmoSupplyReply), global::Protobuf.Room.AmmoSupplyReply.Parser, new[]{ "RoomId", "OwnerId", "ActorId", "AmmoBase", "Ret" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.ChangeAiRights), global::Protobuf.Room.ChangeAiRights.Parser, new[]{ "RoomId", "OwnerId" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.ChangeAiRightsReply), global::Protobuf.Room.ChangeAiRightsReply.Parser, new[]{ "RoomId", "OwnerId", "Ret", "AiActorId", "AiAccount", "ControlByMe" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.ChangeAiRightsReply), global::Protobuf.Room.ChangeAiRightsReply.Parser, new[]{ "RoomId", "OwnerId", "Ret", "AiPlayerId", "AiAccount", "ControlByMe" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.HighAiState), global::Protobuf.Room.HighAiState.Parser, new[]{ "RoomId", "OwnerId", "ActorId", "State", "CellIndexFrom", "CellIndexTo", "TargetId", "Orientation", "DurationTime", "TotalTime" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.HighAiStateReply), global::Protobuf.Room.HighAiStateReply.Parser, new[]{ "RoomId", "OwnerId", "ActorId", "State", "CellIndexFrom", "CellIndexTo", "TargetId", "Orientation", "DurationTime", "TotalTime", "Ret" }, null, null, null, null)
           }));
@@ -14359,7 +14359,7 @@ namespace Protobuf.Room {
       roomId_ = other.roomId_;
       ownerId_ = other.ownerId_;
       ret_ = other.ret_;
-      aiActorId_ = other.aiActorId_;
+      aiPlayerId_ = other.aiPlayerId_;
       aiAccount_ = other.aiAccount_;
       controlByMe_ = other.controlByMe_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
@@ -14403,17 +14403,17 @@ namespace Protobuf.Room {
       }
     }
 
-    /// <summary>Field number for the "AiActorId" field.</summary>
-    public const int AiActorIdFieldNumber = 4;
-    private long aiActorId_;
+    /// <summary>Field number for the "AiPlayerId" field.</summary>
+    public const int AiPlayerIdFieldNumber = 4;
+    private long aiPlayerId_;
     /// <summary>
     /// 本机可以控制谁?
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public long AiActorId {
-      get { return aiActorId_; }
+    public long AiPlayerId {
+      get { return aiPlayerId_; }
       set {
-        aiActorId_ = value;
+        aiPlayerId_ = value;
       }
     }
 
@@ -14458,7 +14458,7 @@ namespace Protobuf.Room {
       if (RoomId != other.RoomId) return false;
       if (OwnerId != other.OwnerId) return false;
       if (Ret != other.Ret) return false;
-      if (AiActorId != other.AiActorId) return false;
+      if (AiPlayerId != other.AiPlayerId) return false;
       if (AiAccount != other.AiAccount) return false;
       if (ControlByMe != other.ControlByMe) return false;
       return Equals(_unknownFields, other._unknownFields);
@@ -14470,7 +14470,7 @@ namespace Protobuf.Room {
       if (RoomId != 0L) hash ^= RoomId.GetHashCode();
       if (OwnerId != 0L) hash ^= OwnerId.GetHashCode();
       if (Ret != false) hash ^= Ret.GetHashCode();
-      if (AiActorId != 0L) hash ^= AiActorId.GetHashCode();
+      if (AiPlayerId != 0L) hash ^= AiPlayerId.GetHashCode();
       if (AiAccount.Length != 0) hash ^= AiAccount.GetHashCode();
       if (ControlByMe != false) hash ^= ControlByMe.GetHashCode();
       if (_unknownFields != null) {
@@ -14498,9 +14498,9 @@ namespace Protobuf.Room {
         output.WriteRawTag(24);
         output.WriteBool(Ret);
       }
-      if (AiActorId != 0L) {
+      if (AiPlayerId != 0L) {
         output.WriteRawTag(32);
-        output.WriteInt64(AiActorId);
+        output.WriteInt64(AiPlayerId);
       }
       if (AiAccount.Length != 0) {
         output.WriteRawTag(42);
@@ -14527,8 +14527,8 @@ namespace Protobuf.Room {
       if (Ret != false) {
         size += 1 + 1;
       }
-      if (AiActorId != 0L) {
-        size += 1 + pb::CodedOutputStream.ComputeInt64Size(AiActorId);
+      if (AiPlayerId != 0L) {
+        size += 1 + pb::CodedOutputStream.ComputeInt64Size(AiPlayerId);
       }
       if (AiAccount.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(AiAccount);
@@ -14556,8 +14556,8 @@ namespace Protobuf.Room {
       if (other.Ret != false) {
         Ret = other.Ret;
       }
-      if (other.AiActorId != 0L) {
-        AiActorId = other.AiActorId;
+      if (other.AiPlayerId != 0L) {
+        AiPlayerId = other.AiPlayerId;
       }
       if (other.AiAccount.Length != 0) {
         AiAccount = other.AiAccount;
@@ -14589,7 +14589,7 @@ namespace Protobuf.Room {
             break;
           }
           case 32: {
-            AiActorId = input.ReadInt64();
+            AiPlayerId = input.ReadInt64();
             break;
           }
           case 42: {

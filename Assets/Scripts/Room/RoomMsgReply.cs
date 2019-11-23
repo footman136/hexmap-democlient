@@ -400,12 +400,20 @@ public class RoomMsgReply
             if (input.ControlByMe)
             {
                 msg = $"AI代理权修改: {input.AiAccount} 被我控制!";
-                GameRoomManager.Instance.AddAiPlayer(input.AiActorId, input.AiAccount);
+                GameRoomManager.Instance.AddAiPlayer(input.AiPlayerId, input.AiAccount);
+                
+                // AI-代理权 4-刷新AI玩家身上的资源
+                UpdateRes output3 = new UpdateRes()
+                {
+                    RoomId = input.RoomId,
+                    OwnerId = input.AiPlayerId,
+                };
+                GameRoomManager.Instance.SendMsg(ROOM.UpdateRes, output3.ToByteArray());
             }
             else
             {
                 msg = $"AI代理权修改: {input.AiAccount} 解除被我的控制!";
-                GameRoomManager.Instance.RemoveAiPlayer(input.AiActorId);
+                GameRoomManager.Instance.RemoveAiPlayer(input.AiPlayerId);
             }
 
             GameRoomManager.Instance.Log($"MSG: CHANGE_AI_RIGHTS_REPLY OK - " + msg);
