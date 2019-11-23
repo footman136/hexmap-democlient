@@ -152,7 +152,7 @@ using static FSMStateActor;
                     CellIndexFrom = ab.CellIndex,
                     CellIndexTo = TargetCellIndex,
                     Orientation = ab.Orientation,
-                    DurationTime = GetRemainedTime(),
+                    DurationTime = durationTime,
                 };
                 GameRoomManager.Instance.SendMsg(ROOM.ActorAiState, output.ToByteArray());
 

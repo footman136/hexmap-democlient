@@ -400,15 +400,26 @@ namespace Animation
             }
 
             StateEnum newAiState = (StateEnum)input.State;
-            
+
+            // 注: 在客户端: input.DurationTime是没有用的, 时间完全由 服务器端/AI端 控制
+
+            switch (CurrentAiState)
+            {
+                case StateEnum.GUARD:
+                    ShowShield(false);
+                    break;
+                case StateEnum.HARVEST:
+                    ShowSliderHarvest(false);
+                    break;
+                case StateEnum.FIGHT:
+                    break;
+            }
+
             CurrentAiState = newAiState;
             TargetPosition = newPosition;
             TargetActorId = input.TargetId;
             TargetCellIndex = input.CellIndexTo;
             
-            // 注: 在客户端: input.DurationTime是没有用的, 时间完全由 服务器端/AI端 控制
-            
-            ShowShield(false);
 
             AnimationState[] aniState = null;
             switch (CurrentAiState)
@@ -434,9 +445,11 @@ namespace Animation
                 case StateEnum.FIGHT:
                     GameRoomManager.Instance.HexmapHelper.Stop(input.ActorId);
                     GameRoomManager.Instance.HexmapHelper.LookAt(input.ActorId, TargetPosition);
+                    ShowSliderBlood();
                     aniState = attackingStates;
                     break;
                 case StateEnum.DELAYFIGHT:
+                    ShowSliderBlood();
                     aniState = idleStates; // 先不播放战斗动画,过了AttackInternal的时间以后再通过ActorPlayAni消息来播
                     break;
                 case StateEnum.GUARD:
@@ -445,6 +458,7 @@ namespace Animation
                     aniState = idleStates;
                     break;
                 case StateEnum.HARVEST:
+                    ShowSliderHarvest(true, input.DurationTime);
                     aniState = harvestStates;
                     break;
                 case StateEnum.NONE:
@@ -465,10 +479,6 @@ namespace Animation
                 return; // 不是自己，略过
             if (!input.Ret)
                 return;
-
-            // 显示进度条
-            _sliderHarvest = GameRoomManager.Instance.FightManager.SliderHarvest.Spawn(_inner, Vector3.zero);
-            _sliderHarvest.Init(this, input.DurationTime);
         }
         
         private void OnHarvestStopReply(byte[] bytes)
@@ -490,13 +500,6 @@ namespace Animation
                 res.Refresh(currentCell);
             }
 
-            // 隐藏进度条
-            if (_sliderHarvest)
-            {
-                _sliderHarvest.Recycle();
-                _sliderHarvest = null;
-            }
-
             string [] resTypes = {"木材","粮食","铁矿"};
             string msg = $"获取了 {input.ResHarvest} 的 {resTypes[input.ResType]} 资源";
             UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Success);
@@ -504,6 +507,25 @@ namespace Animation
             
             // 必要的时候, 刷新地面上的资源数字
             PanelRoomMain.Instance.UpdateResInCell(currentCell.Index);
+        }
+
+        private void ShowSliderHarvest(bool show, float durationTime = 0)
+        {
+            if (show)
+            {
+                // 显示进度条
+                _sliderHarvest = GameRoomManager.Instance.FightManager.SliderHarvest.Spawn(_inner, Vector3.zero);
+                _sliderHarvest.Init(this, durationTime);
+            }
+            else
+            {
+                // 隐藏进度条
+                if (_sliderHarvest)
+                {
+                    _sliderHarvest.Recycle();
+                    _sliderHarvest = null;
+                }
+            }
         }
         
         #endregion
