@@ -1,5 +1,6 @@
 ﻿using AI;
 using UnityEngine;
+using static FSMStateActor;
 
 public class CmdMarch : MonoBehaviour, ICommand
 {
@@ -90,6 +91,7 @@ public class CmdMarch : MonoBehaviour, ICommand
         
             Debug.Log($"CmdMarch - From<{av.PosX},{av.PosZ}> - Dest<{cellTarget.coordinates.X},{cellTarget.coordinates.Z}>");
             ab.StateMachine.TriggerTransition(FSMStateActor.StateEnum.WALK, cellTarget.Index);
+            CmdAttack.SendAiStateHigh(StateEnum.WALK, cellTarget.Index);
         }
         Stop();
         // 消耗行动点 

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static FSMStateActor;
 
 public class CmdGuard : MonoBehaviour, ICommand
 {
@@ -18,7 +19,8 @@ public class CmdGuard : MonoBehaviour, ICommand
         var abMe = GameRoomManager.Instance.RoomLogic.ActorManager.GetActor(avMe.ActorId);
         if (abMe == null)
             return;
-        abMe.StateMachine.TriggerTransition(FSMStateActor.StateEnum.GUARD);
+        abMe.StateMachine.TriggerTransition(StateEnum.GUARD);
+        CmdAttack.SendAiStateHigh(StateEnum.GUARD);
         Stop();
 
     }

@@ -40,19 +40,23 @@ namespace AI
             {
                 if (_actorBehaviour.IsEnemyInRange(abEnemy))
                 {
-                    if (_actorBehaviour.Distance < 18f * _actorBehaviour.ShootingRange)
+                    if (_actorBehaviour.Distance < 24f * _actorBehaviour.ShootingRange)
                     { // 敌人进入射程,进入攻击状态. 注意:这时候的敌人,可能不是之前要打的敌人
-                        _actorBehaviour.IsCounterAttack = false; // 这是主动攻击, 不是反击, 记录在自己身上, Stop的时候用
-                        Owner.TriggerTransition(StateEnum.FIGHT, abEnemy.CellIndex, abEnemy.ActorId, _actorBehaviour.AttackDuration);    
+                        if (_actorBehaviour.AmmoBase > 0)
+                        { // 弹药是否足够, 如果不够了, 该干嘛干嘛去
+                            _actorBehaviour.IsCounterAttack = false; // 这是主动攻击, 不是反击, 记录在自己身上, Stop的时候用
+                            Owner.TriggerTransition(StateEnum.FIGHT, abEnemy.CellIndex, abEnemy.ActorId,
+                                _actorBehaviour.AttackDuration);
+                            CmdAttack.TryCommand();
+                            return;
+                        }
                     }
                 }
             }
-            else
-            {
-                if(_actorBehaviour.CurrentPosition == vecLast && _actorBehaviour.CellIndex == Owner.TargetCellIndex)
-                { // 没有敌人的话,到达目的地以后,自动进入警戒状态  
-                    Owner.TriggerTransition(StateEnum.GUARD);
-                }
+            
+            if(_actorBehaviour.CurrentPosition == vecLast && _actorBehaviour.CellIndex == Owner.TargetCellIndex)
+            { // 没有敌人的话,到达目的地以后,自动进入警戒状态  
+                Owner.TriggerTransition(StateEnum.GUARD);
             }
             vecLast = _actorBehaviour.CurrentPosition;
         }

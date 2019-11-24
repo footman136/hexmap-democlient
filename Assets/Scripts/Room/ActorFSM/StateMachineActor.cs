@@ -97,6 +97,7 @@ using static FSMStateActor;
                 StateEnum.WALK,
                 StateEnum.WALKFIGHT,
                 StateEnum.FIGHT,
+                StateEnum.DELAYFIGHT,
                 StateEnum.GUARD,
             });
             allowedTransitions.Add(StateEnum.WALKFIGHT, new List<StateEnum>
@@ -106,6 +107,7 @@ using static FSMStateActor;
                 StateEnum.WALK,
                 StateEnum.WALKFIGHT,
                 StateEnum.FIGHT,
+                StateEnum.DELAYFIGHT,
                 StateEnum.GUARD,
             });
             allowedTransitions.Add(StateEnum.FIGHT, new List<StateEnum>
@@ -115,6 +117,7 @@ using static FSMStateActor;
                 StateEnum.WALK,
                 StateEnum.WALKFIGHT,
                 StateEnum.FIGHT,
+                StateEnum.DELAYFIGHT,
                 StateEnum.GUARD,
             });
             allowedTransitions.Add(StateEnum.DELAYFIGHT, new List<StateEnum>

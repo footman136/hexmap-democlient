@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Google.Protobuf;
 using Protobuf.Room;
 using UnityEngine;
+using static FSMStateActor;
 
 public class CmdMining : MonoBehaviour, ICommand
 {
@@ -54,7 +55,8 @@ public class CmdMining : MonoBehaviour, ICommand
             };
             GameRoomManager.Instance.SendMsg(ROOM.HarvestStart, output.ToByteArray());
 
-            ab.StateMachine.TriggerTransition(FSMStateActor.StateEnum.HARVEST, 0, 0, durationTime, durationTime);
+            ab.StateMachine.TriggerTransition(StateEnum.HARVEST, 0, 0, durationTime, durationTime);
+            CmdAttack.SendAiStateHigh(StateEnum.HARVEST);
             // 消耗行动点 
             CmdAttack.TryCommand();
         }

@@ -210,6 +210,8 @@ namespace Animation
             return null;
         }
 
+        public bool IsDead => CurrentAiState == StateEnum.DIE || CurrentAiState == StateEnum.VANISH;
+
         #endregion
         
         #region 播放动画
@@ -419,7 +421,11 @@ namespace Animation
             TargetPosition = newPosition;
             TargetActorId = input.TargetId;
             TargetCellIndex = input.CellIndexTo;
-            
+
+            if (avTarget == null || avTarget.IsDead)
+            {
+                TargetActorId = 0;
+            }
 
             AnimationState[] aniState = null;
             switch (CurrentAiState)
@@ -433,6 +439,7 @@ namespace Animation
                     //aniState = vanishStates; // vanishStates这个状态的动画不知道为什么不正确,这里只能继续沿用Die的最后一帧了
                     break;
                 case StateEnum.DIE:
+                    GameRoomManager.Instance.HexmapHelper.Stop(input.ActorId);
                     aniState = deathStates;
                     break;
                 case StateEnum.WALK:

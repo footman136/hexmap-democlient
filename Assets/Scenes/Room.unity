@@ -887,7 +887,7 @@ MonoBehaviour:
   FightManager: {fileID: 1337228929}
   RoomId: 0
   RoomName: 
-  IsAiOn: 0
+  IsAiOn: 1
 --- !u!4 &1778121409
 Transform:
   m_ObjectHideFlags: 0

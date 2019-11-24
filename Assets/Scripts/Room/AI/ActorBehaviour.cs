@@ -57,11 +57,19 @@ namespace AI
         private float _distance;
         public float Distance => _distance;
         
-        private float TIME_DELAY;
+        private const float AI_TIME_DELAY = 1f;  // AI思考的间隔时间(秒)
         public bool IsCounterAttack; // 我是否处于反击状态
         
         // AI - 代理权, True-本机拥有本单元的AI控制权 (接收并执行ActorAiStateReply函数)
         public bool HasAiRights;
+        // 高级AI状态, 这个主要用于记录, 存盘的时候, 本单位最后的AI状态, 如果中途发生了改变, 当回到IDLE状态的时候, 
+        // 本单位应该恢复成这个状态, 例如: 如果是GUARD状态, 中途如果发现了敌人, 自己的状态就变了(变成FIGHT),
+        // 但是如果打完敌人(状态变为IDLE), 这个状态应该仍然回到GUARD状态.
+        // 但是有的时候又不用回到原来的状态, 例如: WALK, 到达目的地以后, 就可以不用再动了
+        public StateEnum HighAiState;
+        public int HighAiTargetCell;
+        public long HighAiTargetId;
+        
 
         //If true, AI changes to this animal will be logged in the console.
         private bool _logChanges = false;
@@ -77,6 +85,7 @@ namespace AI
             CurrentPosition = HexUnit.transform.localPosition;
             HasAiRights = false;
             AddListener();
+            
         }
         public void Fini()
         {
@@ -85,7 +94,7 @@ namespace AI
 
         private void AddListener()
         {
-            MsgDispatcher.RegisterMsg((int)ROOM_REPLY.HighAiStateReply, OnHighAiStateReply);
+            MsgDispatcher.RegisterMsg((int)ROOM_REPLY.ActorAiStateHighReply, OnActorAiStateHighReply);
             MsgDispatcher.RegisterMsg((int)ROOM_REPLY.UpdateActorInfoReply, OnUpdateActorInfoReply);
             MsgDispatcher.RegisterMsg((int)ROOM_REPLY.FightStartReply, OnFightStartReply);
             MsgDispatcher.RegisterMsg((int)ROOM_REPLY.FightStopReply, OnFightStopReply);
@@ -95,7 +104,7 @@ namespace AI
 
         private void RemoveListener()
         {
-            MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.HighAiStateReply, OnHighAiStateReply);
+            MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.ActorAiStateHighReply, OnActorAiStateHighReply);
             MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.UpdateActorInfoReply, OnUpdateActorInfoReply);
             MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.FightStartReply, OnFightStartReply);
             MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.FightStopReply, OnFightStopReply);
@@ -108,7 +117,10 @@ namespace AI
         public void Tick()
         {
             CurrentPosition = HexUnit.transform.localPosition; // 不是Cell的坐标
-            _distance = Vector3.Distance(CurrentPosition, StateMachine.TargetPosition);
+            Vector2 curPos2 = new Vector2(CurrentPosition.x, CurrentPosition.y);
+            Vector2 targetPos2 = new Vector2(StateMachine.TargetPosition.x, StateMachine.TargetPosition.y);
+            //_distance = Vector3.Distance(CurrentPosition, StateMachine.TargetPosition);
+            _distance = Vector2.Distance(curPos2, targetPos2);// 
             int posXOld = PosX;
             int posZOld = PosZ;
             var currentCell = HexUnit.Grid.GetCell(CurrentPosition);
@@ -133,7 +145,7 @@ namespace AI
             StateMachine.Tick();
             
             timeNow += Time.deltaTime;
-            if (timeNow < TIME_DELAY)
+            if (timeNow < AI_TIME_DELAY)
             {
                 return;
             }
@@ -183,6 +195,11 @@ namespace AI
 
             return null;
         }
+        
+        public bool IsDead => StateMachine.CurrentAiState == StateEnum.DIE || StateMachine.CurrentAiState == StateEnum.VANISH;
+
+        public bool IsFighting => HighAiState == StateEnum.FIGHT ||
+                                  HighAiState == StateEnum.DELAYFIGHT;
 
         #endregion
         
@@ -192,17 +209,32 @@ namespace AI
         /// AI - 代理权: 如果我拥有了它的控制权, 则状态机要在这里运行, ActorVisualizer的同名函数会继续运行(接受本函数发送的消息)
         /// </summary>
         /// <param name="bytes"></param>
-        private void OnHighAiStateReply(byte[] bytes)
+        private void OnActorAiStateHighReply(byte[] bytes)
         {
-            ActorAiStateReply input = ActorAiStateReply.Parser.ParseFrom(bytes);
+            ActorAiStateHighReply input = ActorAiStateHighReply.Parser.ParseFrom(bytes);
             if (input.ActorId != ActorId)
                 return; // 不是自己，略过
             if (!input.Ret)
                 return;
-            if (!HasAiRights)
-                return; // 如果本地AI可以控制本单位, 则继续, 否则这里返回
-            
-            StateMachine.TriggerTransition((StateEnum)input.State, input.CellIndexTo, input.TargetId, input.DurationTime, input.TotalTime);
+            // 如果本地AI可以控制本单位, 或者是当前玩家自己, 则继续, 否则这里返回
+            if (!HasAiRights && input.OwnerId != GameRoomManager.Instance.CurrentPlayer.TokenId)
+                return;
+
+            HighAiState = (StateEnum) input.State;// 记录高级AI状态
+            HighAiTargetCell = input.CellIndexTo;
+            HighAiTargetId = 0;
+            var abTarget = GameRoomManager.Instance.RoomLogic.ActorManager.GetActor(input.TargetId);
+            if(abTarget == null || abTarget.IsDead)
+            {
+                HighAiTargetId = input.TargetId;
+            }
+
+            // 对于当前玩家自己, 仅记下来自己的HighAi状态, 但是不再修改状态机了(因为本地, 玩家操作的时候已经修改了状态机)
+            if (input.OwnerId != GameRoomManager.Instance.CurrentPlayer.TokenId)
+            {
+                StateMachine.TriggerTransition((StateEnum) input.State, input.CellIndexTo, input.TargetId,
+                    input.DurationTime, input.TotalTime);
+            }
         }
 
         #endregion
@@ -248,6 +280,7 @@ namespace AI
 
             GameRoomManager.Instance.Log("ActorBehaviour OnFightStartReply OK ...");
         }
+        
         private void OnFightStopReply(byte[] bytes)
         {
             FightStopReply input = FightStopReply.Parser.ParseFrom(bytes);
@@ -259,38 +292,26 @@ namespace AI
                 return;
             }
 
-            if (input.IsEnemyDead)
-            { // 杀死了敌人以后, 要走到对方的位置去
-//                var abTarget = GameRoomManager.Instance.RoomLogic.ActorManager.GetActor(input.TargetId);
-//                if (abTarget != null)
-//                {
-//                    StateMachine.TriggerTransition(StateEnum.WALK, abTarget.CellIndex);
-//                }
-            }
-
-            if (input.FightAgain)
+            // 每次攻击都要消耗行动点和弹药基数, 所以需要每一轮攻击都判断行动点和弹药基数是否足够
+            // 如果在战斗中才进行下次进攻的判定, 否则战斗结束
+            if (input.FightAgain && IsFighting && AmmoBase > 0 && CmdAttack.IsActionPointGranted())
             { // 弹药基数足够, 可以再打一轮, 要用 [延迟攻击] 的状态, 时间也要把 [攻击持续时间] & [攻击间隔] 算在一起
-                StateMachine.TriggerTransition(StateEnum.DELAYFIGHT, 0, input.TargetId, AttackDuration + AttackInterval);
+                StateMachine.TriggerTransition(StateEnum.DELAYFIGHT, 0, input.TargetId,
+                    AttackDuration + AttackInterval);
+                CmdAttack.TryCommand();
             }
-            else if(!input.IsEnemyDead && !IsCounterAttack)
-            { // 我方战斗结束, 如果这时候敌人没死, (我不是处于反击状态), 敌人反击一次
+            else if (!input.IsEnemyDead && !IsCounterAttack)
+            {
+                // 我方战斗结束, 如果这时候敌人没死, (我不是处于反击状态), 敌人反击一次
                 var abTarget = GameRoomManager.Instance.RoomLogic.ActorManager.GetActor(input.TargetId);
                 if (abTarget != null)
                 {
                     abTarget.IsCounterAttack = true; // 这是反击, 不是主动攻击, 记录在自己身上, Stop的时候用
-//                    FightStart output = new FightStart()
-//                    {
-//                        RoomId = abTarget.RoomId,
-//                        OwnerId = abTarget.OwnerId,
-//                        ActorId = input.TargetId,
-//                        TargetId = input.ActorId,
-//                        SkillId = 1,
-//                    };
-//                    GameRoomManager.Instance.SendMsg(ROOM.FightStart, output.ToByteArray());
-                    
+
                     // 反击的时候, 不需要行动点的允许, 直接就可以打
                     abTarget.IsCounterAttack = true; // 这是反击, 不是主动攻击, 记录在自己身上, Stop的时候用
-                    abTarget.StateMachine.TriggerTransition(StateEnum.FIGHT, 0, input.ActorId, abTarget.AttackDuration);
+                    abTarget.StateMachine.TriggerTransition(StateEnum.FIGHT, 0, input.ActorId,
+                        abTarget.AttackDuration);
                     GameRoomManager.Instance.Log("ActorBehaviour OnFightStopReply - 敌人反击");
                 }
             }
@@ -310,25 +331,12 @@ namespace AI
         
         #endregion
         
-        #region AI - 第一层
-        IEnumerator Running()
-        {
-            yield return new WaitForSeconds(ScriptableActorStats.thinkingFrequency);
-            while (true)
-            {
-                AI_Running();
-
-                yield return new WaitForSeconds(ScriptableActorStats.thinkingFrequency);
-            }
-        }
-        #endregion
-        
-        #region AI - 第二层
-
         private bool bFirst = true;
         private float _lastTime = 0f;
         private float _deltaTime;
 
+        #region AI - 第一层
+        
         private void AI_Running()
         {
             if (!GameRoomManager.Instance.IsAiOn)
@@ -336,18 +344,27 @@ namespace AI
                 return;
             }
 
-            // 这里的_deltaTime是真实的每次本函数调用的时间间隔（而不是Time.deltaTime）。
-            //_deltaTime = Time.deltaTime;
-            var nowTime = Time.time;
-            _deltaTime = nowTime - _lastTime;
-            _lastTime = nowTime;
+            // 如果本地AI可以控制本单位, 或者是当前玩家自己, 则继续, 否则这里返回
+            if (!HasAiRights && OwnerId != GameRoomManager.Instance.CurrentPlayer.TokenId)
+                return;
 
-            if (bFirst)
+            if (StateMachine.CurrentAiState == StateEnum.IDLE)
             {
-                //newBorn();
-                _deltaTime = 0; // 第一次不记录时间延迟
-                bFirst = false;
+                if (StateMachine.GetLastedTime() > 5f)
+                { // 进入休闲状态超过5秒, 也就是说闲置超过5秒的情况下
+                    switch (HighAiState)
+                    {
+                        case StateEnum.GUARD:
+                            StateMachine.TriggerTransition(StateEnum.GUARD);
+                            break;
+                        case StateEnum.WALKFIGHT:
+                            StateMachine.TriggerTransition(StateEnum.WALKFIGHT, HighAiTargetCell, HighAiTargetId);
+                            break;
+                    }
+                }
             }
+            
+            
 
 //            float range = 100f;
 //            if (StateMachine.CurrentAiState == FSMStateActor.StateEnum.IDLE)
@@ -366,6 +383,9 @@ namespace AI
 //                }
 //            }
         }
+        #endregion
+
+        #region AI - 第二层
 
         #endregion
     }

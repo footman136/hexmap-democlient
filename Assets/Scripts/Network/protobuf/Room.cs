@@ -164,17 +164,17 @@ namespace Protobuf.Room {
             "Z2h0cxIOCgZSb29tSWQYASABKAMSDwoHT3duZXJJZBgCIAEoAyJ/ChNDaGFu",
             "Z2VBaVJpZ2h0c1JlcGx5Eg4KBlJvb21JZBgBIAEoAxIPCgdPd25lcklkGAIg",
             "ASgDEgsKA1JldBgDIAEoCBISCgpBaVBsYXllcklkGAQgASgDEhEKCUFpQWNj",
-            "b3VudBgFIAEoCRITCgtDb250cm9sQnlNZRgGIAEoCCLKAQoLSGlnaEFpU3Rh",
-            "dGUSDgoGUm9vbUlkGAEgASgDEg8KB093bmVySWQYAiABKAMSDwoHQWN0b3JJ",
-            "ZBgDIAEoAxINCgVTdGF0ZRgEIAEoBRIVCg1DZWxsSW5kZXhGcm9tGAUgASgF",
-            "EhMKC0NlbGxJbmRleFRvGAYgASgFEhAKCFRhcmdldElkGAcgASgDEhMKC09y",
-            "aWVudGF0aW9uGAggASgCEhQKDER1cmF0aW9uVGltZRgJIAEoAhIRCglUb3Rh",
-            "bFRpbWUYCiABKAIi3AEKEEhpZ2hBaVN0YXRlUmVwbHkSDgoGUm9vbUlkGAEg",
-            "ASgDEg8KB093bmVySWQYAiABKAMSDwoHQWN0b3JJZBgDIAEoAxINCgVTdGF0",
-            "ZRgEIAEoBRIVCg1DZWxsSW5kZXhGcm9tGAUgASgFEhMKC0NlbGxJbmRleFRv",
-            "GAYgASgFEhAKCFRhcmdldElkGAcgASgDEhMKC09yaWVudGF0aW9uGAggASgC",
-            "EhQKDER1cmF0aW9uVGltZRgJIAEoAhIRCglUb3RhbFRpbWUYCiABKAISCwoD",
-            "UmV0GAsgASgIYgZwcm90bzM="));
+            "b3VudBgFIAEoCRITCgtDb250cm9sQnlNZRgGIAEoCCKKAQoQQWN0b3JBaVN0",
+            "YXRlSGlnaBIOCgZSb29tSWQYASABKAMSDwoHT3duZXJJZBgCIAEoAxIPCgdB",
+            "Y3RvcklkGAMgASgDEhMKC0hpZ2hBaVN0YXRlGAQgASgFEhkKEUhpZ2hBaUNl",
+            "bGxJbmRleFRvGAYgASgFEhQKDEhpZ2hUYXJnZXRJZBgHIAEoAyKpAgoVQWN0",
+            "b3JBaVN0YXRlSGlnaFJlcGx5Eg4KBlJvb21JZBgBIAEoAxIPCgdPd25lcklk",
+            "GAIgASgDEg8KB0FjdG9ySWQYAyABKAMSDQoFU3RhdGUYBCABKAUSFQoNQ2Vs",
+            "bEluZGV4RnJvbRgFIAEoBRITCgtDZWxsSW5kZXhUbxgGIAEoBRIQCghUYXJn",
+            "ZXRJZBgHIAEoAxITCgtPcmllbnRhdGlvbhgIIAEoAhIUCgxEdXJhdGlvblRp",
+            "bWUYCSABKAISEQoJVG90YWxUaW1lGAogASgCEhMKC0hpZ2hBaVN0YXRlGAsg",
+            "ASgFEhYKDkhpZ2hBaVRhcmdldElkGAwgASgDEhkKEUhpZ2hBaUNlbGxJbmRl",
+            "eFRvGA0gASgFEgsKA1JldBgOIAEoCGIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -235,8 +235,8 @@ namespace Protobuf.Room {
             new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.AmmoSupplyReply), global::Protobuf.Room.AmmoSupplyReply.Parser, new[]{ "RoomId", "OwnerId", "ActorId", "AmmoBase", "Ret" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.ChangeAiRights), global::Protobuf.Room.ChangeAiRights.Parser, new[]{ "RoomId", "OwnerId" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.ChangeAiRightsReply), global::Protobuf.Room.ChangeAiRightsReply.Parser, new[]{ "RoomId", "OwnerId", "Ret", "AiPlayerId", "AiAccount", "ControlByMe" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.HighAiState), global::Protobuf.Room.HighAiState.Parser, new[]{ "RoomId", "OwnerId", "ActorId", "State", "CellIndexFrom", "CellIndexTo", "TargetId", "Orientation", "DurationTime", "TotalTime" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.HighAiStateReply), global::Protobuf.Room.HighAiStateReply.Parser, new[]{ "RoomId", "OwnerId", "ActorId", "State", "CellIndexFrom", "CellIndexTo", "TargetId", "Orientation", "DurationTime", "TotalTime", "Ret" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.ActorAiStateHigh), global::Protobuf.Room.ActorAiStateHigh.Parser, new[]{ "RoomId", "OwnerId", "ActorId", "HighAiState", "HighAiCellIndexTo", "HighTargetId" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Protobuf.Room.ActorAiStateHighReply), global::Protobuf.Room.ActorAiStateHighReply.Parser, new[]{ "RoomId", "OwnerId", "ActorId", "State", "CellIndexFrom", "CellIndexTo", "TargetId", "Orientation", "DurationTime", "TotalTime", "HighAiState", "HighAiTargetId", "HighAiCellIndexTo", "Ret" }, null, null, null, null)
           }));
     }
     #endregion
@@ -245,7 +245,7 @@ namespace Protobuf.Room {
   #region Messages
   /// <summary>
   //////////////////////////////////////////////////
-  /// ĞÄÌø
+  /// å¿ƒè·³
   /// </summary>
   public sealed partial class HeartBeat : pb::IMessage<HeartBeat> {
     private static readonly pb::MessageParser<HeartBeat> _parser = new pb::MessageParser<HeartBeat>(() => new HeartBeat());
@@ -350,7 +350,7 @@ namespace Protobuf.Room {
 
   /// <summary>
   //////////////////////////////////////////////////
-  /// Íæ¼Ò¸Õ¸Õ¼ÓÈë·şÎñÆ÷
+  /// ç©å®¶åˆšåˆšåŠ å…¥æœåŠ¡å™¨
   /// </summary>
   public sealed partial class PlayerEnter : pb::IMessage<PlayerEnter> {
     private static readonly pb::MessageParser<PlayerEnter> _parser = new pb::MessageParser<PlayerEnter>(() => new PlayerEnter());
@@ -640,7 +640,7 @@ namespace Protobuf.Room {
 
   /// <summary>
   //////////////////////////////////////////////////
-  /// Íæ¼ÒÔÚ¿Í»§¶Ë´´½¨ÁËµØÍ¼ÒÔºó,ÉÏ´«µ½·şÎñÆ÷½øĞĞ±£´æ
+  /// ç©å®¶åœ¨å®¢æˆ·ç«¯åˆ›å»ºäº†åœ°å›¾ä»¥å,ä¸Šä¼ åˆ°æœåŠ¡å™¨è¿›è¡Œä¿å­˜
   /// </summary>
   public sealed partial class UploadMap : pb::IMessage<UploadMap> {
     private static readonly pb::MessageParser<UploadMap> _parser = new pb::MessageParser<UploadMap>(() => new UploadMap());
@@ -1098,7 +1098,7 @@ namespace Protobuf.Room {
 
   /// <summary>
   //////////////////////////////////////////////////
-  /// ËùÓĞÍæ¼Ò½øÈë·¿¼ä,¶¼Òª´Ó·şÎñÆ÷ÏÂÔØ·şÎñÆ÷Êı¾İ
+  /// æ‰€æœ‰ç©å®¶è¿›å…¥æˆ¿é—´,éƒ½è¦ä»æœåŠ¡å™¨ä¸‹è½½æœåŠ¡å™¨æ•°æ®
   /// </summary>
   public sealed partial class DownloadMap : pb::IMessage<DownloadMap> {
     private static readonly pb::MessageParser<DownloadMap> _parser = new pb::MessageParser<DownloadMap>(() => new DownloadMap());
@@ -1584,7 +1584,7 @@ namespace Protobuf.Room {
 
   /// <summary>
   //////////////////////////////////////////////////
-  /// ½øÈë/Àë¿ª·¿¼ä
+  /// è¿›å…¥/ç¦»å¼€æˆ¿é—´
   /// </summary>
   public sealed partial class NetRoomInfo : pb::IMessage<NetRoomInfo> {
     private static readonly pb::MessageParser<NetRoomInfo> _parser = new pb::MessageParser<NetRoomInfo>(() => new NetRoomInfo());
@@ -2541,7 +2541,7 @@ namespace Protobuf.Room {
 
   /// <summary>
   //////////////////////////////////////////////////
-  /// ³ÇÊĞ
+  /// åŸå¸‚
   /// </summary>
   public sealed partial class DownloadCities : pb::IMessage<DownloadCities> {
     private static readonly pb::MessageParser<DownloadCities> _parser = new pb::MessageParser<DownloadCities>(() => new DownloadCities());
@@ -3075,7 +3075,7 @@ namespace Protobuf.Room {
     public const int CreatorIdFieldNumber = 9;
     private long creatorId_;
     /// <summary>
-    ///bool IsCapital = 10; ÊÇ·ñÊÇ¶¼³Ç£¬ÓÉ·şÎñÆ÷À´Ëã£¬ÔİÊ±²»ĞèÒª¿Í»§¶ËÀ´´«
+    ///bool IsCapital = 10; æ˜¯å¦æ˜¯éƒ½åŸï¼Œç”±æœåŠ¡å™¨æ¥ç®—ï¼Œæš‚æ—¶ä¸éœ€è¦å®¢æˆ·ç«¯æ¥ä¼ 
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public long CreatorId {
@@ -4106,7 +4106,7 @@ namespace Protobuf.Room {
 
   /// <summary>
   //////////////////////////////////////////////////
-  /// µ¥Ôª(²¿¶ÓºÍ½¨Öş)
+  /// å•å…ƒ(éƒ¨é˜Ÿå’Œå»ºç­‘)
   /// </summary>
   public sealed partial class DownloadActors : pb::IMessage<DownloadActors> {
     private static readonly pb::MessageParser<DownloadActors> _parser = new pb::MessageParser<DownloadActors>(() => new DownloadActors());
@@ -5622,7 +5622,7 @@ namespace Protobuf.Room {
     public const int DieTypeFieldNumber = 4;
     private int dieType_;
     /// <summary>
-    /// ËÀÍö·½Ê½,0-ÆÕÍ¨É¾³ı;1-Õ½¶·ÖÂËÀ
+    /// æ­»äº¡æ–¹å¼,0-æ™®é€šåˆ é™¤;1-æˆ˜æ–—è‡´æ­»
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int DieType {
@@ -6650,7 +6650,7 @@ namespace Protobuf.Room {
     public const int DurationTimeFieldNumber = 9;
     private float durationTime_;
     /// <summary>
-    /// Õâ¸öÊ±¼äÊÇÊ£ÓàµÄÊ±¼ä, ÔÚ¿Í»§¶Ë: input.DurationTimeÊÇÃ»ÓĞÓÃµÄ(½ø¶ÈÌõ»áÓÃµ½), Ê±¼äÍêÈ«ÓÉ ·şÎñÆ÷¶Ë/AI¶Ë ¿ØÖÆ
+    /// è¿™ä¸ªæ—¶é—´æ˜¯å‰©ä½™çš„æ—¶é—´, åœ¨å®¢æˆ·ç«¯: input.DurationTimeæ˜¯æ²¡æœ‰ç”¨çš„(è¿›åº¦æ¡ä¼šç”¨åˆ°), æ—¶é—´å®Œå…¨ç”± æœåŠ¡å™¨ç«¯/AIç«¯ æ§åˆ¶
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public float DurationTime {
@@ -6664,7 +6664,7 @@ namespace Protobuf.Room {
     public const int TotalTimeFieldNumber = 10;
     private float totalTime_;
     /// <summary>
-    /// Õâ¸öÊ±¼äÊÇÔ­Ê¼µÄ×ÜµÄ³ÖĞøÊ±¼ä(½ø¶ÈÌõ»áÓÃµ½)
+    /// è¿™ä¸ªæ—¶é—´æ˜¯åŸå§‹çš„æ€»çš„æŒç»­æ—¶é—´(è¿›åº¦æ¡ä¼šç”¨åˆ°)
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public float TotalTime {
@@ -7313,8 +7313,8 @@ namespace Protobuf.Room {
 
   /// <summary>
   //////////////////////////////////////////////////
-  /// ¸üĞÂµ¥ÔªµÄÊôĞÔ,
-  /// ¸üĞÂ×ø±ê,ÒòÎª·şÎñÆ÷Ä¿Ç°Ã»ÓĞÈÎºÎ¼ÆËã,Á¬×ø±ê¶¼Òª´Ó¿Í»§¶Ë´«¹ıÀ´,ËùÒÔ·şÎñÆ÷ÒªÆµ·±µÃµ½¸üĞÂ,·ñÔòÎŞ·¨±£´æÍæ¼Òµ±Ç°Î»ÖÃ
+  /// æ›´æ–°å•å…ƒçš„å±æ€§,
+  /// æ›´æ–°åæ ‡,å› ä¸ºæœåŠ¡å™¨ç›®å‰æ²¡æœ‰ä»»ä½•è®¡ç®—,è¿åæ ‡éƒ½è¦ä»å®¢æˆ·ç«¯ä¼ è¿‡æ¥,æ‰€ä»¥æœåŠ¡å™¨è¦é¢‘ç¹å¾—åˆ°æ›´æ–°,å¦åˆ™æ— æ³•ä¿å­˜ç©å®¶å½“å‰ä½ç½®
   /// </summary>
   public sealed partial class UpdateActorPos : pb::IMessage<UpdateActorPos> {
     private static readonly pb::MessageParser<UpdateActorPos> _parser = new pb::MessageParser<UpdateActorPos>(() => new UpdateActorPos());
@@ -7614,7 +7614,7 @@ namespace Protobuf.Room {
   }
 
   /// <summary>
-  /// ·µ»ØÏûÏ¢,Ä¿Ç°Ã»ÓĞÓÃ,ÒòÎªÉÏ´«µ½·şÎñÆ÷¾Í¿ÉÒÔÁË,Ò²²»ĞèÒªÍ¨Öª±ğÈË,×ø±êÍ¬²½µÄ²Ù×÷,ÊÇAiStateChange¸ºÔğ´¦ÀíÁË
+  /// è¿”å›æ¶ˆæ¯,ç›®å‰æ²¡æœ‰ç”¨,å› ä¸ºä¸Šä¼ åˆ°æœåŠ¡å™¨å°±å¯ä»¥äº†,ä¹Ÿä¸éœ€è¦é€šçŸ¥åˆ«äºº,åæ ‡åŒæ­¥çš„æ“ä½œ,æ˜¯AiStateChangeè´Ÿè´£å¤„ç†äº†
   /// </summary>
   public sealed partial class UpdateActorPosReply : pb::IMessage<UpdateActorPosReply> {
     private static readonly pb::MessageParser<UpdateActorPosReply> _parser = new pb::MessageParser<UpdateActorPosReply>(() => new UpdateActorPosReply());
@@ -7942,7 +7942,7 @@ namespace Protobuf.Room {
   }
 
   /// <summary>
-  /// ¸üĞÂÆäËûÊôĞÔ,±ÈÈçÑªÁ¿:Hp,AmmoBase
+  /// æ›´æ–°å…¶ä»–å±æ€§,æ¯”å¦‚è¡€é‡:Hp,AmmoBase
   /// </summary>
   public sealed partial class UpdateActorInfo : pb::IMessage<UpdateActorInfo> {
     private static readonly pb::MessageParser<UpdateActorInfo> _parser = new pb::MessageParser<UpdateActorInfo>(() => new UpdateActorInfo());
@@ -8528,7 +8528,7 @@ namespace Protobuf.Room {
     public const int AiStateFieldNumber = 4;
     private int aiState_;
     /// <summary>
-    /// ËäÈ»´ú±íµÄÊÇAI×´Ì¬»úÀïµÄ×´Ì¬,µ«ÊÇ½ö²¥·ÅÕâ¸ö×´Ì¬µÄ¶¯»­¶øÒÑ
+    /// è™½ç„¶ä»£è¡¨çš„æ˜¯AIçŠ¶æ€æœºé‡Œçš„çŠ¶æ€,ä½†æ˜¯ä»…æ’­æ”¾è¿™ä¸ªçŠ¶æ€çš„åŠ¨ç”»è€Œå·²
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int AiState {
@@ -8975,7 +8975,7 @@ namespace Protobuf.Room {
     public const int ActorIdFieldNumber = 3;
     private long actorId_;
     /// <summary>
-    /// Èç¹û¸ÄÎªÏÈ·¢ËÍ±¾ÏûÏ¢,µÈ´ı·şÎñÆ÷·µ»ØºóÔÙÖ´ĞĞÖ¸ÁîµÄ»°,Õâ¸ö±äÁ¿¾ÍÓĞÓÃÁË,ÔÚ·µ»Øºó¿ÉÒÔÕÒµ½±»Ö´ĞĞµÄµ¥Î»
+    /// å¦‚æœæ”¹ä¸ºå…ˆå‘é€æœ¬æ¶ˆæ¯,ç­‰å¾…æœåŠ¡å™¨è¿”å›åå†æ‰§è¡ŒæŒ‡ä»¤çš„è¯,è¿™ä¸ªå˜é‡å°±æœ‰ç”¨äº†,åœ¨è¿”å›åå¯ä»¥æ‰¾åˆ°è¢«æ‰§è¡Œçš„å•ä½
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public long ActorId {
@@ -9398,7 +9398,7 @@ namespace Protobuf.Room {
 
   /// <summary>
   //////////////////////////////////////////////////
-  /// ²É¼¯
+  /// é‡‡é›†
   /// </summary>
   public sealed partial class HarvestStart : pb::IMessage<HarvestStart> {
     private static readonly pb::MessageParser<HarvestStart> _parser = new pb::MessageParser<HarvestStart>(() => new HarvestStart());
@@ -9488,7 +9488,7 @@ namespace Protobuf.Room {
     public const int ResTypeFieldNumber = 5;
     private int resType_;
     /// <summary>
-    /// ×ÊÔ´ÖÖÀà,ÒòÎª·şÎñÆ÷Ê²Ã´¶¼²»ÖªµÀ,ËùÒÔËùÓĞĞÅÏ¢¶¼´Ó¿Í»§¶ËÀ´
+    /// èµ„æºç§ç±»,å› ä¸ºæœåŠ¡å™¨ä»€ä¹ˆéƒ½ä¸çŸ¥é“,æ‰€ä»¥æ‰€æœ‰ä¿¡æ¯éƒ½ä»å®¢æˆ·ç«¯æ¥
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int ResType {
@@ -9502,7 +9502,7 @@ namespace Protobuf.Room {
     public const int ResRemainFieldNumber = 6;
     private int resRemain_;
     /// <summary>
-    /// ×ÊÔ´Ê£Óà
+    /// èµ„æºå‰©ä½™
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int ResRemain {
@@ -9516,7 +9516,7 @@ namespace Protobuf.Room {
     public const int DurationTimeFieldNumber = 7;
     private float durationTime_;
     /// <summary>
-    /// ²É¼¯ÍêÈ«²¿ĞèÒªµÄÊ±¼ä
+    /// é‡‡é›†å®Œå…¨éƒ¨éœ€è¦çš„æ—¶é—´
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public float DurationTime {
@@ -9795,7 +9795,7 @@ namespace Protobuf.Room {
     public const int ResTypeFieldNumber = 5;
     private int resType_;
     /// <summary>
-    /// ×ÊÔ´ÖÖÀà,ÒòÎª·şÎñÆ÷Ê²Ã´¶¼²»ÖªµÀ,ËùÒÔËùÓĞĞÅÏ¢¶¼´Ó¿Í»§¶ËÀ´
+    /// èµ„æºç§ç±»,å› ä¸ºæœåŠ¡å™¨ä»€ä¹ˆéƒ½ä¸çŸ¥é“,æ‰€ä»¥æ‰€æœ‰ä¿¡æ¯éƒ½ä»å®¢æˆ·ç«¯æ¥
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int ResType {
@@ -9809,7 +9809,7 @@ namespace Protobuf.Room {
     public const int ResRemainFieldNumber = 6;
     private int resRemain_;
     /// <summary>
-    /// ×ÊÔ´Ê£Óà
+    /// èµ„æºå‰©ä½™
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int ResRemain {
@@ -9823,7 +9823,7 @@ namespace Protobuf.Room {
     public const int DurationTimeFieldNumber = 7;
     private float durationTime_;
     /// <summary>
-    /// ²É¼¯ÍêÈ«²¿ĞèÒªµÄÊ±¼ä
+    /// é‡‡é›†å®Œå…¨éƒ¨éœ€è¦çš„æ—¶é—´
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public float DurationTime {
@@ -10128,7 +10128,7 @@ namespace Protobuf.Room {
     public const int ResTypeFieldNumber = 5;
     private int resType_;
     /// <summary>
-    /// ×ÊÔ´ÖÖÀà,ÒòÎª·şÎñÆ÷Ê²Ã´¶¼²»ÖªµÀ,ËùÒÔËùÓĞĞÅÏ¢¶¼´Ó¿Í»§¶ËÀ´
+    /// èµ„æºç§ç±»,å› ä¸ºæœåŠ¡å™¨ä»€ä¹ˆéƒ½ä¸çŸ¥é“,æ‰€ä»¥æ‰€æœ‰ä¿¡æ¯éƒ½ä»å®¢æˆ·ç«¯æ¥
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int ResType {
@@ -10142,7 +10142,7 @@ namespace Protobuf.Room {
     public const int ResRemainFieldNumber = 6;
     private int resRemain_;
     /// <summary>
-    /// ×ÊÔ´Ê£Óà
+    /// èµ„æºå‰©ä½™
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int ResRemain {
@@ -10156,7 +10156,7 @@ namespace Protobuf.Room {
     public const int ResHarvestFieldNumber = 7;
     private int resHarvest_;
     /// <summary>
-    ///²É¼¯µ½µÄ×ÊÔ´
+    ///é‡‡é›†åˆ°çš„èµ„æº
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int ResHarvest {
@@ -10435,7 +10435,7 @@ namespace Protobuf.Room {
     public const int ResTypeFieldNumber = 5;
     private int resType_;
     /// <summary>
-    /// ×ÊÔ´ÖÖÀà,ÒòÎª·şÎñÆ÷Ê²Ã´¶¼²»ÖªµÀ,ËùÒÔËùÓĞĞÅÏ¢¶¼´Ó¿Í»§¶ËÀ´
+    /// èµ„æºç§ç±»,å› ä¸ºæœåŠ¡å™¨ä»€ä¹ˆéƒ½ä¸çŸ¥é“,æ‰€ä»¥æ‰€æœ‰ä¿¡æ¯éƒ½ä»å®¢æˆ·ç«¯æ¥
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int ResType {
@@ -10449,7 +10449,7 @@ namespace Protobuf.Room {
     public const int ResRemainFieldNumber = 6;
     private int resRemain_;
     /// <summary>
-    /// ×ÊÔ´Ê£Óà
+    /// èµ„æºå‰©ä½™
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int ResRemain {
@@ -10463,7 +10463,7 @@ namespace Protobuf.Room {
     public const int ResHarvestFieldNumber = 7;
     private int resHarvest_;
     /// <summary>
-    ///²É¼¯µ½µÄ×ÊÔ´
+    ///é‡‡é›†åˆ°çš„èµ„æº
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int ResHarvest {
@@ -10682,8 +10682,8 @@ namespace Protobuf.Room {
 
   /// <summary>
   //////////////////////////////////////////////////
-  /// µ¥¶À±£´æ×ÊÔ´Êı¾İ,
-  /// ÕâÀï±£´æµÄÊÇµØÍ¼´´½¨ÒÔºó,¸Ä±äµÄ×ÊÔ´Êı¾İ.ÕâÖ»ÊÇÁÙÊ±µÄ...
+  /// å•ç‹¬ä¿å­˜èµ„æºæ•°æ®,
+  /// è¿™é‡Œä¿å­˜çš„æ˜¯åœ°å›¾åˆ›å»ºä»¥å,æ”¹å˜çš„èµ„æºæ•°æ®.è¿™åªæ˜¯ä¸´æ—¶çš„...
   /// </summary>
   public sealed partial class DownloadResCell : pb::IMessage<DownloadResCell> {
     private static readonly pb::MessageParser<DownloadResCell> _parser = new pb::MessageParser<DownloadResCell>(() => new DownloadResCell());
@@ -11289,7 +11289,7 @@ namespace Protobuf.Room {
   }
 
   /// <summary>
-  ///Ë¢ĞÂ×ÊÔ´
+  ///åˆ·æ–°èµ„æº
   /// </summary>
   public sealed partial class UpdateRes : pb::IMessage<UpdateRes> {
     private static readonly pb::MessageParser<UpdateRes> _parser = new pb::MessageParser<UpdateRes>(() => new UpdateRes());
@@ -11718,7 +11718,7 @@ namespace Protobuf.Room {
   }
 
   /// <summary>
-  ///Ë¢ĞÂĞĞ¶¯µã
+  ///åˆ·æ–°è¡ŒåŠ¨ç‚¹
   /// </summary>
   public sealed partial class UpdateActionPoint : pb::IMessage<UpdateActionPoint> {
     private static readonly pb::MessageParser<UpdateActionPoint> _parser = new pb::MessageParser<UpdateActionPoint>(() => new UpdateActionPoint());
@@ -12120,7 +12120,7 @@ namespace Protobuf.Room {
 
   /// <summary>
   //////////////////////////////////////////////////
-  /// ÖÕÓÚĞ´µ½Õ½¶·ÁË,ºğºğºğ
+  /// ç»ˆäºå†™åˆ°æˆ˜æ–—äº†,å¼å¼å¼
   /// </summary>
   public sealed partial class FightStart : pb::IMessage<FightStart> {
     private static readonly pb::MessageParser<FightStart> _parser = new pb::MessageParser<FightStart>(() => new FightStart());
@@ -13029,7 +13029,7 @@ namespace Protobuf.Room {
     public const int FightAgainFieldNumber = 6;
     private bool fightAgain_;
     /// <summary>
-    /// µ¯Ò©×ã¹»,ÔÙ´òÒ»ÂÖ
+    /// å¼¹è¯è¶³å¤Ÿ,å†æ‰“ä¸€è½®
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool FightAgain {
@@ -13258,7 +13258,7 @@ namespace Protobuf.Room {
   }
 
   /// <summary>
-  /// ì­Ñª°É
+  /// é£™è¡€å§
   /// </summary>
   public sealed partial class SprayBlood : pb::IMessage<SprayBlood> {
     private static readonly pb::MessageParser<SprayBlood> _parser = new pb::MessageParser<SprayBlood>(() => new SprayBlood());
@@ -14170,9 +14170,9 @@ namespace Protobuf.Room {
 
   /// <summary>
   //////////////////////////////////////////////////
-  /// Õâ¸öÏûÏ¢±È½ÏÌØÊâ, ÒòÎªÎÒÃÇµÄ²úÆ·ÔÚ·şÎñÆ÷¶ËÊÇÃ»ÓĞÈÎºÎÂß¼­ºÍAIµÄ, ½ö½öÊÇ×ª·¢ºÍ´æÈ¡µÄ×÷ÓÃ,
-  /// ËùÒÔÈç¹ûÍæ¼Ò²»ÔÚÏßµÄÊ±ºò, ËüµÄËùÓĞÂß¼­ºÍAI»á½»¸øÆäËûÍæ¼ÒµÄ¿Í»§¶ËÉÏ½øĞĞ¼ÆËã
-  /// ChangeAiRightsÕâ¸öÏûÏ¢ÆäÊµ²»»á±»ÓÃµ½, ÒòÎªËùÓĞ¸Ä±ä¶¼ÊÇ·şÎñÆ÷¶Ë¹ÜÀíµÄ, Ö»»áÓÉ·şÎñÆ÷Ïò¿Í»§¶Ë·¢³öChangeAiRightsReplyÏûÏ¢
+  /// è¿™ä¸ªæ¶ˆæ¯æ¯”è¾ƒç‰¹æ®Š, å› ä¸ºæˆ‘ä»¬çš„äº§å“åœ¨æœåŠ¡å™¨ç«¯æ˜¯æ²¡æœ‰ä»»ä½•é€»è¾‘å’ŒAIçš„, ä»…ä»…æ˜¯è½¬å‘å’Œå­˜å–çš„ä½œç”¨,
+  /// æ‰€ä»¥å¦‚æœç©å®¶ä¸åœ¨çº¿çš„æ—¶å€™, å®ƒçš„æ‰€æœ‰é€»è¾‘å’ŒAIä¼šäº¤ç»™å…¶ä»–ç©å®¶çš„å®¢æˆ·ç«¯ä¸Šè¿›è¡Œè®¡ç®—
+  /// ChangeAiRightsè¿™ä¸ªæ¶ˆæ¯å…¶å®ä¸ä¼šè¢«ç”¨åˆ°, å› ä¸ºæ‰€æœ‰æ”¹å˜éƒ½æ˜¯æœåŠ¡å™¨ç«¯ç®¡ç†çš„, åªä¼šç”±æœåŠ¡å™¨å‘å®¢æˆ·ç«¯å‘å‡ºChangeAiRightsReplyæ¶ˆæ¯
   /// </summary>
   public sealed partial class ChangeAiRights : pb::IMessage<ChangeAiRights> {
     private static readonly pb::MessageParser<ChangeAiRights> _parser = new pb::MessageParser<ChangeAiRights>(() => new ChangeAiRights());
@@ -14407,7 +14407,7 @@ namespace Protobuf.Room {
     public const int AiPlayerIdFieldNumber = 4;
     private long aiPlayerId_;
     /// <summary>
-    /// ±¾»ú¿ÉÒÔ¿ØÖÆË­?
+    /// æœ¬æœºå¯ä»¥æ§åˆ¶è°?
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public long AiPlayerId {
@@ -14432,7 +14432,7 @@ namespace Protobuf.Room {
     public const int ControlByMeFieldNumber = 6;
     private bool controlByMe_;
     /// <summary>
-    /// True: ±¾»ú¿ÉÒÔ¿ØÖÆ¸ÃÍæ¼ÒµÄËùÓĞµ¥Î»
+    /// True: æœ¬æœºå¯ä»¥æ§åˆ¶è¯¥ç©å®¶çš„æ‰€æœ‰å•ä½
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool ControlByMe {
@@ -14607,13 +14607,14 @@ namespace Protobuf.Room {
   }
 
   /// <summary>
-  /// ¸ßµÈ¼¶AI×´Ì¬(¾¡¹Ü²ÎÊıÓëActorAiStateÍêÈ«Ò»Ñù, µ«ÊÇ²»Í¬ÓÚÖ®Ç°µÄAI×´Ì¬, Ö®Ç°µÄ×´Ì¬ÊôÓÚAI×´Ì¬»úµÄ×´Ì¬)
+  /// é«˜ç­‰çº§AIçŠ¶æ€(å°½ç®¡å‚æ•°ä¸ActorAiStateå®Œå…¨ä¸€æ ·, ä½†æ˜¯ä¸åŒäºä¹‹å‰çš„AIçŠ¶æ€, ä¹‹å‰çš„çŠ¶æ€å±äºAIçŠ¶æ€æœºçš„çŠ¶æ€)
+  /// ç©å®¶ä¸‹è¾¾æŒ‡ä»¤çš„æ—¶å€™,ä¼šå‘é€è¿™æ¡æ¶ˆæ¯, è¿™æ¡æ¶ˆæ¯ä¸ActorAiStateä¸ä¸€æ ·, è¿™æ˜¯é«˜çº§AIçš„çŠ¶æ€
   /// </summary>
-  public sealed partial class HighAiState : pb::IMessage<HighAiState> {
-    private static readonly pb::MessageParser<HighAiState> _parser = new pb::MessageParser<HighAiState>(() => new HighAiState());
+  public sealed partial class ActorAiStateHigh : pb::IMessage<ActorAiStateHigh> {
+    private static readonly pb::MessageParser<ActorAiStateHigh> _parser = new pb::MessageParser<ActorAiStateHigh>(() => new ActorAiStateHigh());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<HighAiState> Parser { get { return _parser; } }
+    public static pb::MessageParser<ActorAiStateHigh> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
@@ -14626,30 +14627,26 @@ namespace Protobuf.Room {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public HighAiState() {
+    public ActorAiStateHigh() {
       OnConstruction();
     }
 
     partial void OnConstruction();
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public HighAiState(HighAiState other) : this() {
+    public ActorAiStateHigh(ActorAiStateHigh other) : this() {
       roomId_ = other.roomId_;
       ownerId_ = other.ownerId_;
       actorId_ = other.actorId_;
-      state_ = other.state_;
-      cellIndexFrom_ = other.cellIndexFrom_;
-      cellIndexTo_ = other.cellIndexTo_;
-      targetId_ = other.targetId_;
-      orientation_ = other.orientation_;
-      durationTime_ = other.durationTime_;
-      totalTime_ = other.totalTime_;
+      highAiState_ = other.highAiState_;
+      highAiCellIndexTo_ = other.highAiCellIndexTo_;
+      highTargetId_ = other.highTargetId_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public HighAiState Clone() {
-      return new HighAiState(this);
+    public ActorAiStateHigh Clone() {
+      return new ActorAiStateHigh(this);
     }
 
     /// <summary>Field number for the "RoomId" field.</summary>
@@ -14685,96 +14682,46 @@ namespace Protobuf.Room {
       }
     }
 
-    /// <summary>Field number for the "State" field.</summary>
-    public const int StateFieldNumber = 4;
-    private int state_;
+    /// <summary>Field number for the "HighAiState" field.</summary>
+    public const int HighAiStateFieldNumber = 4;
+    private int highAiState_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public int State {
-      get { return state_; }
+    public int HighAiState {
+      get { return highAiState_; }
       set {
-        state_ = value;
+        highAiState_ = value;
       }
     }
 
-    /// <summary>Field number for the "CellIndexFrom" field.</summary>
-    public const int CellIndexFromFieldNumber = 5;
-    private int cellIndexFrom_;
+    /// <summary>Field number for the "HighAiCellIndexTo" field.</summary>
+    public const int HighAiCellIndexToFieldNumber = 6;
+    private int highAiCellIndexTo_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public int CellIndexFrom {
-      get { return cellIndexFrom_; }
+    public int HighAiCellIndexTo {
+      get { return highAiCellIndexTo_; }
       set {
-        cellIndexFrom_ = value;
+        highAiCellIndexTo_ = value;
       }
     }
 
-    /// <summary>Field number for the "CellIndexTo" field.</summary>
-    public const int CellIndexToFieldNumber = 6;
-    private int cellIndexTo_;
+    /// <summary>Field number for the "HighTargetId" field.</summary>
+    public const int HighTargetIdFieldNumber = 7;
+    private long highTargetId_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public int CellIndexTo {
-      get { return cellIndexTo_; }
+    public long HighTargetId {
+      get { return highTargetId_; }
       set {
-        cellIndexTo_ = value;
-      }
-    }
-
-    /// <summary>Field number for the "TargetId" field.</summary>
-    public const int TargetIdFieldNumber = 7;
-    private long targetId_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public long TargetId {
-      get { return targetId_; }
-      set {
-        targetId_ = value;
-      }
-    }
-
-    /// <summary>Field number for the "Orientation" field.</summary>
-    public const int OrientationFieldNumber = 8;
-    private float orientation_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public float Orientation {
-      get { return orientation_; }
-      set {
-        orientation_ = value;
-      }
-    }
-
-    /// <summary>Field number for the "DurationTime" field.</summary>
-    public const int DurationTimeFieldNumber = 9;
-    private float durationTime_;
-    /// <summary>
-    /// Õâ¸öÊ±¼äÊÇÊ£ÓàµÄÊ±¼ä
-    /// </summary>
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public float DurationTime {
-      get { return durationTime_; }
-      set {
-        durationTime_ = value;
-      }
-    }
-
-    /// <summary>Field number for the "TotalTime" field.</summary>
-    public const int TotalTimeFieldNumber = 10;
-    private float totalTime_;
-    /// <summary>
-    /// Õâ¸öÊ±¼äÊ±Ô­Ê¼µÄ×ÜµÄ³ÖĞøÊ±¼ä 
-    /// </summary>
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public float TotalTime {
-      get { return totalTime_; }
-      set {
-        totalTime_ = value;
+        highTargetId_ = value;
       }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
-      return Equals(other as HighAiState);
+      return Equals(other as ActorAiStateHigh);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(HighAiState other) {
+    public bool Equals(ActorAiStateHigh other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -14784,13 +14731,9 @@ namespace Protobuf.Room {
       if (RoomId != other.RoomId) return false;
       if (OwnerId != other.OwnerId) return false;
       if (ActorId != other.ActorId) return false;
-      if (State != other.State) return false;
-      if (CellIndexFrom != other.CellIndexFrom) return false;
-      if (CellIndexTo != other.CellIndexTo) return false;
-      if (TargetId != other.TargetId) return false;
-      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Orientation, other.Orientation)) return false;
-      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(DurationTime, other.DurationTime)) return false;
-      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(TotalTime, other.TotalTime)) return false;
+      if (HighAiState != other.HighAiState) return false;
+      if (HighAiCellIndexTo != other.HighAiCellIndexTo) return false;
+      if (HighTargetId != other.HighTargetId) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -14800,13 +14743,9 @@ namespace Protobuf.Room {
       if (RoomId != 0L) hash ^= RoomId.GetHashCode();
       if (OwnerId != 0L) hash ^= OwnerId.GetHashCode();
       if (ActorId != 0L) hash ^= ActorId.GetHashCode();
-      if (State != 0) hash ^= State.GetHashCode();
-      if (CellIndexFrom != 0) hash ^= CellIndexFrom.GetHashCode();
-      if (CellIndexTo != 0) hash ^= CellIndexTo.GetHashCode();
-      if (TargetId != 0L) hash ^= TargetId.GetHashCode();
-      if (Orientation != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Orientation);
-      if (DurationTime != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(DurationTime);
-      if (TotalTime != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(TotalTime);
+      if (HighAiState != 0) hash ^= HighAiState.GetHashCode();
+      if (HighAiCellIndexTo != 0) hash ^= HighAiCellIndexTo.GetHashCode();
+      if (HighTargetId != 0L) hash ^= HighTargetId.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -14832,33 +14771,17 @@ namespace Protobuf.Room {
         output.WriteRawTag(24);
         output.WriteInt64(ActorId);
       }
-      if (State != 0) {
+      if (HighAiState != 0) {
         output.WriteRawTag(32);
-        output.WriteInt32(State);
+        output.WriteInt32(HighAiState);
       }
-      if (CellIndexFrom != 0) {
-        output.WriteRawTag(40);
-        output.WriteInt32(CellIndexFrom);
-      }
-      if (CellIndexTo != 0) {
+      if (HighAiCellIndexTo != 0) {
         output.WriteRawTag(48);
-        output.WriteInt32(CellIndexTo);
+        output.WriteInt32(HighAiCellIndexTo);
       }
-      if (TargetId != 0L) {
+      if (HighTargetId != 0L) {
         output.WriteRawTag(56);
-        output.WriteInt64(TargetId);
-      }
-      if (Orientation != 0F) {
-        output.WriteRawTag(69);
-        output.WriteFloat(Orientation);
-      }
-      if (DurationTime != 0F) {
-        output.WriteRawTag(77);
-        output.WriteFloat(DurationTime);
-      }
-      if (TotalTime != 0F) {
-        output.WriteRawTag(85);
-        output.WriteFloat(TotalTime);
+        output.WriteInt64(HighTargetId);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -14877,26 +14800,14 @@ namespace Protobuf.Room {
       if (ActorId != 0L) {
         size += 1 + pb::CodedOutputStream.ComputeInt64Size(ActorId);
       }
-      if (State != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(State);
+      if (HighAiState != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(HighAiState);
       }
-      if (CellIndexFrom != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(CellIndexFrom);
+      if (HighAiCellIndexTo != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(HighAiCellIndexTo);
       }
-      if (CellIndexTo != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(CellIndexTo);
-      }
-      if (TargetId != 0L) {
-        size += 1 + pb::CodedOutputStream.ComputeInt64Size(TargetId);
-      }
-      if (Orientation != 0F) {
-        size += 1 + 4;
-      }
-      if (DurationTime != 0F) {
-        size += 1 + 4;
-      }
-      if (TotalTime != 0F) {
-        size += 1 + 4;
+      if (HighTargetId != 0L) {
+        size += 1 + pb::CodedOutputStream.ComputeInt64Size(HighTargetId);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -14905,7 +14816,7 @@ namespace Protobuf.Room {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(HighAiState other) {
+    public void MergeFrom(ActorAiStateHigh other) {
       if (other == null) {
         return;
       }
@@ -14918,26 +14829,14 @@ namespace Protobuf.Room {
       if (other.ActorId != 0L) {
         ActorId = other.ActorId;
       }
-      if (other.State != 0) {
-        State = other.State;
+      if (other.HighAiState != 0) {
+        HighAiState = other.HighAiState;
       }
-      if (other.CellIndexFrom != 0) {
-        CellIndexFrom = other.CellIndexFrom;
+      if (other.HighAiCellIndexTo != 0) {
+        HighAiCellIndexTo = other.HighAiCellIndexTo;
       }
-      if (other.CellIndexTo != 0) {
-        CellIndexTo = other.CellIndexTo;
-      }
-      if (other.TargetId != 0L) {
-        TargetId = other.TargetId;
-      }
-      if (other.Orientation != 0F) {
-        Orientation = other.Orientation;
-      }
-      if (other.DurationTime != 0F) {
-        DurationTime = other.DurationTime;
-      }
-      if (other.TotalTime != 0F) {
-        TotalTime = other.TotalTime;
+      if (other.HighTargetId != 0L) {
+        HighTargetId = other.HighTargetId;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -14963,31 +14862,15 @@ namespace Protobuf.Room {
             break;
           }
           case 32: {
-            State = input.ReadInt32();
-            break;
-          }
-          case 40: {
-            CellIndexFrom = input.ReadInt32();
+            HighAiState = input.ReadInt32();
             break;
           }
           case 48: {
-            CellIndexTo = input.ReadInt32();
+            HighAiCellIndexTo = input.ReadInt32();
             break;
           }
           case 56: {
-            TargetId = input.ReadInt64();
-            break;
-          }
-          case 69: {
-            Orientation = input.ReadFloat();
-            break;
-          }
-          case 77: {
-            DurationTime = input.ReadFloat();
-            break;
-          }
-          case 85: {
-            TotalTime = input.ReadFloat();
+            HighTargetId = input.ReadInt64();
             break;
           }
         }
@@ -14996,11 +14879,14 @@ namespace Protobuf.Room {
 
   }
 
-  public sealed partial class HighAiStateReply : pb::IMessage<HighAiStateReply> {
-    private static readonly pb::MessageParser<HighAiStateReply> _parser = new pb::MessageParser<HighAiStateReply>(() => new HighAiStateReply());
+  /// <summary>
+  /// è¿™ä¸ªæ¶ˆæ¯ä¸ä¼šåœ¨æ”¶åˆ°ä¸Šé¢çš„æ¶ˆæ¯å°±è¿”å›, è€Œæ˜¯åœ¨æœ¬ç©å®¶ç™»å½•çš„æ—¶å€™, ä¼šå¾—åˆ°, è¿™é‡Œä¼šå‘Šè¯‰æˆ‘, 
+  /// </summary>
+  public sealed partial class ActorAiStateHighReply : pb::IMessage<ActorAiStateHighReply> {
+    private static readonly pb::MessageParser<ActorAiStateHighReply> _parser = new pb::MessageParser<ActorAiStateHighReply>(() => new ActorAiStateHighReply());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<HighAiStateReply> Parser { get { return _parser; } }
+    public static pb::MessageParser<ActorAiStateHighReply> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
@@ -15013,14 +14899,14 @@ namespace Protobuf.Room {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public HighAiStateReply() {
+    public ActorAiStateHighReply() {
       OnConstruction();
     }
 
     partial void OnConstruction();
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public HighAiStateReply(HighAiStateReply other) : this() {
+    public ActorAiStateHighReply(ActorAiStateHighReply other) : this() {
       roomId_ = other.roomId_;
       ownerId_ = other.ownerId_;
       actorId_ = other.actorId_;
@@ -15031,13 +14917,16 @@ namespace Protobuf.Room {
       orientation_ = other.orientation_;
       durationTime_ = other.durationTime_;
       totalTime_ = other.totalTime_;
+      highAiState_ = other.highAiState_;
+      highAiTargetId_ = other.highAiTargetId_;
+      highAiCellIndexTo_ = other.highAiCellIndexTo_;
       ret_ = other.ret_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public HighAiStateReply Clone() {
-      return new HighAiStateReply(this);
+    public ActorAiStateHighReply Clone() {
+      return new ActorAiStateHighReply(this);
     }
 
     /// <summary>Field number for the "RoomId" field.</summary>
@@ -15150,8 +15039,41 @@ namespace Protobuf.Room {
       }
     }
 
+    /// <summary>Field number for the "HighAiState" field.</summary>
+    public const int HighAiStateFieldNumber = 11;
+    private int highAiState_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int HighAiState {
+      get { return highAiState_; }
+      set {
+        highAiState_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "HighAiTargetId" field.</summary>
+    public const int HighAiTargetIdFieldNumber = 12;
+    private long highAiTargetId_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public long HighAiTargetId {
+      get { return highAiTargetId_; }
+      set {
+        highAiTargetId_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "HighAiCellIndexTo" field.</summary>
+    public const int HighAiCellIndexToFieldNumber = 13;
+    private int highAiCellIndexTo_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int HighAiCellIndexTo {
+      get { return highAiCellIndexTo_; }
+      set {
+        highAiCellIndexTo_ = value;
+      }
+    }
+
     /// <summary>Field number for the "Ret" field.</summary>
-    public const int RetFieldNumber = 11;
+    public const int RetFieldNumber = 14;
     private bool ret_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool Ret {
@@ -15163,11 +15085,11 @@ namespace Protobuf.Room {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
-      return Equals(other as HighAiStateReply);
+      return Equals(other as ActorAiStateHighReply);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(HighAiStateReply other) {
+    public bool Equals(ActorAiStateHighReply other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -15184,6 +15106,9 @@ namespace Protobuf.Room {
       if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Orientation, other.Orientation)) return false;
       if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(DurationTime, other.DurationTime)) return false;
       if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(TotalTime, other.TotalTime)) return false;
+      if (HighAiState != other.HighAiState) return false;
+      if (HighAiTargetId != other.HighAiTargetId) return false;
+      if (HighAiCellIndexTo != other.HighAiCellIndexTo) return false;
       if (Ret != other.Ret) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -15201,6 +15126,9 @@ namespace Protobuf.Room {
       if (Orientation != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Orientation);
       if (DurationTime != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(DurationTime);
       if (TotalTime != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(TotalTime);
+      if (HighAiState != 0) hash ^= HighAiState.GetHashCode();
+      if (HighAiTargetId != 0L) hash ^= HighAiTargetId.GetHashCode();
+      if (HighAiCellIndexTo != 0) hash ^= HighAiCellIndexTo.GetHashCode();
       if (Ret != false) hash ^= Ret.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -15255,8 +15183,20 @@ namespace Protobuf.Room {
         output.WriteRawTag(85);
         output.WriteFloat(TotalTime);
       }
-      if (Ret != false) {
+      if (HighAiState != 0) {
         output.WriteRawTag(88);
+        output.WriteInt32(HighAiState);
+      }
+      if (HighAiTargetId != 0L) {
+        output.WriteRawTag(96);
+        output.WriteInt64(HighAiTargetId);
+      }
+      if (HighAiCellIndexTo != 0) {
+        output.WriteRawTag(104);
+        output.WriteInt32(HighAiCellIndexTo);
+      }
+      if (Ret != false) {
+        output.WriteRawTag(112);
         output.WriteBool(Ret);
       }
       if (_unknownFields != null) {
@@ -15297,6 +15237,15 @@ namespace Protobuf.Room {
       if (TotalTime != 0F) {
         size += 1 + 4;
       }
+      if (HighAiState != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(HighAiState);
+      }
+      if (HighAiTargetId != 0L) {
+        size += 1 + pb::CodedOutputStream.ComputeInt64Size(HighAiTargetId);
+      }
+      if (HighAiCellIndexTo != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(HighAiCellIndexTo);
+      }
       if (Ret != false) {
         size += 1 + 1;
       }
@@ -15307,7 +15256,7 @@ namespace Protobuf.Room {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(HighAiStateReply other) {
+    public void MergeFrom(ActorAiStateHighReply other) {
       if (other == null) {
         return;
       }
@@ -15340,6 +15289,15 @@ namespace Protobuf.Room {
       }
       if (other.TotalTime != 0F) {
         TotalTime = other.TotalTime;
+      }
+      if (other.HighAiState != 0) {
+        HighAiState = other.HighAiState;
+      }
+      if (other.HighAiTargetId != 0L) {
+        HighAiTargetId = other.HighAiTargetId;
+      }
+      if (other.HighAiCellIndexTo != 0) {
+        HighAiCellIndexTo = other.HighAiCellIndexTo;
       }
       if (other.Ret != false) {
         Ret = other.Ret;
@@ -15396,6 +15354,18 @@ namespace Protobuf.Room {
             break;
           }
           case 88: {
+            HighAiState = input.ReadInt32();
+            break;
+          }
+          case 96: {
+            HighAiTargetId = input.ReadInt64();
+            break;
+          }
+          case 104: {
+            HighAiCellIndexTo = input.ReadInt32();
+            break;
+          }
+          case 112: {
             Ret = input.ReadBool();
             break;
           }

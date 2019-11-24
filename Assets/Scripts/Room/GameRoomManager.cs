@@ -135,7 +135,6 @@ public class GameRoomManager : ClientScript
         Connect();
         
         //初始化结束
-        IsAiOn = false;
         Debug.Log("GameRoomManager DowloadDataFiles - OK!");
     }
 

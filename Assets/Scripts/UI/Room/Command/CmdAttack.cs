@@ -93,6 +93,24 @@ public class CmdAttack : MonoBehaviour, ICommand
         GameRoomManager.Instance.SendMsg(ROOM.TryCommand, output.ToByteArray());
     }
 
+    public static void SendAiStateHigh(StateEnum aiState, int targetCellIndex = 0, long targetId = 0)
+    {
+        var avMe = CommandManager.Instance.CurrentExecuter.CurrentActor;
+        if (avMe != null)
+        {
+            ActorAiStateHigh output = new ActorAiStateHigh()
+            {
+                RoomId = GameRoomManager.Instance.RoomId,
+                OwnerId = GameRoomManager.Instance.CurrentPlayer.TokenId,
+                ActorId = avMe.ActorId,
+                HighAiState = (int)aiState,
+                HighAiCellIndexTo = targetCellIndex,
+                HighTargetId = targetId,
+            };
+            GameRoomManager.Instance.SendMsg(ROOM.ActorAiStateHigh, output.ToByteArray());
+        }
+    }
+
     private void DoAttack()
     {
         var avMe = CommandManager.Instance.CurrentExecuter.CurrentActor;
@@ -138,11 +156,13 @@ public class CmdAttack : MonoBehaviour, ICommand
 
         if ( avTarget && avTarget.OwnerId != avMe.OwnerId)
         {// 目标点是一支部队,且是敌人的部队,则盯住这支部队猛打
-            abMe.StateMachine.TriggerTransition(FSMStateActor.StateEnum.WALKFIGHT, cellTarget.Index, avTarget.ActorId);
+            abMe.StateMachine.TriggerTransition(StateEnum.WALKFIGHT, cellTarget.Index, avTarget.ActorId);
+            SendAiStateHigh(StateEnum.WALKFIGHT, cellTarget.Index, avTarget.ActorId);
         }
         else
         {// 目标点仅仅是一个位置坐标,则在行军过程中,搜索进攻,发现任意敌人就停下来打它
-            abMe.StateMachine.TriggerTransition(FSMStateActor.StateEnum.WALKFIGHT, cellTarget.Index);
+            abMe.StateMachine.TriggerTransition(StateEnum.WALKFIGHT, cellTarget.Index);
+            SendAiStateHigh(StateEnum.WALKFIGHT, cellTarget.Index);
         }
     }
 }
