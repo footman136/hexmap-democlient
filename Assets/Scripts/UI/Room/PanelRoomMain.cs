@@ -233,7 +233,7 @@ public class PanelRoomMain : MonoBehaviour
             SelectCircle sc = _selectObj.GetComponent<SelectCircle>();
             if (sc)
             {
-                sc.SetSize(1);
+                sc.SetSize(2);
             }
         }
         else
