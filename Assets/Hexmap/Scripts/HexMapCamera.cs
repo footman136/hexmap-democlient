@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class HexMapCamera : MonoBehaviour {
 
@@ -51,7 +52,8 @@ public class HexMapCamera : MonoBehaviour {
 		#else
 			float zoomDelta = GetZoomDelta();
 		#endif
-		if (zoomDelta != 0f) {
+		//if (zoomDelta != 0f)
+		{
 			AdjustZoom(zoomDelta);
 		}
 
@@ -69,10 +71,27 @@ public class HexMapCamera : MonoBehaviour {
 		CameraMove();
 	}
 
-	void AdjustZoom (float delta) {
+	void AdjustZoom (float delta)
+	{
 		zoom = Mathf.Clamp01(zoom + delta);
 
 		float distance = Mathf.Lerp(stickMinZoom, stickMaxZoom, zoom);
+		
+//		// 因为摄影机距离地面的距离如果太近的话, 会导致穿帮, 所以要根据当前视口中心所在地块的高度来重置摄影机的位置
+//		if (Math.Abs(zoom - 1f) < 0.01f)
+//		{
+//			Ray ray = HexGameUI.CurrentCamera.ScreenPointToRay(Input.mousePosition);
+//			RaycastHit hit;
+//			if (Physics.Raycast(ray, out hit)) {
+//				HexCell currentCell = grid.GetCell(hit.point);
+//				float dist = hit.distance;
+//				if (currentCell != null)
+//				{
+//					distance = distance + (15f-currentCell.Position.y);
+//				}
+//			}
+//		}
+//
 		stick.localPosition = new Vector3(0f, 0f, distance);
 
 		float angle = Mathf.Lerp(swivelMinZoom, swivelMaxZoom, zoom);

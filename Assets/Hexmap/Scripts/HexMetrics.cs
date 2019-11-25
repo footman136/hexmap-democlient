@@ -37,7 +37,7 @@ public static class HexMetrics {
 
 	public const float waterElevationOffset = -0.5f;
 
-	public const float wallHeight = 4f;
+	public const float wallHeight = 2.5f; // 城墙的高度, 原来是4, 建筑的缩放比例原来是0.7, 部队原来的所犯比例是0.3. Nov.25.2019. Liu Gang.
 
 	public const float wallYOffset = -1f;
 

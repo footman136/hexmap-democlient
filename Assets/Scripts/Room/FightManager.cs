@@ -7,8 +7,9 @@ public class FightManager : MonoBehaviour
     [Space(), Header("UI显示"), Space(5)] 
     public PanelSliderHarvest SliderHarvest;
     public PanelSliderBlood SliderBlood;
-    public PanelSprayBlood SprayBlood;
     public PanelShield Shield;
+    public PanelSprayBlood SprayBlood;
+    public PanelSprayAmmoBase SprayAmmoBase;
     
     
     

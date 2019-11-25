@@ -653,7 +653,11 @@ namespace Animation
 
             AmmoBase = input.AmmoBase;
             string msg = $"恢复弹药:{AmmoBase}/{AmmoBaseMax}";
-            UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Success);
+            
+            // 每次都创建新的
+            var spray = GameRoomManager.Instance.FightManager.SprayAmmoBase.Spawn(_inner, Vector3.zero);
+            if (spray == null) return;
+            spray.Play(this, msg);
         }
         
         #endregion

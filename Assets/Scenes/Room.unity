@@ -359,6 +359,9 @@ MonoBehaviour:
   - size: 5
     prefab: {fileID: 7430226491509728902, guid: c6f53a4860968c046b8b792d7e8dac06,
       type: 3}
+  - size: 5
+    prefab: {fileID: 1317174083210729657, guid: 00447a37bbbe45c498c2c66e331107e2,
+      type: 3}
 --- !u!224 &665694473
 RectTransform:
   m_ObjectHideFlags: 0
@@ -402,7 +405,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 720234766}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -45}
+  m_LocalPosition: {x: 0, y: 0, z: -40}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 649458028}
@@ -456,9 +459,11 @@ MonoBehaviour:
     type: 3}
   SliderBlood: {fileID: 4138220395765204711, guid: 18e9481990c3f21488008cc3984b48dc,
     type: 3}
-  SprayBlood: {fileID: 6586637960507905114, guid: 5a32ffa23fe36904b8e3d51691271311,
-    type: 3}
   Shield: {fileID: 7430226491509728903, guid: c6f53a4860968c046b8b792d7e8dac06, type: 3}
+  SprayBlood: {fileID: 7218132363813479699, guid: 5a32ffa23fe36904b8e3d51691271311,
+    type: 3}
+  SprayAmmoBase: {fileID: 7893928075610708206, guid: 00447a37bbbe45c498c2c66e331107e2,
+    type: 3}
 --- !u!1 &1390469885
 GameObject:
   m_ObjectHideFlags: 0
@@ -1064,7 +1069,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stickMinZoom: -250
-  stickMaxZoom: -45
+  stickMaxZoom: -40
   swivelMinZoom: 90
   swivelMaxZoom: 45
   moveSpeedMinZoom: 400

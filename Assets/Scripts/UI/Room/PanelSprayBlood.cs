@@ -71,8 +71,6 @@ public class PanelSprayBlood : MonoBehaviour
         _posScreen = HexGameUI.CurrentCamera.WorldToScreenPoint(_pos);
         transform.position = _posScreen;
         
-//        _posSaved = transform.localPosition;
-//        _posEnd = _posSaved + new Vector3(0,_FLY_HEIGHT,0);
         _posSaved = transform.position;
         _posEnd = _posSaved + new Vector3(0,_FLY_HEIGHT,0);
         _posY = 0;
