@@ -66,7 +66,7 @@ namespace Animation
         public Vector3 TargetPosition;
         public Vector3 CurrentPosition;
         public StateEnum CurrentAiState; // AI的当前状态
-        public long TargetActorId; // 目标单位的id
+        public long TargetActorId; // 目标单位的id, 在监视面板上可以看到
         public int TargetCellIndex;
         public HexUnit HexUnit;
         
@@ -77,6 +77,12 @@ namespace Animation
         [SerializeField] private PanelSliderHarvest _sliderHarvest;
         [SerializeField] private PanelSliderBlood _sliderBlood;
         [SerializeField] private PanelShield _shield;
+        
+        // 这个 Line Renderer 太丑了, 以后用三国的搞 
+        //[SerializeField] private LineRenderer _lineRenderer;
+
+        private List<HexCell> _listPath;
+        public List<HexCell> ListPath => _listPath;
 
         [Space(), Header("Debug"), Space(5)]
         [SerializeField, Tooltip("If true, AI changes to this animal will be logged in the console.")]
@@ -100,6 +106,22 @@ namespace Animation
             if(UIManager.Instance)
                 _inner = UIManager.Instance.Root.Find("Inner");
             PrepareAllAnimations();
+
+//            GameObject go = Resources.Load("UI/Room/Arrow") as GameObject;
+//            if (go)
+//            {
+//                GameObject go2 = Instantiate(go, transform); 
+//                _lineRenderer = go2.GetComponent<LineRenderer>();
+//            }
+//
+//            if (!_lineRenderer)
+//            {
+//                Debug.LogError("Arrow not found!");
+//            }
+//            else
+//            {
+//                _lineRenderer.gameObject.SetActive(false);
+//            }
         }
         // Start is called before the first frame update
         void Start()
@@ -171,6 +193,8 @@ namespace Animation
             CellIndex = HexUnit.Location.Index;
             PosX = HexUnit.Location.coordinates.X;
             PosZ = HexUnit.Location.coordinates.Z;
+
+            UpdatePath();
         }
 
         public void Log(string msg)
@@ -301,9 +325,12 @@ namespace Animation
             switch (aiState)
             {
                 case StateEnum.IDLE:
+                case StateEnum.DELAYFIGHT:
+                case StateEnum.GUARD:
                     PlayAnimation(idleStates);
                     break;
                 case StateEnum.WALK:
+                case StateEnum.WALKFIGHT:
                     PlayAnimation(runningStates);
                     break;
                 case StateEnum.FIGHT:
@@ -384,24 +411,24 @@ namespace Animation
             if (!input.Ret)
                 return;
 
-            HexCell fromCell = GameRoomManager.Instance.HexmapHelper.GetCell(input.CellIndexFrom);
+            HexCell fromCell = GameRoomManager.Instance.HexmapHelper.GetCell(input.AiCellIndexFrom);
 
             Vector3 newPosition = Vector3.zero;
             HexCell targetCell = null;
             ActorVisualizer avTarget = null;
-            if (AllActors.ContainsKey(input.TargetId))
+            if (AllActors.ContainsKey(input.AiTargetId))
             { //如果目标是单位,优先用单位的坐标作为目标点
-                avTarget = AllActors[input.TargetId];
+                avTarget = AllActors[input.AiTargetId];
                 newPosition = avTarget.CurrentPosition;
                 targetCell = avTarget.HexUnit.Location;
             }
             else
             {
-                targetCell = GameRoomManager.Instance.HexmapHelper.GetCell(input.CellIndexTo);
+                targetCell = GameRoomManager.Instance.HexmapHelper.GetCell(input.AiCellIndexTo);
                 newPosition = targetCell.Position;
             }
 
-            StateEnum newAiState = (StateEnum)input.State;
+            StateEnum newAiState = (StateEnum)input.AiState;
 
             // 注: 在客户端: input.DurationTime是没有用的, 时间完全由 服务器端/AI端 控制
 
@@ -419,8 +446,8 @@ namespace Animation
 
             CurrentAiState = newAiState;
             TargetPosition = newPosition;
-            TargetActorId = input.TargetId;
-            TargetCellIndex = input.CellIndexTo;
+            TargetActorId = input.AiTargetId;
+            TargetCellIndex = input.AiCellIndexTo;
 
             if (avTarget == null || avTarget.IsDead)
             {
@@ -444,7 +471,7 @@ namespace Animation
                     break;
                 case StateEnum.WALK:
                 case StateEnum.WALKFIGHT:
-                    GameRoomManager.Instance.HexmapHelper.DoMove(input.ActorId, input.CellIndexFrom, input.CellIndexTo);
+                    _listPath = GameRoomManager.Instance.HexmapHelper.DoMove(input.ActorId, input.AiCellIndexFrom, input.AiCellIndexTo);
                     Debug.Log($"MSG: ActorAiState - {CurrentAiState} - From<{fromCell.coordinates.X},{fromCell.coordinates.X}> - To<{targetCell.coordinates.X},{targetCell.coordinates.Z}>");
                     //aniState = movementStates;
                     aniState = runningStates;
@@ -465,7 +492,7 @@ namespace Animation
                     aniState = idleStates;
                     break;
                 case StateEnum.HARVEST:
-                    ShowSliderHarvest(true, input.DurationTime, input.TotalTime);
+                    ShowSliderHarvest(true, input.AiDurationTime, input.AiTotalTime);
                     aniState = harvestStates;
                     break;
                 case StateEnum.NONE:
@@ -553,13 +580,13 @@ namespace Animation
 
             // 显示自己的血条
             ShowSliderBlood();
+            GameRoomManager.Instance.Log("ActorVisualizer OnFightStartReply OK ...");
             
             // 显示对方的血条
             var avTarget = GameRoomManager.Instance.GetActorVisualizer(input.TargetId);
             if (!avTarget) return;
+            if (avTarget.IsDead) return;
             avTarget.ShowSliderBlood();
-            
-            GameRoomManager.Instance.Log("ActorVisualizer OnFightStartReply OK ...");
         }
 
         public void ShowSliderBlood(bool show = true)
@@ -659,8 +686,60 @@ namespace Animation
             if (spray == null) return;
             spray.Play(this, msg);
         }
-        
+
         #endregion
+        
+        #region 显示路径
+//        public void ShowPath()
+//        {
+//            if (_listPath == null)
+//                return;
+//            if (_listPath.Count == 0)
+//            {
+//                _lineRenderer.positionCount = 0;
+//                _lineRenderer.gameObject.SetActive(false);
+//            }
+//            else
+//            {
+//                _lineRenderer.positionCount = _listPath.Count;//设置线段数
+//                for(int i=0; i<_listPath.Count; ++i)
+//                {
+//                    var cell = _listPath[i];
+//                    _lineRenderer.SetPosition(i, cell.Position);                    
+//                }
+//                _lineRenderer.gameObject.SetActive(true);
+//            }
+//        }
+
+        public void UpdatePath()
+        {
+            if (_listPath == null)
+                return;
+
+            // 找到本单位当前格子是否在路径上(注意, 有可能确实不在, 比如抄近路的时候, 有可能完全绕过一个格子)
+            int find = -1;
+            for (int i = 0; i < _listPath.Count; ++i)
+            {
+                var cell = _listPath[i];
+                if (CellIndex == cell.Index)
+                {
+                    find = i;
+                    break;
+                }
+            }
+
+            // 把这个格子以前的路径都干掉, 然后重画路径, 这样画出来的路径永远是从当前位置到目标点的
+            if (find >= 0 && find < _listPath.Count)
+            {
+                for (int i = 0; i < find; ++i)
+                {
+                    _listPath.RemoveAt(0);
+                }
+                GameRoomManager.Instance.HexmapHelper.ShowPath(this);
+            }
+        }
+        #endregion
+        
         
     }
 

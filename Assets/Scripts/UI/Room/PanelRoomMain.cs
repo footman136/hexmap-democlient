@@ -291,6 +291,7 @@ public class PanelRoomMain : MonoBehaviour
             ShowHitGround(Input.mousePosition);
             HexCell cell = GetCellUnderCursor();
             SetTarget(cell);
+            hexmapHelper.ShowPath(_pickInfoMaster.CurrentActor);
         }
         
     }
@@ -298,6 +299,8 @@ public class PanelRoomMain : MonoBehaviour
     public void SetSelection(HexCell cell)
     {
         _pickInfoMaster.Clear();
+        _commands.ClearCommands();
+        hexmapHelper.ShowPath(null);
         if (cell)
         {
             _pickInfoMaster.CurrentCell = cell;
@@ -327,7 +330,8 @@ public class PanelRoomMain : MonoBehaviour
             }
             else if (_pickInfoMaster.CurrentActor)
             {
-                ShowSelector(_pickInfoMaster.CurrentActor, true);    
+                ShowSelector(_pickInfoMaster.CurrentActor, true); 
+                hexmapHelper.ShowPath(_pickInfoMaster.CurrentActor);
             }
             Debug.Log($"Selector : <{cell.coordinates.X},{cell.coordinates.Z}>");
         }

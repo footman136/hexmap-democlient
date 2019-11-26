@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using AI;
 using GameUtils;
 using Google.Protobuf;
+using Microsoft.Applications.Events.DataModels;
 using Protobuf.Room;
 using UnityEngine;
 using static FSMStateActor;
@@ -59,9 +60,8 @@ public class CmdAttack : MonoBehaviour, ICommand
         // 执行
         _piTarget = piTarget;
         DoAttack();
-        Stop();
-
         TryCommand();
+        Stop();
     }
 
     public static bool IsActionPointGranted()
@@ -71,29 +71,33 @@ public class CmdAttack : MonoBehaviour, ICommand
 
     public static void TryCommand()
     {
-        var av = CommandManager.Instance.CurrentExecuter.CurrentActor;
-        long actorId = 0;
-        if (av != null)
-        {
-            actorId = av.ActorId;
-        }
+        long roomId = GameRoomManager.Instance.RoomId;
+        long ownerId = GameRoomManager.Instance.CurrentPlayer.TokenId;
+        long actorId = CommandManager.Instance.CurrentExecuter.CurrentActor.ActorId;
+        int commandId = (int) CommandManager.Instance.RunningCommandId;
+        int actionPointCost = CommandManager.Instance.RunningCommandActionPoint;
+        TryCommand(roomId, ownerId, actorId, commandId, actionPointCost);
+    }
+
+    public static void TryCommand(long roomId, long ownerId, long actorId, int commandId, int actionPointCost)
+    {
         // 正规流程,应该是先向服务器申请行动点是否足够,等待服务器确认以后再真正地执行
         // 但是这样会导致服务器反应较为迟钝,而且客户端逻辑相对复杂,所有指令都要经过这样"申请/确认"的流程
         // 所以,这里先再客户端自己确认行动点是否足够以后,就先执行了,然后再发送执行消耗行动点
         // 如果服务器返回失败,则停止刚才的行为. 当然,这样做可能会导致之前的行动被打断,但是理论上服务器被驳回的几率较小,可以忽略
         TryCommand output = new TryCommand()
         {
-            RoomId = GameRoomManager.Instance.RoomId,
-            OwnerId = GameRoomManager.Instance.CurrentPlayer.TokenId,
+            RoomId = roomId,
+            OwnerId = ownerId,
             ActorId = actorId,
-            CommandId = (int) CommandManager.Instance.RunningCommandId,
-            ActionPointCost = CommandManager.Instance.RunningCommandActionPoint,
+            CommandId = commandId,
+            ActionPointCost = actionPointCost,
         };
     
         GameRoomManager.Instance.SendMsg(ROOM.TryCommand, output.ToByteArray());
     }
 
-    public static void SendAiStateHigh(StateEnum aiState, int targetCellIndex = 0, long targetId = 0)
+    public static void SendAiStateHigh(StateEnum aiState, int targetCellIndex = 0, long targetId = 0, float durationTime = 0f, float totalTime = 0f)
     {
         var avMe = CommandManager.Instance.CurrentExecuter.CurrentActor;
         if (avMe != null)
@@ -105,7 +109,9 @@ public class CmdAttack : MonoBehaviour, ICommand
                 ActorId = avMe.ActorId,
                 HighAiState = (int)aiState,
                 HighAiCellIndexTo = targetCellIndex,
-                HighTargetId = targetId,
+                HighAiTargetId = targetId,
+                HighAiDurationTime = durationTime,
+                HighAiTotalTime = totalTime,
             };
             GameRoomManager.Instance.SendMsg(ROOM.ActorAiStateHigh, output.ToByteArray());
         }
@@ -156,12 +162,12 @@ public class CmdAttack : MonoBehaviour, ICommand
 
         if ( avTarget && avTarget.OwnerId != avMe.OwnerId)
         {// 目标点是一支部队,且是敌人的部队,则盯住这支部队猛打
-            abMe.StateMachine.TriggerTransition(StateEnum.WALKFIGHT, cellTarget.Index, avTarget.ActorId);
+            //abMe.StateMachine.TriggerTransition(StateEnum.WALKFIGHT, cellTarget.Index, avTarget.ActorId);
             SendAiStateHigh(StateEnum.WALKFIGHT, cellTarget.Index, avTarget.ActorId);
         }
         else
         {// 目标点仅仅是一个位置坐标,则在行军过程中,搜索进攻,发现任意敌人就停下来打它
-            abMe.StateMachine.TriggerTransition(StateEnum.WALKFIGHT, cellTarget.Index);
+            //abMe.StateMachine.TriggerTransition(StateEnum.WALKFIGHT, cellTarget.Index);
             SendAiStateHigh(StateEnum.WALKFIGHT, cellTarget.Index);
         }
     }

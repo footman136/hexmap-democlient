@@ -13,12 +13,19 @@ public class CmdHalt : MonoBehaviour, ICommand
     }
     public void Run()
     {
-        var whoMove = CommandManager.Instance.CurrentExecuter.CurrentActor;
-        if (!whoMove)
+//        var whoMove = CommandManager.Instance.CurrentExecuter.CurrentActor;
+//        if (!whoMove)
+//            return;
+//        var av = whoMove;
+//        var ab = GameRoomManager.Instance.RoomLogic.ActorManager.GetActor(av.ActorId);
+//        ab?.StateMachine.TriggerTransition(StateEnum.IDLE); 
+        var pi = CommandManager.Instance.CurrentExecuter;
+        if (pi == null || !pi.CurrentActor)
+        {
+            string msg = $"没有选中任何部队!";
+            UIManager.Instance.SystemTips(msg,PanelSystemTips.MessageType.Error);
             return;
-        var av = whoMove;
-        var ab = GameRoomManager.Instance.RoomLogic.ActorManager.GetActor(av.ActorId);
-        ab?.StateMachine.TriggerTransition(StateEnum.IDLE); 
+        }
         CmdAttack.SendAiStateHigh(StateEnum.IDLE);
     }
     public void Tick()

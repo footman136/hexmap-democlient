@@ -15,6 +15,13 @@ public class CmdLumberjack : MonoBehaviour, ICommand
     }
     public void Run()
     {
+        var pi = CommandManager.Instance.CurrentExecuter;
+        if (pi == null || !pi.CurrentActor)
+        {
+            string msg = $"没有选中任何部队!";
+            UIManager.Instance.SystemTips(msg,PanelSystemTips.MessageType.Error);
+            return;
+        }
         var av = CommandManager.Instance.CurrentExecuter.CurrentActor;
         if (av == null)
             return;
@@ -55,8 +62,8 @@ public class CmdLumberjack : MonoBehaviour, ICommand
             };
             GameRoomManager.Instance.SendMsg(ROOM.HarvestStart, output.ToByteArray());
 
-            ab.StateMachine.TriggerTransition(StateEnum.HARVEST, 0, 0, durationTime, durationTime);
-            CmdAttack.SendAiStateHigh(StateEnum.HARVEST);
+            //ab.StateMachine.TriggerTransition(StateEnum.HARVEST, 0, 0, durationTime, durationTime);
+            CmdAttack.SendAiStateHigh(StateEnum.HARVEST, 0, 0, durationTime, durationTime);
             // 消耗行动点 
             CmdAttack.TryCommand();
         }

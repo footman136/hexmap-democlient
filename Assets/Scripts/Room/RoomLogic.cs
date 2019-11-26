@@ -120,6 +120,7 @@ public class RoomLogic : MonoBehaviour
                 var ab = ActorManager.GetActor(input.ActorId);
                 if (ab == null) return;
                 ab.StateMachine.TriggerTransition(FSMStateActor.StateEnum.DIE);
+                GameRoomManager.Instance.Log($"MSG: OnActorRemoveReply - OK - {ab.Name}:{ab.ActorId} 被杀死!");
             }
         }
     }

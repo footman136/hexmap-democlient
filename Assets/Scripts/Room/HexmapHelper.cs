@@ -531,7 +531,7 @@ public class HexmapHelper : MonoBehaviour
         return false;
     }
 
-    public void DoMove (long actorId, int cellIndexFrom, int cellIndexTo)
+    public List<HexCell> DoMove (long actorId, int cellIndexFrom, int cellIndexTo)
     {
         if (ActorVisualizer.AllActors.ContainsKey(actorId))
         {
@@ -552,11 +552,21 @@ public class HexmapHelper : MonoBehaviour
                             Debug.Log($"DoMove: From<{hcFrom.coordinates.X},{hcFrom.coordinates.Z}> - To<{hcTo.coordinates.X},{hcTo.coordinates.Z}>");
                             Debug.Log($"DoMove: From<{hcFrom.Position.x},{hcFrom.Position.z}> - To<{hcTo.Position.x},{hcTo.Position.z}>");
                             hu.Travel(listPath, av.Speed);
+                            
+                            // 把路线备份一份出来
+                            List<HexCell> returnPath = ListPool<HexCell>.Get();
+                            returnPath.Clear();
+                            foreach (var current in listPath)
+                            {
+                                returnPath.Add(current);
+                            }
+                            return returnPath;
                         }
                     }
                 }
             }
         }
+        return null;
     }
 
     public void Stop(long actorId)
@@ -597,6 +607,18 @@ public class HexmapHelper : MonoBehaviour
         if (av == null)
             return;
         av.transform.Find("CameraFollow").gameObject.SetActive(bEnable);
+    }
+
+    public void ShowPath(ActorVisualizer av)
+    {
+        if (av != null && av.ListPath != null && av.ListPath.Count > 0)
+        {
+            hexGrid.ShowPath(av.ListPath);
+        }
+        else
+        {
+            hexGrid.ShowPath(null);
+        }
     }
 
     #endregion

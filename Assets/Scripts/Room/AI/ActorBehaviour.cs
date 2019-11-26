@@ -69,7 +69,8 @@ namespace AI
         public StateEnum HighAiState;
         public int HighAiTargetCell;
         public long HighAiTargetId;
-        
+        public float HighAiDurationTime;
+        public float HighAiTotalTime;
 
         //If true, AI changes to this animal will be logged in the console.
         private bool _logChanges = false;
@@ -220,21 +221,19 @@ namespace AI
             if (!HasAiRights && input.OwnerId != GameRoomManager.Instance.CurrentPlayer.TokenId)
                 return;
 
-            HighAiState = (StateEnum) input.State;// 记录高级AI状态
-            HighAiTargetCell = input.CellIndexTo;
+            HighAiState = (StateEnum) input.HighAiState;// 记录高级AI状态
+            HighAiTargetCell = input.HighAiCellIndexTo;
             HighAiTargetId = 0;
-            var abTarget = GameRoomManager.Instance.RoomLogic.ActorManager.GetActor(input.TargetId);
-            if(abTarget == null || abTarget.IsDead)
+            var abTarget = GameRoomManager.Instance.RoomLogic.ActorManager.GetActor(input.HighAiTargetId);
+            if(abTarget != null && !abTarget.IsDead)
             {
-                HighAiTargetId = input.TargetId;
+                HighAiTargetId = input.HighAiTargetId;
             }
+            HighAiDurationTime = input.HighAiDurationTime;
+            HighAiTotalTime = input.HighAiTotalTime;
 
-            // 对于当前玩家自己, 仅记下来自己的HighAi状态, 但是不再修改状态机了(因为本地, 玩家操作的时候已经修改了状态机)
-            if (input.OwnerId != GameRoomManager.Instance.CurrentPlayer.TokenId)
-            {
-                StateMachine.TriggerTransition((StateEnum) input.State, input.CellIndexTo, input.TargetId,
-                    input.DurationTime, input.TotalTime);
-            }
+            StateMachine.TriggerTransition((StateEnum) input.HighAiState, input.HighAiCellIndexTo, input.HighAiTargetId,
+                input.HighAiDurationTime, input.HighAiTotalTime);
         }
 
         #endregion
@@ -294,11 +293,16 @@ namespace AI
 
             // 每次攻击都要消耗行动点和弹药基数, 所以需要每一轮攻击都判断行动点和弹药基数是否足够
             // 如果在战斗中才进行下次进攻的判定, 否则战斗结束
-            if (input.FightAgain && IsFighting && AmmoBase > 0 && CmdAttack.IsActionPointGranted())
+            if (input.FightAgain && AmmoBase > 0 && CmdAttack.IsActionPointGranted())
             { // 弹药基数足够, 可以再打一轮, 要用 [延迟攻击] 的状态, 时间也要把 [攻击持续时间] & [攻击间隔] 算在一起
                 StateMachine.TriggerTransition(StateEnum.DELAYFIGHT, 0, input.TargetId,
-                    AttackDuration + AttackInterval);
-                CmdAttack.TryCommand();
+                    AttackDuration + AttackInterval, AttackDuration + AttackInterval);
+                long roomId = input.RoomId;
+                long ownerId = input.OwnerId;
+                long actorId = input.ActorId;
+                int commandId = (int)CommandManager.CommandID.Attack;
+                int actionPointCost = CommandManager.Instance.Commands[CommandManager.CommandID.Attack].ActionPointCost;
+                CmdAttack.TryCommand(roomId, ownerId, actorId, commandId, actionPointCost);
             }
             else if (!input.IsEnemyDead && !IsCounterAttack)
             {
@@ -334,6 +338,7 @@ namespace AI
         private bool bFirst = true;
         private float _lastTime = 0f;
         private float _deltaTime;
+        private const float _REST_TIME = 10f;
 
         #region AI - 第一层
         
@@ -350,15 +355,71 @@ namespace AI
 
             if (StateMachine.CurrentAiState == StateEnum.IDLE)
             {
-                if (StateMachine.GetLastedTime() > 5f)
-                { // 进入休闲状态超过5秒, 也就是说闲置超过5秒的情况下
+                float lastedTime = StateMachine.GetLastedTime();
+                if (lastedTime > _REST_TIME)
+                { // 进入休闲状态超过_REST_TIME秒, 也就是说闲置超过_REST_TIME秒的情况下
                     switch (HighAiState)
                     {
                         case StateEnum.GUARD:
                             StateMachine.TriggerTransition(StateEnum.GUARD);
                             break;
                         case StateEnum.WALKFIGHT:
-                            StateMachine.TriggerTransition(StateEnum.WALKFIGHT, HighAiTargetCell, HighAiTargetId);
+                            // 如果可以直接攻击, 则直接攻击, 否则走过去再攻击
+                            if (AmmoBase <= 0)
+                            {
+                                ActorAiStateHigh output = new ActorAiStateHigh()
+                                {
+                                    RoomId = RoomId,
+                                    OwnerId = OwnerId,
+                                    ActorId = ActorId,
+                                    HighAiState = (int)StateEnum.IDLE,
+                                };
+                                GameRoomManager.Instance.SendMsg(ROOM.ActorAiStateHigh, output.ToByteArray());
+                            }
+                            var ab = GameRoomManager.Instance.RoomLogic.ActorManager.GetActor(HighAiTargetId);
+                            if (ab == null || ab.IsDead)
+                            {
+                                HighAiTargetId = 0;
+                                if (CellIndex == HighAiTargetCell)
+                                { // 结束这个高级AI
+                                    ActorAiStateHigh output = new ActorAiStateHigh()
+                                    {
+                                        RoomId = RoomId,
+                                        OwnerId = OwnerId,
+                                        ActorId = ActorId,
+                                        HighAiState = (int)StateEnum.IDLE,
+                                    };
+                                    GameRoomManager.Instance.SendMsg(ROOM.ActorAiStateHigh, output.ToByteArray());
+                                }
+                            }
+                            else
+                            {
+                                if (!ActorWalkFightState.AttackEnemyInRange(this, HighAiTargetId))
+                                {
+                                    if (AmmoBase > 0)
+                                    {
+                                        StateMachine.TriggerTransition(StateEnum.WALKFIGHT, HighAiTargetCell,
+                                            HighAiTargetId);
+                                    }
+                                }
+                            }
+                            break;
+                        case StateEnum.WALK: // 解决拥堵问题
+                            if (HighAiTargetCell == CellIndex)
+                            { // 走到了, 跳出本逻辑
+                                ActorAiStateHigh output = new ActorAiStateHigh()
+                                {
+                                    RoomId = RoomId,
+                                    OwnerId = OwnerId,
+                                    ActorId = ActorId,
+                                    HighAiState = (int)StateEnum.IDLE,
+                                };
+                                GameRoomManager.Instance.SendMsg(ROOM.ActorAiStateHigh, output.ToByteArray());
+                            }
+                            else
+                            {
+                                StateMachine.TriggerTransition(StateEnum.WALK, HighAiTargetCell);
+                            }
                             break;
                     }
                 }

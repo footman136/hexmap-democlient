@@ -51,9 +51,14 @@ public class CmdAbandonCity : MonoBehaviour, ICommand
                         CityId = city.CityId,
                     }; 
                     GameRoomManager.Instance.SendMsg(ROOM.CityRemove, output.ToByteArray());
+                    // 消耗行动点 
+                    long roomId = city.RoomId;
+                    long ownerId = city.OwnerId;
+                    long cityId = city.CityId;
+                    int commandId = (int) CommandManager.Instance.RunningCommandId;
+                    int actionPointCost = CommandManager.Instance.RunningCommandActionPoint;
+                    CmdAttack.TryCommand(roomId, ownerId, cityId, commandId, actionPointCost);
                 }
-                // 消耗行动点 
-                CmdAttack.TryCommand();
             }
                 break;
             case PanelMessageBox.BUTTON.NO:

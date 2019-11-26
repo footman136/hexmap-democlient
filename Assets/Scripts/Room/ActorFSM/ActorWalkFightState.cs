@@ -30,39 +30,48 @@ namespace AI
             }
             timeSpan = 0;
 
-            ActorBehaviour abEnemy = GameRoomManager.Instance.RoomLogic.ActorManager.GetActor(Owner.TargetActorId);
-            if (abEnemy == null)
-            { // 优先找指定的敌人,如果没有找到,则搜索射程以内的敌人(从近到远)
-                abEnemy = _actorBehaviour.FindEnemyInRange();
-            }
-
-            if (abEnemy != null)
-            {
-                if (_actorBehaviour.IsEnemyInRange(abEnemy))
-                {
-                    if (_actorBehaviour.Distance < 24f * _actorBehaviour.ShootingRange)
-                    { // 敌人进入射程,进入攻击状态. 注意:这时候的敌人,可能不是之前要打的敌人
-                        if (_actorBehaviour.AmmoBase > 0)
-                        { // 弹药是否足够, 如果不够了, 该干嘛干嘛去
-                            _actorBehaviour.IsCounterAttack = false; // 这是主动攻击, 不是反击, 记录在自己身上, Stop的时候用
-                            Owner.TriggerTransition(StateEnum.FIGHT, abEnemy.CellIndex, abEnemy.ActorId,
-                                _actorBehaviour.AttackDuration);
-                            CmdAttack.TryCommand();
-                            return;
-                        }
-                    }
-                }
-            }
+            if (AttackEnemyInRange(_actorBehaviour, Owner.TargetActorId))
+                return;
             
             if(_actorBehaviour.CurrentPosition == vecLast && _actorBehaviour.CellIndex == Owner.TargetCellIndex)
-            { // 没有敌人的话,到达目的地以后,自动进入警戒状态  
-                Owner.TriggerTransition(StateEnum.GUARD);
+            { // 没有敌人的话,到达目的地以后,就休息了  
+                Owner.TriggerTransition(StateEnum.IDLE);
             }
             vecLast = _actorBehaviour.CurrentPosition;
         }
 
         public override void Exit(bool disabled)
         {
+        }
+    
+        public static bool AttackEnemyInRange(ActorBehaviour actorMe, long targetId)
+        {
+            if (actorMe.AmmoBase <= 0)
+            {// 弹药是否足够, 如果不够了, 该干嘛干嘛去
+                return false;
+            }
+
+            ActorBehaviour abEnemy = GameRoomManager.Instance.RoomLogic.ActorManager.GetActor(targetId);
+            if (abEnemy == null)
+            { // 优先找指定的敌人,如果没有找到,则搜索射程以内的敌人(从近到远)
+                abEnemy = actorMe.FindEnemyInRange();
+            }
+        
+            if (abEnemy != null)
+            {
+                if (actorMe.IsEnemyInRange(abEnemy))
+                {
+                    if (actorMe.Distance < 20f * actorMe.ShootingRange)
+                    { // 敌人进入射程,进入攻击状态. 注意:这时候的敌人,可能不是之前要打的敌人
+                        actorMe.IsCounterAttack = false; // 这是主动攻击, 不是反击, 记录在自己身上, Stop的时候用
+                        actorMe.StateMachine.TriggerTransition(StateEnum.FIGHT, abEnemy.CellIndex, abEnemy.ActorId,
+                            actorMe.AttackDuration);
+                        CmdAttack.TryCommand();
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
     }
 }

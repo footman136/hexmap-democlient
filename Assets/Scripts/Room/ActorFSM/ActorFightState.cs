@@ -38,8 +38,8 @@ namespace AI
                 GameRoomManager.Instance.SendMsg(ROOM.FightStart, output.ToByteArray());
             }
             else
-            { // 如果没有找到敌人
-                Owner.TriggerTransition(StateEnum.GUARD);
+            { // 如果没有找到敌人, 休息
+                Owner.TriggerTransition(StateEnum.IDLE);
             }
         }
 

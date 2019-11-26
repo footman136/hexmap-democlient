@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using AI;
 using UnityEngine;
 using Assets.Gamelogic.FSM;
@@ -152,13 +153,13 @@ using static FSMStateActor;
                     RoomId = ab.RoomId,
                     OwnerId = ab.OwnerId,
                     ActorId = ab.ActorId,
-                    TargetId = TargetActorId,
-                    State = (int) newState,
-                    CellIndexFrom = ab.CellIndex,
-                    CellIndexTo = TargetCellIndex,
+                    AiState = (int) newState,
+                    AiCellIndexFrom = ab.CellIndex,
+                    AiCellIndexTo = TargetCellIndex,
+                    AiTargetId = TargetActorId,
                     Orientation = ab.Orientation,
-                    DurationTime = durationTime,
-                    TotalTime = totalTime, 
+                    AiDurationTime = durationTime,
+                    AiTotalTime = totalTime, 
                 };
                 GameRoomManager.Instance.SendMsg(ROOM.ActorAiState, output.ToByteArray());
 
@@ -174,7 +175,7 @@ using static FSMStateActor;
                 if (logChanges)
                 {
                     Debug.Log(
-                        $"ActorStateMachine: State changed from<{oldState}> to<{newState}> - TargetPosition:<{TargetPosX},{TargetPosZ}> DurationTime:<{output.DurationTime}>");
+                        $"ActorStateMachine: <{ab.ActorId}> State changed from<{oldState}> to<{newState}> - TargetPosition:<{TargetPosX},{TargetPosZ}> DurationTime:<{output.AiDurationTime}> -Time:{DateTime.Now.ToLongTimeString()}");
                 }
             }
             else

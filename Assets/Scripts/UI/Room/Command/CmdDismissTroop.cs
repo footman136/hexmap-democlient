@@ -33,7 +33,12 @@ public class CmdDismissTroop : MonoBehaviour, ICommand
             case PanelMessageBox.BUTTON.YES:
             {
                 var pi = CommandManager.Instance.CurrentExecuter;
-                if (pi != null)
+                if (pi == null || !pi.CurrentActor)
+                {
+                    string msg = $"没有选中任何部队!";
+                    UIManager.Instance.SystemTips(msg,PanelSystemTips.MessageType.Error);
+                    return;
+                }
                 {
                     var av = pi.CurrentActor;
                     if (av)

@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class HexGrid : MonoBehaviour {
 
@@ -462,6 +463,46 @@ public class HexGrid : MonoBehaviour {
 		currentPathTo.EnableHighlight(Color.red);
 	}
 
+	List<HexCell> _listPathSaved = new List<HexCell>();
+	public void ShowPath (List<HexCell> path)
+	{
+		// 先擦掉之前画的
+		if (_listPathSaved != null)
+		{
+			foreach (var current in _listPathSaved)
+			{
+				current.SetLabel(current.GetLabelStr(showLabel));
+				current.DisableHighlight();
+			}
+		}
+
+		_listPathSaved.Clear();
+		if (path == null)
+			return;
+		
+		// 再画新的
+		for (int i = 0; i < path.Count; ++i)
+		{
+			HexCell current = path[i];
+			string label = $"{i}";
+			if(current.Unit)
+				label = $"{i}-<color=#FF0000FF>T</color>";
+			current.SetLabel(label);
+			current.EnableHighlight(Color.yellow);
+		}
+
+		if (path.Count >= 2)
+		{
+			path[0].EnableHighlight(Color.blue);
+			path[path.Count-1].EnableHighlight(Color.red);
+		}
+		
+		foreach (var current in path)
+		{
+			_listPathSaved.Add(current);
+		}
+	}
+	
 	public void FindPath (HexCell fromCell, HexCell toCell, HexUnit unit) {
 		ClearPath();
 		currentPathFrom = fromCell;

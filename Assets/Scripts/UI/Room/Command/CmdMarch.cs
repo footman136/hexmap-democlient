@@ -47,6 +47,13 @@ public class CmdMarch : MonoBehaviour, ICommand
             return;
         }
         
+        var pi = CommandManager.Instance.CurrentExecuter;
+        if (pi == null || !pi.CurrentActor)
+        {
+            string msg = $"没有选中任何部队!";
+            UIManager.Instance.SystemTips(msg,PanelSystemTips.MessageType.Error);
+            return;
+        }
         var av = CommandManager.Instance.CurrentExecuter.CurrentActor;
         if (!av)
             return;
@@ -90,7 +97,7 @@ public class CmdMarch : MonoBehaviour, ICommand
             }
         
             Debug.Log($"CmdMarch - From<{av.PosX},{av.PosZ}> - Dest<{cellTarget.coordinates.X},{cellTarget.coordinates.Z}>");
-            ab.StateMachine.TriggerTransition(FSMStateActor.StateEnum.WALK, cellTarget.Index);
+            //ab.StateMachine.TriggerTransition(FSMStateActor.StateEnum.WALK, cellTarget.Index);
             CmdAttack.SendAiStateHigh(StateEnum.WALK, cellTarget.Index);
         }
         Stop();
