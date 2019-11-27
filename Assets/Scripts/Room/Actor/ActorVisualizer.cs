@@ -107,6 +107,7 @@ namespace Animation
                 _inner = UIManager.Instance.Root.Find("Inner");
             PrepareAllAnimations();
 
+            // 寻路的路线,但是现在太丑了, 所以先去掉, 以后再说
 //            GameObject go = Resources.Load("UI/Room/Arrow") as GameObject;
 //            if (go)
 //            {

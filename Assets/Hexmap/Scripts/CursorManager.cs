@@ -18,8 +18,7 @@ public class CursorManager : MonoBehaviour
         ATTACK = 4,
     }
 
-    private CURSOR_TYPE _cursorType;
-    private CURSOR_TYPE _cursorTypeLast;
+    private readonly Stack<CURSOR_TYPE> _cursorStack = new Stack<CURSOR_TYPE>();
 
     public static CursorManager Instance;
 
@@ -31,11 +30,15 @@ public class CursorManager : MonoBehaviour
         }
         Instance = this;
     }
-    
+
     public void ShowCursor(CURSOR_TYPE type)
     {
-        _cursorTypeLast = _cursorType;
-        _cursorType = type;  
+        showCursor(type);
+        _cursorStack.Push(type);
+    }
+    
+    private void showCursor(CURSOR_TYPE type)
+    {
         switch (type)
         {
             case CURSOR_TYPE.CAMERA_MOVE:
@@ -58,6 +61,11 @@ public class CursorManager : MonoBehaviour
 
     public void RestoreCursor()
     {
-        ShowCursor(_cursorTypeLast);
+        if (_cursorStack.Count > 0)
+            _cursorStack.Pop();
+        if (_cursorStack.Count > 0)
+            showCursor(_cursorStack.Peek());
+        else
+            showCursor(CURSOR_TYPE.NONE);
     }
 }

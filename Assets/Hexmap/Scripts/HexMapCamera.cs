@@ -1,5 +1,8 @@
 ﻿using System;
 using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine.EventSystems;
 
 public class HexMapCamera : MonoBehaviour {
 
@@ -163,6 +166,11 @@ public class HexMapCamera : MonoBehaviour {
 	/// </summary>
 	public void CameraMove()
 	{
+		bool over = IsPointerOverUIObject(Input.mousePosition);
+		if (over)
+		{
+			return;
+		}
 		if (Input.GetMouseButton(0))
 		{
 			if (Input.touchCount > 1)
@@ -240,4 +248,17 @@ public class HexMapCamera : MonoBehaviour {
 
 		return 0;
 	}
+	
+	//    ————————————————
+	//    版权声明：本文为CSDN博主「SunnyIncsdn」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。
+	//    原文链接：https://blog.csdn.net/SunnyInCSDN/article/details/72470247
+	public static bool IsPointerOverUIObject(Vector3 mousePosition) {//判断是否点击的是UI，有效应对安卓没有反应的情况，true为UI
+		PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
+		eventDataCurrentPosition.position = new Vector2(mousePosition.x, mousePosition.y);
+		List<RaycastResult> results = new List<RaycastResult>();
+		EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
+		return results.Count > 0;
+	}
+
+
 }

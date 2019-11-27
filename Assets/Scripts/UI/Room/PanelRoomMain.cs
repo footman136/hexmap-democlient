@@ -1,15 +1,14 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using Animation;
 using GameUtils;
 using Google.Protobuf;
 using Main;
 using Protobuf.Room;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.SocialPlatforms;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class PanelRoomMain : MonoBehaviour
 {
@@ -20,9 +19,12 @@ public class PanelRoomMain : MonoBehaviour
     [SerializeField] private Toggle _togAi;
     [SerializeField] private Toggle _togFollowCamera;
     [SerializeField] private Toggle _togShowRes;
+    
     [SerializeField] private GameObject _btnCreateActor;
     [SerializeField] private GameObject _btnRangeTest;
     [SerializeField] private GameObject _btnReturnCity;
+    [SerializeField] private GameObject _groupCreateActor;
+    
     [SerializeField] private Text _txtPlayerName;
     [SerializeField] private Text _txtWood;
     [SerializeField] private Text _txtFood;
@@ -80,6 +82,7 @@ public class PanelRoomMain : MonoBehaviour
 
         _btnCreateActor.transform.Find("Select").gameObject.SetActive(false);
         _btnRangeTest.transform.Find("Select").gameObject.SetActive(false);
+        ClearCreateActorGroup();
 
         AddListener();
     }
@@ -123,10 +126,10 @@ public class PanelRoomMain : MonoBehaviour
         // 因为检测的是Up消息,所以延迟一帧
 //        if (vecLastMousePosition == Vector3.zero)
 //            vecLastMousePosition = Input.mousePosition;
-        bool over = IsPointerOverUIObject(vecLastMousePosition);
+        bool over = HexMapCamera.IsPointerOverUIObject(vecLastMousePosition);
+        vecLastMousePosition = Input.mousePosition;
         if (over)
         {
-            vecLastMousePosition = Input.mousePosition;
             return;
         }
 
@@ -135,8 +138,6 @@ public class PanelRoomMain : MonoBehaviour
             _isMouseDown = true;
             _downMousePos = Input.mousePosition;
         }
-
-        vecLastMousePosition = Input.mousePosition;
 
         if (Input.GetMouseButtonUp(0) && _isMouseDown)
         {
@@ -150,10 +151,8 @@ public class PanelRoomMain : MonoBehaviour
             
             if (_isCreatingActor)
             {
-                AskCreateUnit(GetCellUnderCursor(), 10010);
-                _isCreatingActor = false;
-                CursorManager.Instance.RestoreCursor();
-                _btnCreateActor.transform.Find("Select").gameObject.SetActive(false);
+                AskCreateUnit(GetCellUnderCursor(), _createActorInfoId);
+                ClearCreateActorGroup();
             }
             else if (_isRangeTesting)
             {
@@ -177,18 +176,6 @@ public class PanelRoomMain : MonoBehaviour
         if(_pickInfoMaster.CurrentActor)
             _pickInfoMaster.CurrentActor.UpdatePath();
     }
-
-    //    ————————————————
-    //    版权声明：本文为CSDN博主「SunnyIncsdn」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。
-    //    原文链接：https://blog.csdn.net/SunnyInCSDN/article/details/72470247
-    private bool IsPointerOverUIObject(Vector3 mousePosition) {//判断是否点击的是UI，有效应对安卓没有反应的情况，true为UI
-        PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
-        eventDataCurrentPosition.position = new Vector2(mousePosition.x, mousePosition.y);
-        List<RaycastResult> results = new List<RaycastResult>();
-        EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
-        return results.Count > 0;
-    }
-
 
     HexCell GetCellUnderCursor () {
         return
@@ -289,6 +276,7 @@ public class PanelRoomMain : MonoBehaviour
             hexmapHelper.hexGrid.ClearPath();
             UpdateCurrentCell();
             SetSelection(currentCell);
+            ClearCreateActorGroup();
         }
         else
         {
@@ -340,7 +328,6 @@ public class PanelRoomMain : MonoBehaviour
             hexmapHelper.hexGrid.ClearPath();
             ShowSelector(null, false);
             ShowSelectorCity(null, false);
-            CursorManager.Instance.ShowCursor(CursorManager.CURSOR_TYPE.NONE);
         }
     }
 
@@ -504,7 +491,7 @@ public class PanelRoomMain : MonoBehaviour
 
     #endregion
 
-    #region 事件处理
+    #region UI事件处理
     public void OnClickExit()
     {
         LeaveRoom output = new LeaveRoom()
@@ -601,15 +588,6 @@ public class PanelRoomMain : MonoBehaviour
         }
     }
 
-    private bool _isCreatingActor = false; 
-    public void OnClickCreateActor()
-    {
-        SetSelection(null);
-        _isCreatingActor = true;
-        CursorManager.Instance.ShowCursor(CursorManager.CURSOR_TYPE.CRAETE_ACTOR);
-        _btnCreateActor.transform.Find("Select").gameObject.SetActive(true);
-    }
-
     private bool _isRangeTesting = false;
     public void OnClickRangeTest()
     {
@@ -679,6 +657,64 @@ public class PanelRoomMain : MonoBehaviour
         }
     }
 
+    #endregion
+
+    #region 创建部队的操作-测试专用  
+
+    private bool _isCreatingActor = false;
+    private GameObject _createBtn;
+    private bool _isShowCreateActorGroup = false;
+    private int _createActorInfoId;
+    
+    public void OnClickCreateActor()
+    {
+        SetSelection(null);
+        if (!_isShowCreateActorGroup)
+        {
+            _groupCreateActor.SetActive(true);
+            _btnCreateActor.transform.Find("Select").gameObject.SetActive(true);
+            _isShowCreateActorGroup = true;
+        }
+        else
+        {
+            ClearCreateActorGroup();
+        }
+    }
+
+    // 关闭弹出的菜单
+    public void ClearCreateActorGroup()
+    {
+        _isShowCreateActorGroup = false;
+        _groupCreateActor.SetActive(false);
+        _btnCreateActor.transform.Find("Select").gameObject.SetActive(false);
+        
+        if(_isCreatingActor)
+            CursorManager.Instance.RestoreCursor();
+        _isCreatingActor = false;
+        for (int i = 0; i < _groupCreateActor.transform.childCount; ++i)
+        {
+            var child = _groupCreateActor.transform.GetChild(i);
+            child.Find("Select").gameObject.SetActive(false);
+        }
+        _createBtn = null;
+    }
+
+    public void OnClickActorItem(GameObject go)
+    {
+        SetSelection(null);
+        _isCreatingActor = true;
+        CursorManager.Instance.ShowCursor(CursorManager.CURSOR_TYPE.CRAETE_ACTOR);
+        if(_createBtn)
+            _createBtn.transform.Find("Select").gameObject.SetActive(false);
+        _createBtn = go;
+        _createBtn.transform.Find("Select").gameObject.SetActive(true);
+        string itenName = _createBtn.name;
+        string[] cuts = itenName.Split('_');
+        if (cuts.Length == 2)
+        {
+            _createActorInfoId = int.Parse(cuts[1]);
+        }
+    }
     #endregion
     
     #region 消息处理
