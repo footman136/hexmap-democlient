@@ -100,6 +100,7 @@ namespace AI
             MsgDispatcher.RegisterMsg((int)ROOM_REPLY.FightStartReply, OnFightStartReply);
             MsgDispatcher.RegisterMsg((int)ROOM_REPLY.FightStopReply, OnFightStopReply);
             MsgDispatcher.RegisterMsg((int)ROOM_REPLY.AmmoSupplyReply, OnAmmoSupplyReply);
+            MsgDispatcher.RegisterMsg((int)ROOM_REPLY.TryCommandReply, OnTryCommandReply);
 
         }
 
@@ -110,6 +111,7 @@ namespace AI
             MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.FightStartReply, OnFightStartReply);
             MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.FightStopReply, OnFightStopReply);
             MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.AmmoSupplyReply, OnAmmoSupplyReply);
+            MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.TryCommandReply, OnTryCommandReply);
         }
 
 
@@ -117,10 +119,11 @@ namespace AI
         private float timeNow = 0;
         public void Tick()
         {
-            CurrentPosition = HexUnit.transform.localPosition; // 不是Cell的坐标
-            Vector2 curPos2 = new Vector2(CurrentPosition.x, CurrentPosition.y);
-            Vector2 targetPos2 = new Vector2(StateMachine.TargetPosition.x, StateMachine.TargetPosition.y);
-            //_distance = Vector3.Distance(CurrentPosition, StateMachine.TargetPosition);
+            
+            CurrentPosition = HexUnit.transform.localPosition; // 不是Cell的坐标, 不见得是格子中心,所以要这样取值
+            Vector2 curPos2 = new Vector2(CurrentPosition.x, CurrentPosition.z);
+            // 注意: 这里的TargetPos2, 是目标点格子中心点坐标, 与敌人单位的实际位置不一样(差一格), 如果要计算真正的距离, 用CalcDistance()函数
+            Vector2 targetPos2 = new Vector2(StateMachine.TargetPosition.x, StateMachine.TargetPosition.z);
             _distance = Vector2.Distance(curPos2, targetPos2);// 
             int posXOld = PosX;
             int posZOld = PosZ;
@@ -186,7 +189,7 @@ namespace AI
                 if (cell.Unit != null)
                 {
                     var av = cell.Unit.GetComponent<ActorVisualizer>();
-                    if (av != null && av.OwnerId != OwnerId && av.CurrentAiState != StateEnum.DIE && av.CurrentAiState != StateEnum.VANISH)
+                    if (av != null && av.OwnerId != OwnerId && !av.IsDead)
                     { // 绕这么大一圈子,将来移植到服务器的话,需要考虑应该如何做
                         var ab = GameRoomManager.Instance.RoomLogic.ActorManager.GetActor(av.ActorId);
                         return ab;
@@ -202,6 +205,18 @@ namespace AI
         public bool IsFighting => HighAiState == StateEnum.FIGHT ||
                                   HighAiState == StateEnum.DELAYFIGHT;
 
+        /// <summary>
+        /// 与敌人的距离
+        /// </summary>
+        /// <param name="abEnemy"></param>
+        /// <returns></returns>
+        public float CalcDistance(ActorBehaviour abEnemy)
+        {
+            Vector2 enemy = new Vector2(abEnemy.CurrentPosition.x, abEnemy.CurrentPosition.z);
+            Vector2 me = new Vector2(CurrentPosition.x, CurrentPosition.z);
+            float distance = Vector2.Distance(enemy, me);
+            return distance;
+        }
         #endregion
         
         #region AI - 代理权
@@ -320,7 +335,7 @@ namespace AI
                 }
             }
 
-            GameRoomManager.Instance.Log($"ActorBehaviour OnFightStop - Ammo:{AmmoBase}/{AmmoBaseMax}");
+            GameRoomManager.Instance.Log($"ActorBehaviour OnFightStopReply - Ammo:{AmmoBase}/{AmmoBaseMax}");
         }
 
         private void OnAmmoSupplyReply(byte[] bytes)
@@ -333,15 +348,26 @@ namespace AI
             
         }
         
+        private void OnTryCommandReply(byte[] bytes)
+        {
+            TryCommandReply input = TryCommandReply.Parser.ParseFrom(bytes);
+            if (input.ActorId != ActorId)
+                return; // 不是自己，略过
+            if (!input.Ret)
+            {
+                GameRoomManager.Instance.Log($"RoomLogic OnTryCommandReply Error - " + input.ErrMsg);
+                StateMachine.TriggerTransition(StateEnum.IDLE);
+            }
+
+            // 该指令可以执行,虽然是马后炮
+        }
         #endregion
         
-        private bool bFirst = true;
-        private float _lastTime = 0f;
-        private float _deltaTime;
-        private const float _REST_TIME = 10f;
-
         #region AI - 第一层
         
+        private const float _REST_TIME = 10f;
+        private bool _first = true;
+
         private void AI_Running()
         {
             if (!GameRoomManager.Instance.IsAiOn)
@@ -356,70 +382,61 @@ namespace AI
             if (StateMachine.CurrentAiState == StateEnum.IDLE)
             {
                 float lastedTime = StateMachine.GetLastedTime();
-                if (lastedTime > _REST_TIME)
+                if (lastedTime > _REST_TIME || _first)
                 { // 进入休闲状态超过_REST_TIME秒, 也就是说闲置超过_REST_TIME秒的情况下
+                    _first = false;
                     switch (HighAiState)
                     {
                         case StateEnum.GUARD:
                             StateMachine.TriggerTransition(StateEnum.GUARD);
                             break;
                         case StateEnum.WALKFIGHT:
-                            // 如果可以直接攻击, 则直接攻击, 否则走过去再攻击
-                            if (AmmoBase <= 0)
-                            {
-                                ActorAiStateHigh output = new ActorAiStateHigh()
-                                {
-                                    RoomId = RoomId,
-                                    OwnerId = OwnerId,
-                                    ActorId = ActorId,
-                                    HighAiState = (int)StateEnum.IDLE,
-                                };
-                                GameRoomManager.Instance.SendMsg(ROOM.ActorAiStateHigh, output.ToByteArray());
-                            }
+                            // 敌人死了, 或者我没有弹药了, 而且我已经走到目的地了
                             var ab = GameRoomManager.Instance.RoomLogic.ActorManager.GetActor(HighAiTargetId);
-                            if (ab == null || ab.IsDead)
+                            if ((ab == null || ab.IsDead || AmmoBase <= 0) && CellIndex == HighAiTargetCell)
                             {
-                                HighAiTargetId = 0;
-                                if (CellIndex == HighAiTargetCell)
-                                { // 结束这个高级AI
-                                    ActorAiStateHigh output = new ActorAiStateHigh()
-                                    {
-                                        RoomId = RoomId,
-                                        OwnerId = OwnerId,
-                                        ActorId = ActorId,
-                                        HighAiState = (int)StateEnum.IDLE,
-                                    };
-                                    GameRoomManager.Instance.SendMsg(ROOM.ActorAiStateHigh, output.ToByteArray());
-                                }
+                                // 结束这个高级AI
+                                CmdAttack.SendAiStateHigh(OwnerId, ActorId, StateEnum.IDLE);
+                                GameRoomManager.Instance.Log($"ActorBehaviour AI_Running - 结束高级AI:{HighAiState}");
+                                break;
                             }
-                            else
+                            if (AmmoBase <= 0)
+                            { // 如果没有弹药了, 则仅仅是走过去
+                                StateMachine.TriggerTransition(StateEnum.WALK, HighAiTargetCell);
+                                break;
+                            }
+                            // 如果可以直接攻击, 则直接攻击, 否则走过去再攻击
+                            if (!ActorWalkFightState.AttackEnemyInRange(this, HighAiTargetId))
                             {
-                                if (!ActorWalkFightState.AttackEnemyInRange(this, HighAiTargetId))
-                                {
-                                    if (AmmoBase > 0)
-                                    {
-                                        StateMachine.TriggerTransition(StateEnum.WALKFIGHT, HighAiTargetCell,
-                                            HighAiTargetId);
-                                    }
-                                }
+                                StateMachine.TriggerTransition(StateEnum.WALKFIGHT, HighAiTargetCell,
+                                    HighAiTargetId);
                             }
                             break;
-                        case StateEnum.WALK: // 解决拥堵问题
+                        case StateEnum.WALK: // 解决拥堵问题, 
                             if (HighAiTargetCell == CellIndex)
                             { // 走到了, 跳出本逻辑
-                                ActorAiStateHigh output = new ActorAiStateHigh()
-                                {
-                                    RoomId = RoomId,
-                                    OwnerId = OwnerId,
-                                    ActorId = ActorId,
-                                    HighAiState = (int)StateEnum.IDLE,
-                                };
-                                GameRoomManager.Instance.SendMsg(ROOM.ActorAiStateHigh, output.ToByteArray());
+                                CmdAttack.SendAiStateHigh(OwnerId, ActorId, StateEnum.IDLE);
+                                GameRoomManager.Instance.Log($"ActorBehaviour AI_Running - 到达目的地! 结束高级AI:{HighAiState}");
                             }
                             else
                             {
                                 StateMachine.TriggerTransition(StateEnum.WALK, HighAiTargetCell);
                             }
+                            break;
+                        case StateEnum.HARVEST:
+                            HexCell currentCell = HexUnit.Location;
+                            HexResource res = currentCell.Res;
+                            int amount = res.GetAmount(res.ResType);
+                            if (amount == 0)
+                            { // 没资源了, 跳出
+                                CmdAttack.SendAiStateHigh(OwnerId, ActorId, StateEnum.IDLE);
+                            }
+                            else
+                            {
+                                StateMachine.TriggerTransition(HighAiState, HighAiTargetCell, HighAiTargetId,
+                                    HighAiDurationTime, HighAiTotalTime);
+                            }
+
                             break;
                     }
                 }

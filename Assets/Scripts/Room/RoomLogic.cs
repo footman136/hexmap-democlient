@@ -7,6 +7,7 @@ using GameUtils;
 using Google.Protobuf;
 using Protobuf.Room;
 using UnityEngine;
+using static FSMStateActor;
 
 public class RoomLogic : MonoBehaviour
 {
@@ -46,7 +47,6 @@ public class RoomLogic : MonoBehaviour
         MsgDispatcher.RegisterMsg((int)ROOM_REPLY.ActorMoveReply, OnActorMoveReply);
         MsgDispatcher.RegisterMsg((int)ROOM_REPLY.CityAddReply, OnCityAddReply);
         MsgDispatcher.RegisterMsg((int)ROOM_REPLY.CityRemoveReply, OnCityRemoveReply);
-        MsgDispatcher.RegisterMsg((int)ROOM_REPLY.TryCommandReply, OnTryCommandReply);
     }
 
     private void RemoveListener()
@@ -56,7 +56,6 @@ public class RoomLogic : MonoBehaviour
         MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.ActorMoveReply, OnActorMoveReply);
         MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.CityAddReply, OnCityAddReply);
         MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.CityRemoveReply, OnCityRemoveReply);
-        MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.TryCommandReply, OnTryCommandReply);
     }
     
     #endregion
@@ -85,7 +84,7 @@ public class RoomLogic : MonoBehaviour
             Debug.LogError("What the Fuck! with GameRoomManager and HexmapHelper!!!");
             return;
         }
-        GameRoomManager.Instance.HexmapHelper.CreateUnit(input.RoomId, input.OwnerId, input.ActorId,   
+        var av = GameRoomManager.Instance.HexmapHelper.CreateUnit(input.RoomId, input.OwnerId, input.ActorId,   
             input.PosX, input.PosZ, input.Orientation, input.Species, input.CellIndex, input.ActorInfoId, 
             input.Name, input.Hp, input.HpMax, input.AttackPower, input.DefencePower, input.Speed, input.FieldOfVision, 
             input.ShootingRange, input.AttackDuration, input.AttackInterval, input.AmmoBase, input.AmmoBaseMax);
@@ -95,6 +94,11 @@ public class RoomLogic : MonoBehaviour
         if (ab != null)
         {
             ab.HasAiRights = GameRoomManager.Instance.GetAiPlayer(input.OwnerId);
+            ab.HighAiState = (StateEnum)input.HighAiState;
+            ab.HighAiTargetCell = input.HighAiCellIndexTo;
+            ab.HighAiTargetId = input.HighAiTargetId;
+            ab.HighAiDurationTime = input.HighAiDurationTime;
+            ab.HighAiTotalTime = input.HighAiTotalTime;
         }
     }
 
@@ -119,7 +123,7 @@ public class RoomLogic : MonoBehaviour
             { // 战斗致死, 这时候先不删除该单元,而是要等动画结束以后再删除
                 var ab = ActorManager.GetActor(input.ActorId);
                 if (ab == null) return;
-                ab.StateMachine.TriggerTransition(FSMStateActor.StateEnum.DIE);
+                ab.StateMachine.TriggerTransition(StateEnum.DIE);
                 GameRoomManager.Instance.Log($"MSG: OnActorRemoveReply - OK - {ab.Name}:{ab.ActorId} 被杀死!");
             }
         }
@@ -167,7 +171,7 @@ public class RoomLogic : MonoBehaviour
         {
             GameRoomManager.Instance.HexmapHelper.SetCameraPosition(input.CellIndex);
         }
-        GameRoomManager.Instance.Log($"MSG: OnCityAddReply OK - 创建城市，坐标:{city.PosX}, {city.PosZ} - Index:{city.CellIndex} - CitySize:{city.CitySize} - IsCapital:{city.IsCapital}");
+        GameRoomManager.Instance.Log($"RoomLogic OnCityAddReply OK - 创建城市，坐标:{city.PosX}, {city.PosZ} - Index:{city.CellIndex} - CitySize:{city.CitySize} - IsCapital:{city.IsCapital}");
     }
 
     private void OnCityRemoveReply(byte[] bytes)
@@ -176,32 +180,15 @@ public class RoomLogic : MonoBehaviour
         if (!input.Ret)
         {
             string msg = $"删除城市失败！";
-            GameRoomManager.Instance.Log("MSG: OnCityRemoveReply Error - " + msg);
+            GameRoomManager.Instance.Log("RoomLogic OnCityRemoveReply Error - " + msg);
         }
         else
         {
             UrbanManager.RemoveCity(input.CityId);
-            GameRoomManager.Instance.Log($"MSG: OnCityRemoveReply OK - 成功删除城市:{input.CityId}");
+            GameRoomManager.Instance.Log($"RoomLogic OnCityRemoveReply OK - 成功删除城市:{input.CityId}");
             PanelRoomMain.Instance.SetSelection(null);
         }
     }
 
-    private void OnTryCommandReply(byte[] bytes)
-    {
-        TryCommandReply input = TryCommandReply.Parser.ParseFrom(bytes);
-        if (!input.Ret)
-        {
-            UIManager.Instance.SystemTips(input.ErrMsg, PanelSystemTips.MessageType.Error);
-            GameRoomManager.Instance.Log($"CmdAttack OnTryCommandReply Error - " + input.ErrMsg);
-            var ab = ActorManager.GetActor(input.ActorId);
-            if (ab != null)
-            {
-                ab.StateMachine.TriggerTransition(FSMStateActor.StateEnum.IDLE);
-            }
-            return;
-        }
-
-        // 该指令可以执行,虽然是马后炮
-    }
     #endregion
 }

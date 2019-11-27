@@ -5,7 +5,7 @@ using Animation;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PanelSprayAmmoBase : MonoBehaviour
+public class PanelSprayMessage : MonoBehaviour
 {
     [SerializeField] private Text _blood;
     [SerializeField] private Vector3 _pos;
@@ -59,11 +59,29 @@ public class PanelSprayAmmoBase : MonoBehaviour
         
     }
 
-    public void Play(ActorVisualizer av, string msg)
+    public void Play(ActorVisualizer av, string msg, PanelSystemTips.MessageType msgType)
     {
         _actor = av;
         _blood.text = msg;
-        _blood.color = new Color(_blood.color.r, _blood.color.g, _blood.color.b, 1f);
+        
+        string strColorBeginFormat = "<color={0}>{1}{2}";
+        string strColorEnd = "</color>";
+        string msgWithColor = msg;
+        switch (msgType)
+        {
+            case PanelSystemTips.MessageType.Success:
+                msgWithColor = string.Format(strColorBeginFormat, "#7FFF00FF", msg, strColorEnd);
+                break;
+            case PanelSystemTips.MessageType.Error:
+                msgWithColor = string.Format(strColorBeginFormat, "red", msg, strColorEnd);
+                break;
+            case PanelSystemTips.MessageType.Warning:
+                msgWithColor = string.Format(strColorBeginFormat, "yellow", msg, strColorEnd);
+                break;
+        }
+
+        _blood.text = msgWithColor;
+        
         _startTime = 0;
         
         _pos = _actor.CurrentPosition;

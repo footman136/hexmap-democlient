@@ -44,7 +44,7 @@ namespace AI
                     RoomId = _actorBehaviour.RoomId,
                     OwnerId = _actorBehaviour.OwnerId,
                     ActorId = _actorBehaviour.ActorId,
-                    AiState = 2, // FSMStateActor.StateEnum
+                    AiState = 2, // FSMStateActor.StateEnum.Fight
                 };              
                 GameRoomManager.Instance.SendMsg(ROOM.ActorPlayAni, output.ToByteArray());
             }

@@ -195,6 +195,7 @@ using static FSMStateActor;
         public void SetTarget(int cellIndex, long actorId)
         {
             TargetActorId = actorId;
+            // 这时候仍然使用cellIndex, 因为这个格子是可以走到的地点, 而actorId所在的格子是无法走到的, 我们寻路目前还必须使用能走到的点
             HexCell cellTarget = GameRoomManager.Instance.HexmapHelper.GetCell(cellIndex);
             if (cellIndex == 0) return;
             

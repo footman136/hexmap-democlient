@@ -462,7 +462,7 @@ MonoBehaviour:
   Shield: {fileID: 7430226491509728903, guid: c6f53a4860968c046b8b792d7e8dac06, type: 3}
   SprayBlood: {fileID: 7218132363813479699, guid: 5a32ffa23fe36904b8e3d51691271311,
     type: 3}
-  SprayAmmoBase: {fileID: 7893928075610708206, guid: 00447a37bbbe45c498c2c66e331107e2,
+  SprayMessage: {fileID: 7893928075610708206, guid: 00447a37bbbe45c498c2c66e331107e2,
     type: 3}
 --- !u!1 &1390469885
 GameObject:

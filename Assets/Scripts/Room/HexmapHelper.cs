@@ -369,7 +369,7 @@ public class HexmapHelper : MonoBehaviour
     /// <param name="ammoBase"></param>
     /// <param name="ammoBaseMax"></param>
     /// <returns></returns>
-    public bool CreateUnit (long roomId, long ownerId, long actorId, int posX, int posZ, float orientation, 
+    public ActorVisualizer CreateUnit (long roomId, long ownerId, long actorId, int posX, int posZ, float orientation, 
         string unitName, int cellIndex, int actorInfoId,
         string name, int hp, int hpMax, float attackPower, float defencePower, float speed, float filedOfVision, float shootingRange,
         float attackDuration, float attackInterval, int ammoBase, int ammoBaseMax)
@@ -378,13 +378,13 @@ public class HexmapHelper : MonoBehaviour
         if (!cell)
         {
             GameRoomManager.Instance.Log($"HexmapHelper CreateUnit ：创建Actor失败！格子越界 - <{posX},{posZ}> - {unitName}");
-            return false;
+            return null;
         }
 
         if (cellIndex == 0)
         {
             Debug.LogError("HexmapHelper CreateUnit Error - CellIndex is lost!!!");
-            return false;
+            return null;
         }
 
         if (cell.Unit)
@@ -408,7 +408,7 @@ public class HexmapHelper : MonoBehaviour
             else
             {
                 GameRoomManager.Instance.Log($"HexmapHelper ：创建Actor失败！原来这个格子没有物体，现在有了物体, 附近也没有空地! - <{posX},{posZ}> - {unitName}");
-                return false;
+                return null;
             }
         }
         
@@ -502,11 +502,11 @@ public class HexmapHelper : MonoBehaviour
                     GameRoomManager.Instance.RoomLogic.ActorManager.AddActor(ab, hu);
                 }
                 GameRoomManager.Instance.Log($"MSG: CreateATroopReply - 创建了一个Actor - {unitName}");
-                return true;
+                return av;
             }
         }
 
-        return false;
+        return null;
     }
 
     public bool DestroyUnit (long actorId) 

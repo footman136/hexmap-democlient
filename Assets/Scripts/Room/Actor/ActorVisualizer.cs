@@ -169,6 +169,7 @@ namespace Animation
             MsgDispatcher.RegisterMsg((int)ROOM_REPLY.UpdateActorInfoReply, OnUpdateActorInfoReply);
             MsgDispatcher.RegisterMsg((int)ROOM_REPLY.ActorPlayAniReply, OnActorPlayAniReply);
             MsgDispatcher.RegisterMsg((int)ROOM_REPLY.AmmoSupplyReply, OnAmmoSupplyReply);
+            MsgDispatcher.RegisterMsg((int)ROOM_REPLY.TryCommandReply, OnTryCommandReply);
         }
 
         void OnDisable()
@@ -182,19 +183,21 @@ namespace Animation
             MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.UpdateActorInfoReply, OnUpdateActorInfoReply);
             MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.ActorPlayAniReply, OnActorPlayAniReply);
             MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.AmmoSupplyReply, OnAmmoSupplyReply);
+            MsgDispatcher.UnRegisterMsg((int)ROOM_REPLY.TryCommandReply, OnTryCommandReply);
         }
 
         // Update is called once per frame
         void Update()
         {
-            _distance = Vector3.Distance(CurrentPosition, TargetPosition);
-            CurrentPosition = HexUnit.transform.localPosition; // 不见得是格子中心,所以要这样取值
-            //CurrentPosition = transform.localPosition; // 这里取的是格子中心,所以不能这样取
+            CurrentPosition = HexUnit.transform.localPosition; // 不是Cell的坐标, 不见得是格子中心,所以要这样取值
+            Vector2 curPos2 = new Vector2(CurrentPosition.x, CurrentPosition.z);
+            Vector2 targetPos2 = new Vector2(TargetPosition.x, TargetPosition.z);
+            _distance = Vector2.Distance(curPos2, targetPos2);//
+            
             CellIndex = HexUnit.Location.Index;
             PosX = HexUnit.Location.coordinates.X;
             PosZ = HexUnit.Location.coordinates.Z;
 
-            UpdatePath();
         }
 
         public void Log(string msg)
@@ -417,16 +420,15 @@ namespace Animation
             HexCell targetCell = null;
             ActorVisualizer avTarget = null;
             if (AllActors.ContainsKey(input.AiTargetId))
-            { //如果目标是单位,优先用单位的坐标作为目标点
+            { //如果目标是单位,优先用单位的[所在格子的]坐标作为目标点, 注意, 也不是目标点的实际坐标
                 avTarget = AllActors[input.AiTargetId];
-                newPosition = avTarget.CurrentPosition;
                 targetCell = avTarget.HexUnit.Location;
             }
             else
             {
                 targetCell = GameRoomManager.Instance.HexmapHelper.GetCell(input.AiCellIndexTo);
-                newPosition = targetCell.Position;
             }
+            newPosition = targetCell.Position;
 
             StateEnum newAiState = (StateEnum)input.AiState;
 
@@ -573,7 +575,9 @@ namespace Animation
                 return; // 不是自己，略过
             if (!input.Ret)
             {
-                UIManager.Instance.SystemTips(input.ErrMsg, PanelSystemTips.MessageType.Error);
+                PanelSprayMessage spray = GameRoomManager.Instance.FightManager.SprayMessage.Spawn(_inner, Vector3.zero);
+                if (spray == null) return;
+                spray.Play(this, input.ErrMsg, PanelSystemTips.MessageType.Error);
                 GameRoomManager.Instance.Log($"ActorVisualizer OnFightStartReply Error - {input.ErrMsg}");
                 return;
             }
@@ -614,9 +618,7 @@ namespace Animation
             if (input.ActorId != ActorId)
                 return; // 不是自己，略过
             if (!input.Ret)
-            {
-                UIManager.Instance.SystemTips(input.ErrMsg, PanelSystemTips.MessageType.Error);
-                GameRoomManager.Instance.Log($"ActorVisualizer OnFightStopReply Error - {input.ErrMsg}");
+            {   GameRoomManager.Instance.Log($"ActorVisualizer OnFightStopReply Error - {input.ErrMsg}");
                 return;
             }
 
@@ -629,6 +631,15 @@ namespace Animation
                 var avTarget = GameRoomManager.Instance.GetActorVisualizer(input.TargetId);
                 if (!avTarget) return;
                 avTarget.ShowSliderBlood();
+            }
+
+            // 如果弹药没了, 提示"弹药已经用完", 提示玩家下次无法攻击了
+            if (AmmoBase <= 0)
+            {
+                string msg = "弹药已经用完!";
+                PanelSprayMessage spray = GameRoomManager.Instance.FightManager.SprayMessage.Spawn(_inner, Vector3.zero);
+                if (spray == null) return;
+                spray.Play(this, msg, PanelSystemTips.MessageType.Error);
             }
 
             GameRoomManager.Instance.Log("ActorVisualizer OnFightStopReply OK ...");
@@ -682,9 +693,29 @@ namespace Animation
             string msg = $"恢复弹药:{AmmoBase}/{AmmoBaseMax}";
             
             // 每次都创建新的
-            var spray = GameRoomManager.Instance.FightManager.SprayAmmoBase.Spawn(_inner, Vector3.zero);
+            var spray = GameRoomManager.Instance.FightManager.SprayMessage.Spawn(_inner, Vector3.zero);
             if (spray == null) return;
-            spray.Play(this, msg);
+            spray.Play(this, msg, PanelSystemTips.MessageType.Success);
+        }
+
+        #endregion
+        
+        #region 显示信息
+        
+        private void OnTryCommandReply(byte[] bytes)
+        {
+            TryCommandReply input = TryCommandReply.Parser.ParseFrom(bytes);
+            if (input.ActorId != ActorId)
+                return; // 不是自己，略过
+            if (!input.Ret)
+            {
+                // 每次都创建新的
+                PanelSprayMessage spray = GameRoomManager.Instance.FightManager.SprayMessage.Spawn(_inner, Vector3.zero);
+                if (spray == null) return;
+                spray.Play(this, input.ErrMsg, PanelSystemTips.MessageType.Error);
+            }
+
+            // 该指令可以执行,虽然是马后炮
         }
 
         #endregion
@@ -714,7 +745,10 @@ namespace Animation
         public void UpdatePath()
         {
             if (_listPath == null)
+            {
+                GameRoomManager.Instance.HexmapHelper.ShowPath(null);
                 return;
+            }
 
             // 找到本单位当前格子是否在路径上(注意, 有可能确实不在, 比如抄近路的时候, 有可能完全绕过一个格子)
             int find = -1;
@@ -739,7 +773,6 @@ namespace Animation
             }
         }
         #endregion
-        
         
     }
 

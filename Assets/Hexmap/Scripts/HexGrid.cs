@@ -449,6 +449,7 @@ public class HexGrid : MonoBehaviour {
 	void ShowPath (int speed)
 	{
 		List<HexCell> path = GetPath();
+		if (path == null) return;
 		for (int i = 0; i < path.Count; ++i)
 		{
 			HexCell current = path[i];

@@ -54,16 +54,16 @@ namespace AI
                 }
             }
             
-            // 2-寻找附近的敌人, 如果有, 且弹药满仓, 且行动点足够, 就干他
-            // (因为本状态下可以恢复弹药,所以如果只要弹药足够就攻击的话,显得拖拖拉拉)
+            // 2-寻找附近的敌人, 如果有, 且自己弹药满仓, 且自己行动点足够, 且敌人活着, 就干他
+            // (因为本状态下可以恢复弹药,所以如果只要弹药有1就攻击的话,显得拖拖拉拉)
             var abEnemy = _actorBehaviour.FindEnemyInRange();
-            if (abEnemy != null && _actorBehaviour.AmmoBase == _actorBehaviour.AmmoBaseMax)
+            if (abEnemy != null 
+                && _actorBehaviour.AmmoBase == _actorBehaviour.AmmoBaseMax
+                && CmdAttack.IsActionPointGranted()
+                && !abEnemy.IsDead)
             {
-                if (CmdAttack.IsActionPointGranted()) // 行动点足够
-                {
-                    _actorBehaviour.IsCounterAttack = false; // 这是主动攻击, 不是反击, 记录在自己身上, Stop的时候用
-                    _actorBehaviour.StateMachine.TriggerTransition(StateEnum.FIGHT, 0, abEnemy.ActorId, _actorBehaviour.AttackDuration);
-                }
+                _actorBehaviour.IsCounterAttack = false; // 这是主动攻击, 不是反击, 记录在自己身上, Stop的时候用
+                _actorBehaviour.StateMachine.TriggerTransition(StateEnum.FIGHT, 0, abEnemy.ActorId, _actorBehaviour.AttackDuration);
             }
         }
 

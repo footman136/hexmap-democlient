@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5800617924312771847}
   - component: {fileID: 7893928075610708206}
   m_Layer: 5
-  m_Name: PanelSprayAmmoBase
+  m_Name: PanelSprayMessage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -46,7 +46,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1317174083210729657}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a70adadaf76d7d94a8404cd716ab9805, type: 3}
+  m_Script: {fileID: 11500000, guid: d7fec497d03ad4f41b3560a3d3476583, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _blood: {fileID: 7734214048634493221}

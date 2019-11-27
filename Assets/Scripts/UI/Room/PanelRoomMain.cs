@@ -172,6 +172,10 @@ public class PanelRoomMain : MonoBehaviour
         {
             DoPathfinding();
         }
+        
+        // 实时显示当前被选中的单位的行军路径
+        if(_pickInfoMaster.CurrentActor)
+            _pickInfoMaster.CurrentActor.UpdatePath();
     }
 
     //    ————————————————
@@ -291,7 +295,6 @@ public class PanelRoomMain : MonoBehaviour
             ShowHitGround(Input.mousePosition);
             HexCell cell = GetCellUnderCursor();
             SetTarget(cell);
-            hexmapHelper.ShowPath(_pickInfoMaster.CurrentActor);
         }
         
     }
@@ -300,13 +303,11 @@ public class PanelRoomMain : MonoBehaviour
     {
         _pickInfoMaster.Clear();
         _commands.ClearCommands();
-        hexmapHelper.ShowPath(null);
         if (cell)
         {
             _pickInfoMaster.CurrentCell = cell;
             if (cell.Unit)
             {
-                //_pickInfoMaster.CurrentUnit = cell.Unit;
                 var av = cell.Unit.GetComponent<ActorVisualizer>();
                 if (av != null)
                 {
@@ -331,7 +332,6 @@ public class PanelRoomMain : MonoBehaviour
             else if (_pickInfoMaster.CurrentActor)
             {
                 ShowSelector(_pickInfoMaster.CurrentActor, true); 
-                hexmapHelper.ShowPath(_pickInfoMaster.CurrentActor);
             }
             Debug.Log($"Selector : <{cell.coordinates.X},{cell.coordinates.Z}>");
         }
@@ -710,12 +710,26 @@ public class PanelRoomMain : MonoBehaviour
     private void OnUpdateActionPointReply(byte[] bytes)
     {
         UpdateActionPointReply input = UpdateActionPointReply.Parser.ParseFrom(bytes);
-        _txtActionPoint.text = $"{input.ActionPoint}/{input.ActionPointMax}";
-        _sliderActionPoint.minValue = 0;
-        _sliderActionPoint.maxValue = input.ActionPointMax;
-        _sliderActionPoint.value = input.ActionPoint;
+        if (!input.Ret)
+            return;
+        if (input.OwnerId == GameRoomManager.Instance.CurrentPlayer.TokenId)
+        {
+            // 是我自己
+            _txtActionPoint.text = $"{input.ActionPoint}/{input.ActionPointMax}";
+            _sliderActionPoint.minValue = 0;
+            _sliderActionPoint.maxValue = input.ActionPointMax;
+            _sliderActionPoint.value = input.ActionPoint;
 
-        GameRoomManager.Instance.CurrentPlayer.SetActionPoint(input.ActionPoint, input.ActionPointMax);        
+            GameRoomManager.Instance.CurrentPlayer.SetActionPoint(input.ActionPoint, input.ActionPointMax);
+        }
+        else
+        {
+            var pi = GameRoomManager.Instance.GetAiPlayer(input.OwnerId);
+            if (pi != null)
+            {
+                pi.SetActionPoint(input.ActionPoint, input.ActionPointMax);
+            }
+        }
     }
     
     #endregion

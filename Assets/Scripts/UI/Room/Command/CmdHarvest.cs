@@ -23,14 +23,11 @@ public class CmdHarvest : MonoBehaviour, ICommand
             return;
         }
 
-        var av = CommandManager.Instance.CurrentExecuter.CurrentActor;
-        if (av == null)
-            return;
-        var ab = GameRoomManager.Instance.RoomLogic.ActorManager.GetActor(av.ActorId);
-        if (ab == null)
+        var avMe = CommandManager.Instance.CurrentExecuter.CurrentActor;
+        if (avMe == null)
             return;
 
-        var currentCell = av.HexUnit.Location;
+        var currentCell = avMe.HexUnit.Location;
         var resType = currentCell.Res.ResType;
         int resAmount = currentCell.Res.GetAmount(resType);
         float durationTime = resAmount * 3.0f;
@@ -54,18 +51,17 @@ public class CmdHarvest : MonoBehaviour, ICommand
         {
             HarvestStart output = new HarvestStart()
             {
-                RoomId = av.RoomId,
-                OwnerId = av.OwnerId,
-                ActorId = av.ActorId,
-                CellIndex = av.CellIndex,
+                RoomId = avMe.RoomId,
+                OwnerId = avMe.OwnerId,
+                ActorId = avMe.ActorId,
+                CellIndex = avMe.CellIndex,
                 ResType = (int)resType,
                 ResRemain = resAmount,
                 DurationTime = durationTime,
             };
             GameRoomManager.Instance.SendMsg(ROOM.HarvestStart, output.ToByteArray());
 
-            //ab.StateMachine.TriggerTransition(StateEnum.HARVEST, 0, 0, durationTime, durationTime);
-            CmdAttack.SendAiStateHigh(StateEnum.HARVEST, 0, 0, durationTime, durationTime);
+            CmdAttack.SendAiStateHigh(avMe.OwnerId, avMe.ActorId, StateEnum.HARVEST, 0, 0, durationTime, durationTime);
             // 消耗行动点 
             CmdAttack.TryCommand();
         }

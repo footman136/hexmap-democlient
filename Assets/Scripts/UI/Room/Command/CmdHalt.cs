@@ -13,12 +13,6 @@ public class CmdHalt : MonoBehaviour, ICommand
     }
     public void Run()
     {
-//        var whoMove = CommandManager.Instance.CurrentExecuter.CurrentActor;
-//        if (!whoMove)
-//            return;
-//        var av = whoMove;
-//        var ab = GameRoomManager.Instance.RoomLogic.ActorManager.GetActor(av.ActorId);
-//        ab?.StateMachine.TriggerTransition(StateEnum.IDLE); 
         var pi = CommandManager.Instance.CurrentExecuter;
         if (pi == null || !pi.CurrentActor)
         {
@@ -26,7 +20,11 @@ public class CmdHalt : MonoBehaviour, ICommand
             UIManager.Instance.SystemTips(msg,PanelSystemTips.MessageType.Error);
             return;
         }
-        CmdAttack.SendAiStateHigh(StateEnum.IDLE);
+        
+        var avMe = CommandManager.Instance.CurrentExecuter.CurrentActor;
+        if (!avMe)
+            return;
+        CmdAttack.SendAiStateHigh(avMe.OwnerId, avMe.ActorId, StateEnum.IDLE);
     }
     public void Tick()
     {

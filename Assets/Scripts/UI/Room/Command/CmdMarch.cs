@@ -54,21 +54,18 @@ public class CmdMarch : MonoBehaviour, ICommand
             UIManager.Instance.SystemTips(msg,PanelSystemTips.MessageType.Error);
             return;
         }
-        var av = CommandManager.Instance.CurrentExecuter.CurrentActor;
-        if (!av)
-            return;
         
+        var avMe = CommandManager.Instance.CurrentExecuter.CurrentActor;
+        if (avMe == null)
+            return;
+            
         HexCell cellTarget = piTarget.CurrentCell;
         if (!cellTarget)
             return;
         
         {
-            var ab = GameRoomManager.Instance.RoomLogic.ActorManager.GetActor(av.ActorId);
-            if (ab == null)
-                return;
-            
-            var currentCell = av.HexUnit.Location;
-            GameRoomManager.Instance.HexmapHelper.hexGrid.FindPath(currentCell, cellTarget, av.HexUnit);
+            var currentCell = avMe.HexUnit.Location;
+            GameRoomManager.Instance.HexmapHelper.hexGrid.FindPath(currentCell, cellTarget, avMe.HexUnit);
             var hexmapHelper = GameRoomManager.Instance.HexmapHelper;
             if (!hexmapHelper.hexGrid.HasPath)
                 return;
@@ -96,9 +93,8 @@ public class CmdMarch : MonoBehaviour, ICommand
                 Debug.LogWarning($"OhNo Hexmap 2!!! - Orgin<{currentCell.coordinates.X},{currentCell.coordinates.Z}> - New2<{newCell2.coordinates.X},{newCell2.coordinates.Z}>");
             }
         
-            Debug.Log($"CmdMarch - From<{av.PosX},{av.PosZ}> - Dest<{cellTarget.coordinates.X},{cellTarget.coordinates.Z}>");
-            //ab.StateMachine.TriggerTransition(FSMStateActor.StateEnum.WALK, cellTarget.Index);
-            CmdAttack.SendAiStateHigh(StateEnum.WALK, cellTarget.Index);
+            Debug.Log($"CmdMarch - From<{avMe.PosX},{avMe.PosZ}> - Dest<{cellTarget.coordinates.X},{cellTarget.coordinates.Z}>");
+            CmdAttack.SendAiStateHigh(avMe.OwnerId, avMe.ActorId, StateEnum.WALK, cellTarget.Index);
         }
         Stop();
         // 消耗行动点 

@@ -9,7 +9,7 @@ public class FightManager : MonoBehaviour
     public PanelSliderBlood SliderBlood;
     public PanelShield Shield;
     public PanelSprayBlood SprayBlood;
-    public PanelSprayAmmoBase SprayAmmoBase;
+    public PanelSprayMessage SprayMessage;
     
     
     
