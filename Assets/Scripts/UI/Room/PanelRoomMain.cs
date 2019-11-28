@@ -325,6 +325,7 @@ public class PanelRoomMain : MonoBehaviour
         }
         else
         {
+            CommandManager.Instance.StopCurrentCommand();
             hexmapHelper.hexGrid.ClearPath();
             ShowSelector(null, false);
             ShowSelectorCity(null, false);
@@ -701,7 +702,6 @@ public class PanelRoomMain : MonoBehaviour
 
     public void OnClickActorItem(GameObject go)
     {
-        SetSelection(null);
         _isCreatingActor = true;
         CursorManager.Instance.ShowCursor(CursorManager.CURSOR_TYPE.CRAETE_ACTOR);
         if(_createBtn)

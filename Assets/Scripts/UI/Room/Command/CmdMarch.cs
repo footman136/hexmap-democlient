@@ -27,7 +27,7 @@ public class CmdMarch : MonoBehaviour, ICommand
     
     public void Stop()
     {
-        CursorManager.Instance.ShowCursor(CursorManager.CURSOR_TYPE.NONE);
+        CursorManager.Instance.RestoreCursor();
         CommandManager.Instance.CommandTargetSelected -= OnCommandTargetSelected;
         if (!Cmd) return;
         var ci = Cmd.GetComponent<CommandItem>();
