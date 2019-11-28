@@ -37,13 +37,19 @@ public class CmdMarch : MonoBehaviour, ICommand
 
     private void OnCommandTargetSelected(PickInfo piTarget)
     {
+        DoMove(piTarget);
+        CmdAttack.TryCommand();
+        Stop();
+    }
+
+    private void DoMove(PickInfo piTarget)
+    {
         // 看看行动点够不够
         if (!CmdAttack.IsActionPointGranted())
         {
             string msg = "行动点数不够, 本操作无法执行! ";
             UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
-            Debug.Log("CmdMarch OnCommandTargetSelected Error - " + msg);
-            Stop();
+            Debug.Log("CmdMarch DoMove Error - " + msg);
             return;
         }
         
@@ -52,13 +58,14 @@ public class CmdMarch : MonoBehaviour, ICommand
         {
             string msg = $"没有选中任何部队!";
             UIManager.Instance.SystemTips(msg,PanelSystemTips.MessageType.Error);
+            Debug.Log("CmdMarch DoMove Error - " + msg);
             return;
         }
         
         var avMe = CommandManager.Instance.CurrentExecuter.CurrentActor;
         if (avMe == null)
             return;
-            
+
         HexCell cellTarget = piTarget.CurrentCell;
         if (!cellTarget)
             return;
@@ -93,11 +100,8 @@ public class CmdMarch : MonoBehaviour, ICommand
                 Debug.LogWarning($"OhNo Hexmap 2!!! - Orgin<{currentCell.coordinates.X},{currentCell.coordinates.Z}> - New2<{newCell2.coordinates.X},{newCell2.coordinates.Z}>");
             }
         
-            Debug.Log($"CmdMarch - From<{avMe.PosX},{avMe.PosZ}> - Dest<{cellTarget.coordinates.X},{cellTarget.coordinates.Z}>");
+            Debug.Log($"CmdMarch DoMove - From<{avMe.PosX},{avMe.PosZ}> - Dest<{cellTarget.coordinates.X},{cellTarget.coordinates.Z}>");
             CmdAttack.SendAiStateHigh(avMe.OwnerId, avMe.ActorId, StateEnum.WALK, cellTarget.Index);
         }
-        Stop();
-        // 消耗行动点 
-        CmdAttack.TryCommand();
     }
 }

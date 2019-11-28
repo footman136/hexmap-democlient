@@ -44,7 +44,6 @@ public class CmdHarvest : MonoBehaviour, ICommand
             string msg = "行动点数不够, 本操作无法执行! ";
             UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
             Debug.Log("CmdHarvest Run Error - " + msg);
-            Stop();
             return;
         }
 

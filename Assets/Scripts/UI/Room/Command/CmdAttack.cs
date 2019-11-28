@@ -43,23 +43,10 @@ public class CmdAttack : MonoBehaviour, ICommand
             ci.Select(false);
     }
 
-    private PickInfo _piTarget;
-
     private void OnCommandTargetSelected(PickInfo piTarget)
     {
-        // 看看行动点够不够
-        if (!IsActionPointGranted())
-        {
-            string msg = "行动点数不够, 本操作无法执行! ";
-            UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
-            Debug.Log("CmdAttack OnCommandTargetSelected Error - " + msg);
-            Stop();
-            return;
-        }
-
         // 执行
-        _piTarget = piTarget;
-        DoAttack();
+        DoAttack(piTarget);
         TryCommand();
         Stop();
     }
@@ -116,22 +103,32 @@ public class CmdAttack : MonoBehaviour, ICommand
         GameRoomManager.Instance.SendMsg(ROOM.ActorAiStateHigh, output.ToByteArray());
     }
 
-    private void DoAttack()
+    private void DoAttack(PickInfo piTarget)
     {
+        // 看看行动点够不够
+        if (!IsActionPointGranted())
+        {
+            string msg = "行动点数不够, 本操作无法执行! ";
+            UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
+            Debug.Log("CmdAttack DoAttack Error - " + msg);
+            return;
+        }
+
         var pi = CommandManager.Instance.CurrentExecuter;
         if (pi == null || !pi.CurrentActor)
         {
             string msg = $"没有选中任何部队!";
             UIManager.Instance.SystemTips(msg,PanelSystemTips.MessageType.Error);
+            Debug.Log("CmdAttack DoAttack Error - " + msg);
             return;
         }
         
         var avMe = CommandManager.Instance.CurrentExecuter.CurrentActor;
         if (!avMe)
             return;
-        var avTarget = _piTarget.CurrentActor;
+        var avTarget = piTarget.CurrentActor;
         
-        HexCell cellTarget = _piTarget.CurrentCell;
+        HexCell cellTarget = piTarget.CurrentCell;
         if (!cellTarget)
             return;
         
@@ -147,7 +144,7 @@ public class CmdAttack : MonoBehaviour, ICommand
             {
                 // 这里其实应该发送TroopAiState消息到服务器,而不是直接操作状态机,但是因为状态机目前均行在本地,所以就直接调用了
                 abMe.IsCounterAttack = false; // 这是主动攻击, 不是反击, 记录在自己身上, Stop的时候用
-                abMe.StateMachine.TriggerTransition(StateEnum.FIGHT, cellTarget.Index, _piTarget.CurrentActor.ActorId, abMe.AttackDuration);
+                abMe.StateMachine.TriggerTransition(StateEnum.FIGHT, cellTarget.Index, piTarget.CurrentActor.ActorId, abMe.AttackDuration);
                 return;
             }
         }
@@ -161,11 +158,9 @@ public class CmdAttack : MonoBehaviour, ICommand
         GameRoomManager.Instance.HexmapHelper.hexGrid.FindPath(cellMe, cellTarget, avMe.HexUnit);
         if (!hexmapHelper.hexGrid.HasPath)
         {// 如果选中的是一个单位，则需要走到该单位的相邻点上去
-            Debug.Log($"CmdAttack OnCommandTargetSelected Error - Cannot go to target position:<{cellMe.coordinates.X},{cellMe.coordinates.Z}> ");
+            Debug.Log($"CmdAttack DoAttack Error - Cannot go to target position:<{cellMe.coordinates.X},{cellMe.coordinates.Z}> ");
             return;
         }
-
-        Debug.Log($"CmdAttack - From<{avMe.PosX},{avMe.PosZ}> - Dest Pos<{cellTarget.coordinates.X},{cellTarget.coordinates.Z}>");
 
         if ( avTarget && avTarget.OwnerId != avMe.OwnerId)
         {// 目标点是一支部队,且是敌人的部队,则盯住这支部队猛打
@@ -177,5 +172,7 @@ public class CmdAttack : MonoBehaviour, ICommand
             //abMe.StateMachine.TriggerTransition(StateEnum.WALKFIGHT, cellTarget.Index);
             SendAiStateHigh(avMe.OwnerId, avMe.ActorId, StateEnum.WALKFIGHT, cellTarget.Index);
         }
+        
+        Debug.Log($"CmdAttack DoAttack OK - From<{avMe.PosX},{avMe.PosZ}> - Dest Pos<{cellTarget.coordinates.X},{cellTarget.coordinates.Z}>");
     }
 }

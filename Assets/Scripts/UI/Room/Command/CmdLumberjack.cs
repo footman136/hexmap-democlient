@@ -44,7 +44,6 @@ public class CmdLumberjack : MonoBehaviour, ICommand
             string msg = "行动点数不够, 本操作无法执行! ";
             UIManager.Instance.SystemTips(msg, PanelSystemTips.MessageType.Error);
             Debug.Log("CmdLumberjack Run Error - " + msg);
-            Stop();
             return;
         }
         {
