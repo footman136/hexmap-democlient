@@ -182,7 +182,7 @@ public class HexMapCamera : MonoBehaviour {
 			if (!_leftMouseDown)
 			{
 				//鼠标图标换成自定义小手
-				if (CursorManager.Instance != null)
+				if (CursorManager.Instance)
 				{
 					CursorManager.Instance.ShowCursor(CursorManager.CURSOR_TYPE.CAMERA_MOVE);
 				}
@@ -200,7 +200,10 @@ public class HexMapCamera : MonoBehaviour {
 			if (_leftMouseDown)
 			{
 				//鼠标恢复默认图标，置null即可
-				CursorManager.Instance.RestoreCursor();
+				if (CursorManager.Instance)
+				{
+					CursorManager.Instance.RestoreCursor();
+				}
 				_leftMouseDown = false;
 			}
 		}
