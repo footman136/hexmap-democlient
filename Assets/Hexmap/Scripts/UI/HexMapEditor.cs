@@ -117,6 +117,7 @@ public class HexMapEditor : MonoBehaviour {
 		//terrainMaterial.DisableKeyword("GRID_ON");
 		Shader.EnableKeyword("HEX_MAP_EDIT_MODE");
 		SetEditMode(true);
+		HexGameUI.CurrentCamera = Camera.main;
 	}
 
 	void Update () {
